@@ -45,7 +45,7 @@ func InsertNote(name string, wineType string) {
 		log.Fatalln(err)
 	}
 
-	log.Println("Info added successfully")
+	log.Println("Note added successfully")
 }
 
 func DisplayAllNotes() {
@@ -64,4 +64,18 @@ func DisplayAllNotes() {
 		row.Scan(&idNote, &name, &wineType, &country)
 		log.Println("[", country, "] ", name, "—", wineType)
 	}
+}
+
+func AmendNote(newName string, oldName string) {
+	updateNoteSQL := `UPDATE mywinebook SET name = ? WHERE name = ?`
+	statement, err := db.Prepare(updateNoteSQL)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	_, err = statement.Exec(newName, oldName)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	log.Println("Note updated successfully")
 }
