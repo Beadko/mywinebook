@@ -79,3 +79,17 @@ func AmendNote(newName string, oldName string) {
 
 	log.Println("Note updated successfully")
 }
+
+func DeleteNote(name string) {
+	deleteNoteSQL := `DELETE FROM mywinebook WHERE name =?`
+	statement, err := db.Prepare(deleteNoteSQL)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	_, err = statement.Exec(name)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	log.Println("Note deleted successfully")
+}
