@@ -34,7 +34,7 @@ func CreateTable() {
 	log.Println("Mywinebook table created")
 }
 
-func InsertNote(name string, wineType string) {
+func InsertNote(name string, wineType string) error {
 	insertNoteSQL := `INSERT INTO mywinebook(name, wineType) VALUES (?, ?)`
 	statement, err := db.Prepare(insertNoteSQL)
 	if err != nil {
@@ -44,8 +44,9 @@ func InsertNote(name string, wineType string) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-
 	log.Println("Note added successfully")
+	defer db.Close()
+	return nil
 }
 
 func DisplayAllNotes() {
@@ -76,8 +77,8 @@ func AmendNote(newName string, oldName string) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-
 	log.Println("Note updated successfully")
+	defer db.Close()
 }
 
 func DeleteNote(name string) {
@@ -90,6 +91,6 @@ func DeleteNote(name string) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-
 	log.Println("Note deleted successfully")
+	defer db.Close()
 }
