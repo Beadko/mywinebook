@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"log"
 
+	"github.com/Beadko/mywinebook/internal/wine"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -20,11 +21,10 @@ func OpenDatabase() error {
 
 func CreateTable() {
 	createTableSQL := `CREATE TABLE IF NOT EXISTS mywinebook (
-        "idNote" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+        "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
         "name" TEXT,
-        "wineType" TEXT,
-        "country" TEXT
-      );`
+        "wineType" TEXT
+	);`
 	statement, err := db.Prepare(createTableSQL)
 	if err != nil {
 		log.Fatal(err.Error())
@@ -34,7 +34,7 @@ func CreateTable() {
 	log.Println("Mywinebook table created")
 }
 
-func InsertNote(name string, wineType string) error {
+func AddWine(name string, wineType string) error {
 	insertNoteSQL := `INSERT INTO mywinebook(name, wineType) VALUES (?, ?)`
 	statement, err := db.Prepare(insertNoteSQL)
 	if err != nil {
@@ -44,44 +44,43 @@ func InsertNote(name string, wineType string) error {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	log.Println("Note added successfully")
+	log.Println("Wine added successfully")
 	defer db.Close()
 	return nil
 }
 
-func DisplayAllNotes() {
-	row, err := db.Query("SELECT * FROM mywinebook ORDER BY name")
+func GetWines() ([]wine.Wine, error) {
+	row, err := db.Query("SELECT id, name, wineType FROM mywinebook ORDER BY id")
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	defer row.Close()
+	wines := []wine.Wine{}
 
 	for row.Next() {
-		var idNote int
-		var name string
-		var wineType string
-		var country string
-		row.Scan(&idNote, &name, &wineType, &country)
-		log.Println("[", country, "] ", name, "—", wineType)
+		w := wine.Wine{}
+		row.Scan(&w.ID, &w.Name, &w.Type)
 	}
+	return wines, nil
 }
 
-func AmendNote(newName string, oldName string) {
-	updateNoteSQL := `UPDATE mywinebook SET name = ? WHERE name = ?`
+func UpdateWine(wine.Wine) (wine.Wine, error) {
+	updateNoteSQL := `UPDATE mywinebook SET name = ?, wineType = ? WHERE id = ?`
 	statement, err := db.Prepare(updateNoteSQL)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	_, err = statement.Exec(newName, oldName)
+	w := wine.Wine{}
+	_, err = statement.Exec(&w.ID, &w.Name, &w.Type)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	log.Println("Note updated successfully")
-	defer db.Close()
+	log.Println("Wine updated successfully")
+	return w, nil
 }
 
-func DeleteNote(name string) {
+func DeleteWine(name string) error {
 	deleteNoteSQL := `DELETE FROM mywinebook WHERE name =?`
 	statement, err := db.Prepare(deleteNoteSQL)
 	if err != nil {
@@ -91,6 +90,6 @@ func DeleteNote(name string) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	log.Println("Note deleted successfully")
-	defer db.Close()
+	log.Println("Wine deleted successfully")
+	return nil
 }
