@@ -39,5 +39,5 @@ func DeleteNote() {
 	}
 	name := promptGetInput(namePromptContent)
 
-	data.DeleteNote(name)
+	data.DeleteWine(name)
 }

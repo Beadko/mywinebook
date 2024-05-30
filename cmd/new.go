@@ -84,7 +84,7 @@ func createNewNote() {
 		"Add a wine type?",
 	}
 	wineType := promptGetSelect(typePromptContent)
-	data.InsertNote(name, wineType)
+	data.AddWine(name, wineType)
 }
 
 func promptGetSelect(pc promptContent) string {

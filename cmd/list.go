@@ -14,7 +14,7 @@ var listCmd = &cobra.Command{
 	Short: "See a list of wines you tried",
 	Long:  `Get a full list wine entries that you have added to your diary `,
 	Run: func(cmd *cobra.Command, args []string) {
-		data.DisplayAllNotes()
+		data.GetWines()
 	},
 }
 
