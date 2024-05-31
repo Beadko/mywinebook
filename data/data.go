@@ -45,34 +45,51 @@ func AddWine(name string, wineType string) error {
 		log.Fatalln(err)
 	}
 	log.Println("Wine added successfully")
-	defer db.Close()
 	return nil
 }
 
 func GetWines() ([]wine.Wine, error) {
-	row, err := db.Query("SELECT id, name, wineType FROM mywinebook ORDER BY id")
+	rows, err := db.Query("SELECT id, name, wineType FROM mywinebook ORDER BY id")
 	if err != nil {
 		return nil, err
 	}
-
-	defer row.Close()
+	defer rows.Close()
 	wines := []wine.Wine{}
 
-	for row.Next() {
+	for rows.Next() {
 		w := wine.Wine{}
-		row.Scan(&w.ID, &w.Name, &w.Type)
+		if err := rows.Scan(&w.ID, &w.Name, &w.Type); err != nil {
+			return nil, err
+		}
+		wines = append(wines, w)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
 	}
 	return wines, nil
 }
 
-func UpdateWine(wine.Wine) (wine.Wine, error) {
+func GetWine(id string) (wine.Wine, error) {
+	log.Printf("Getting wine %s", id)
+	row := db.QueryRow("SELECT id, name, wineType FROM mywinebook WHERE id = ?", id)
+	w := wine.Wine{}
+	if err := row.Scan(&w.ID, &w.Name, &w.Type); err != nil {
+		return wine.Wine{}, err
+	}
+	if err := row.Err(); err != nil {
+		return wine.Wine{}, err
+	}
+	return w, nil
+}
+
+func UpdateWine(id string) (wine.Wine, error) {
 	updateNoteSQL := `UPDATE mywinebook SET name = ?, wineType = ? WHERE id = ?`
 	statement, err := db.Prepare(updateNoteSQL)
 	if err != nil {
 		log.Fatalln(err)
 	}
 	w := wine.Wine{}
-	_, err = statement.Exec(&w.ID, &w.Name, &w.Type)
+	_, err = statement.Exec(id)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -80,13 +97,13 @@ func UpdateWine(wine.Wine) (wine.Wine, error) {
 	return w, nil
 }
 
-func DeleteWine(name string) error {
-	deleteNoteSQL := `DELETE FROM mywinebook WHERE name =?`
+func DeleteWine(id string) error {
+	deleteNoteSQL := `DELETE FROM mywinebook WHERE id = ?`
 	statement, err := db.Prepare(deleteNoteSQL)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	_, err = statement.Exec(name)
+	_, err = statement.Exec(id)
 	if err != nil {
 		log.Fatalln(err)
 	}
