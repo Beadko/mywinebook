@@ -10,8 +10,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// AddRouterEndpoints add the actual endpoints for api
-
 func AddRouterEndpoints(r *mux.Router) *mux.Router {
 	home := homeHandler{}
 	r.HandleFunc("/", home.ServeHTTP)
@@ -23,22 +21,6 @@ func AddRouterEndpoints(r *mux.Router) *mux.Router {
 	return r
 }
 
-/* func sendJSONResponse(w http.ResponseWriter, data interface{}) {
-	body, err := json.Marshal(data)
-	if err != nil {
-		log.Printf("Failed to encode a JSON response: %v", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-	_, err = w.Write(body)
-	if err != nil {
-		log.Printf("Failed to write the response body: %v", err)
-		return
-	}
-}*/
-
 type homeHandler struct{}
 
 func (h *homeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -46,13 +28,20 @@ func (h *homeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func getWines(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("My wine list"))
-	resp, err := data.GetWines()
+	winelist, err := data.GetWines()
 	if err != nil {
 		return
 	}
+	winelistJson, err := json.Marshal(winelist)
+	if err != nil {
+		fmt.Println("Could not not marshall to JSON.\nStopping here.", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(resp)
+	fmt.Fprintf(w, "%s", winelistJson)
+
 }
 
 func getWine(w http.ResponseWriter, r *http.Request) {
