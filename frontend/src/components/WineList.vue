@@ -1,35 +1,18 @@
 <template>
     <h1> Your Wine List</h1>
-    <body>
-        <div class="wine_table">
-            <table class="table table-bordered table-striped">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Wine Type</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="(wine, index) in wines" :key="index">
-                        <td v-text="wine.id"></td>
-                        <td v-text="wine.name"></td>
-                        <td v-text="wine.wine_type"></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </body>
-</template> 
+    <DataTable :value="wines" dataKey="id" tableStyle="min-width: 60rem">
+        <Column field="name" header="Name"></Column>
+        <Column field="wine_type" header="Type"></Column>
+    </DataTable>
+</template>
 
 <script>
-
 import axios from 'axios';
 export default {
     name: "WineList",
     data() {
         return {            
-            wines:[]
+            wines:[],
         }
     },
     methods: {
