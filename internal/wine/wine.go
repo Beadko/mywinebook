@@ -1,33 +1,22 @@
 package wine
 
-import (
-	"time"
-)
-
 type Wine struct {
-	ID       int       `json:"id"`
-	Type     WineType  `json:"wine_type"`
-	Country  Country   `json:"country"`
-	Name     string    `json:"name"`
+	ID   int      `json:"id"`
+	Type WineType `json:"wine_type"`
+	Name string   `json:"name"`
+	/*Country  Country   `json:"country"`
 	Producer string    `json:"producer"`
 	Year     time.Time `json:"year"`
 	Alcohol  float64   `json:"alcohol"`
 	Nose     Nose      `json:"nose"`
 	Palate   Palate    `json:"palate"`
 	Colour   Colour    `json:"colour"`
-	Score    int       `json:"score"`
+	Score    int       `json:"score"`*/
 }
-type WineType string
-
-// Public Wine Types
-const (
-	Red       WineType = "Red"
-	White     WineType = "White"
-	Rose      WineType = "Rose"
-	Sparkling WineType = "Sparkling"
-)
-
-var WineTypes = []WineType{Red, White, Rose, Sparkling}
+type WineType struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
 
 type Country string
 

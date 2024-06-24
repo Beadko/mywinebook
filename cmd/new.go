@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/Beadko/mywinebook/data"
 	"github.com/Beadko/mywinebook/internal/wine"
@@ -83,8 +84,12 @@ func createNewNote() {
 		fmt.Sprintf("What is the type of %s?", name),
 		"Add a wine type?",
 	}
-	wineType := promptGetSelect(typePromptContent)
-	data.AddWine(name, wineType)
+	t := promptGetSelect(typePromptContent)
+	tInt, err := strconv.Atoi(t)
+	if err != nil {
+		return
+	}
+	data.AddWine(name, tInt)
 }
 
 func promptGetSelect(pc promptContent) string {
@@ -93,7 +98,7 @@ func promptGetSelect(pc promptContent) string {
 
 	prompt := promptui.Select{
 		Label: pc.label,
-		Items: wine.WineTypes,
+		Items: wine.WineType{},
 	}
 
 	_, result, err = prompt.Run()

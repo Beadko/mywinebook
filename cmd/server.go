@@ -30,7 +30,7 @@ func init() {
 func getCorsAllowedOrigin() string {
 	envContent := os.Getenv("CORS_ALLOWED_ORIGIN")
 	if envContent == "" {
-		envContent = "http://localhost:8080"
+		envContent = "http://localhost:5173"
 	}
 	return envContent
 }
