@@ -1,9 +1,10 @@
 package wine
 
 type Wine struct {
-	ID   int      `json:"id"`
-	Type WineType `json:"wine_type"`
-	Name string   `json:"name"`
+	ID     int `json:"id"`
+	TypeID int `json:"wine_type"`
+	Type   WineType
+	Name   string `json:"name"`
 	/*Country  Country   `json:"country"`
 	Producer string    `json:"producer"`
 	Year     time.Time `json:"year"`

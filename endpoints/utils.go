@@ -83,12 +83,13 @@ func deleteWine(w http.ResponseWriter, r *http.Request) {
 }
 
 func addWine(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Add wine"))
 	var wine wine.Wine
 	if err := json.NewDecoder(r.Body).Decode(&wine); err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to decode addWine input", http.StatusInternalServerError)
 		return
 	}
-	err := data.AddWine(wine.Name, wine.Type.ID)
+	err := data.AddWine(wine.Name, wine.TypeID)
 	if err != nil {
 		http.Error(w, "Failed to add the wine", http.StatusInternalServerError)
 		return
