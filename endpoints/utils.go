@@ -32,6 +32,7 @@ func (h *homeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func getWines(w http.ResponseWriter, r *http.Request) {
 	winelist, err := data.GetWines()
 	if err != nil {
+		http.Error(w, "Failed to get wines", http.StatusInternalServerError)
 		return
 	}
 	winelistJson, err := json.Marshal(winelist)

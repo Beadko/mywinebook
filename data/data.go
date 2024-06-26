@@ -78,7 +78,7 @@ func GetWines() ([]wine.Wine, error) {
 
 	for rows.Next() {
 		w := wine.Wine{}
-		if err := rows.Scan(&w.ID, &w.Name, &w.Type); err != nil {
+		if err := rows.Scan(&w.ID, &w.Name, &w.TypeID); err != nil {
 			return nil, err
 		}
 		wines = append(wines, w)
