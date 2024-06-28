@@ -40,6 +40,7 @@ func RunServer() {
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{getCorsAllowedOrigin()},
 		AllowCredentials: true,
+		AllowedMethods:   []string{"POST", "GET", "PUT", "DELETE"},
 	})
 	handler := c.Handler(router)
 	endpoints.AddRouterEndpoints(router)
