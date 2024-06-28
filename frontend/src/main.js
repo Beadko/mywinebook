@@ -9,8 +9,7 @@ import Select from 'primevue/select'
 import InputText from 'primevue/inputtext'
 import Dialog from 'primevue/dialog'
 import App from './App.vue'
-import 'primeicons/primeicons.css'
-
+import 'primeicons/primeicons.css';
 
 const app = createApp(App);
 app.use(PrimeVue, {
