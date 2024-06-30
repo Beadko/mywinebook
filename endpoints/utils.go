@@ -61,9 +61,11 @@ func updateWine(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 	var wine wine.Wine
 	if err := json.NewDecoder(r.Body).Decode(&wine); err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to decode updateWine input", http.StatusInternalServerError)
 		return
 	}
-	_, err := data.UpdateWine(id, wine.Name, wine.Type.ID)
+	err := data.UpdateWine(id, wine.Name, wine.TypeID)
 	if err != nil {
 		http.Error(w, "Failed to update the wine", http.StatusInternalServerError)
 		return

@@ -103,19 +103,14 @@ func GetWine(id string) (wine.Wine, error) {
 	return w, nil
 }
 
-func UpdateWine(id string, name string, wineType int) (wine.Wine, error) {
-	updateNoteSQL := `UPDATE wines SET name = ?, wineType = ? WHERE id = ?`
-	statement, err := db.Prepare(updateNoteSQL)
+func UpdateWine(id string, name string, wineType int) error {
+	_, err := db.Exec(`UPDATE wines SET name = ?, wineType = ? WHERE id = ?`, name, wineType, id)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	w := wine.Wine{}
-	_, err = statement.Exec(id)
-	if err != nil {
-		log.Fatalln(err)
-	}
+
 	log.Println("Wine updated successfully")
-	return w, nil
+	return nil
 }
 
 func DeleteWine(id string) error {
