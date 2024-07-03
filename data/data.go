@@ -12,7 +12,7 @@ var db *sql.DB
 
 func OpenDatabase() error {
 	var err error
-	db, err = sql.Open("sqlite3", "./sqlite-database.db")
+	db, err = sql.Open("sqlite3", "./sqlite-database.db?_foreign_keys=on")
 	if err != nil {
 		return err
 	}
@@ -20,15 +20,19 @@ func OpenDatabase() error {
 }
 
 func InitDB() {
-	db.Exec(`CREATE TABLE IF NOT EXISTS wine_types (
+
+	db.Exec(`
+		CREATE TABLE IF NOT EXISTS wine_types (
 			id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 			name TEXT UNIQUE
 			);
 			INSERT INTO wine_types(name) VALUES ("Red"), ("White"), ("Rose"), ("Sparkling");`)
-	db.Exec(`CREATE TABLE IF NOT EXISTS wines (
+	db.Exec(`
+			CREATE TABLE IF NOT EXISTS wines (
 				id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 				name TEXT,
-				wineType INTEGER REFERENCES wine_types
+				wineType INT unsigned NOT NULL,
+				FOREIGN KEY (wineType) REFERENCES wine_types(id)
 	);`)
 	log.Println("Database created")
 }
@@ -58,14 +62,14 @@ func AddWine(name string, wineType int) error {
 	insertNoteSQL := `INSERT INTO wines(name, wineType) VALUES (?, ?)`
 	statement, err := db.Prepare(insertNoteSQL)
 	if err != nil {
-		log.Fatalln(err)
+		return err
 	}
 	_, err = statement.Exec(name, wineType)
-	if err != nil {
-		log.Fatalln(err)
+	if err == nil {
+		log.Println("Wine added successfully")
+		return nil
 	}
-	log.Println("Wine added successfully")
-	return nil
+	return err
 }
 
 func GetWines() ([]wine.Wine, error) {
@@ -94,7 +98,7 @@ func GetWine(id string) (wine.Wine, error) {
 	log.Printf("Getting wine %s", id)
 	row := db.QueryRow("SELECT * FROM wines WHERE id = ?", id)
 	w := wine.Wine{}
-	if err := row.Scan(&w.ID, &w.Name, &w.Type); err != nil {
+	if err := row.Scan(&w.ID, &w.Name, &w.TypeID); err != nil {
 		return wine.Wine{}, err
 	}
 	if err := row.Err(); err != nil {
@@ -105,24 +109,23 @@ func GetWine(id string) (wine.Wine, error) {
 
 func UpdateWine(id string, name string, wineType int) error {
 	_, err := db.Exec(`UPDATE wines SET name = ?, wineType = ? WHERE id = ?`, name, wineType, id)
-	if err != nil {
-		log.Fatalln(err)
+	if err == nil {
+		log.Println("Wine updated successfully")
+		return nil
 	}
-
-	log.Println("Wine updated successfully")
-	return nil
+	return err
 }
 
 func DeleteWine(id string) error {
 	deleteNoteSQL := `DELETE FROM wines WHERE id = ?`
 	statement, err := db.Prepare(deleteNoteSQL)
 	if err != nil {
-		log.Fatalln(err)
+		return err
 	}
 	_, err = statement.Exec(id)
-	if err != nil {
-		log.Fatalln(err)
+	if err == nil {
+		log.Println("Wine deleted successfully")
+		return nil
 	}
-	log.Println("Wine deleted successfully")
-	return nil
+	return err
 }
