@@ -95,7 +95,7 @@ export default {
             })
         },
         updateWine() {
-            axios.put("http://localhost:8081/wine/"+ this.selected_wine.id)
+            axios.put("http://localhost:8081/wine/"+ this.selected_wine.id, this.selected_wine)
             .then(res => {
                 this.wineDialog = false;
                 location.reload()
