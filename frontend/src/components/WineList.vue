@@ -3,7 +3,11 @@
     <AddWine></AddWine>
     <DataTable v-model:selection="selected_wine" :value="wines" dataKey="id" tableStyle="min-width: 60rem">
         <Column field="name" header="Name"></Column>
-        <Column field="wine_type" header="Type"></Column>
+        <Column field="wine_type" header="Type">
+            <template #body="wine">
+                {{ getCountryName(wine)}}
+            </template>
+        </Column>
         <Column headerStyle="width:4rem">
             <template #body="item">
                 <Button icon="pi pi-trash" severity="secondary" rounded text aria-label="Filter" @click="confirmDelete(item.data)"/>
@@ -11,7 +15,7 @@
             </template>
         </Column>
     </DataTable>
-    <Dialog v-model:visible="deleteDialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
+    <Dialog v-model:visible="delete_dialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
             <div class="flex items-center gap-4">
                 <i class="pi pi-exclamation-triangle !text-3xl" />
                 <span v-if="selected_wine">
@@ -19,11 +23,11 @@
                 </span>
             </div>
             <template #footer>
-                <Button label="No" icon="pi pi-times" text @click="deleteDialog = false" />
+                <Button label="No" icon="pi pi-times" text @click="delete_dialog = false" />
                 <Button label="Yes" icon="pi pi-check" @click="deleteWine" />
             </template>
         </Dialog>
-        <Dialog v-model:visible="wineDialog" :style="{ width: '450px' }" header="Wine Details" :modal="true">
+        <Dialog v-model:visible="wine_dialog" :style="{ width: '450px' }" header="Wine Details" :modal="true">
             <div class="flex flex-col gap-6 p-fluid">
                 <div>
                     <label for="name" class="font-semibold w-24">Name</label>
@@ -35,7 +39,7 @@
                 </div>
             </div>
             <template #footer>
-                <Button label="Cancel" icon="pi pi-times" text @click="wineDialog = false" />
+                <Button label="Cancel" icon="pi pi-times" text @click="wine_dialog = false" />
                 <Button label="Save" icon="pi pi-check" @click="updateWine" />
             </template>
         </Dialog>
@@ -54,9 +58,14 @@ export default {
         return {
             wines: [],
             selected_wine: {},
-            wine_types:[],
-            deleteDialog: false,
-            wineDialog: false
+            wine_types: [],
+            delete_dialog: false,
+            wine_dialog: false,
+        }
+    },
+    computed: {
+        wineTypeMap: function() {
+            return this.wine_types.reduce((acc,cur)=>{acc[cur.id]=cur; return acc},{})
         }
     },
     methods: {
@@ -69,14 +78,23 @@ export default {
                 window.alert(`The API returned an error: ${error}`)
             })
         },
+        getWineTypes() {
+            axios.get("http://localhost:8081/wine_type")
+            .then(res => {
+                this.wine_types = res.data
+            })
+            .catch((error) => {
+                window.alert(`The API returned an error: ${error}`);
+            })
+        },
         confirmDelete(wn) {
             this.selected_wine = wn
-            this.deleteDialog = true
+            this.delete_dialog = true
         },
         deleteWine() {
             axios.delete("http://localhost:8081/wine/"+ this.selected_wine.id)
             .then(res => {
-                this.deleteDialog = false;
+                this.delete_dialog = false;
                 location.reload()
             })
             .catch((error) => {
@@ -85,7 +103,7 @@ export default {
         },
         selectWine(wn) {
             this.selected_wine = wn
-            this.wineDialog = true
+            this.wine_dialog = true
             axios.get("http://localhost:8081/wine_type")
             .then(res => {
                 this.wine_types = res.data;
@@ -97,15 +115,20 @@ export default {
         updateWine() {
             axios.put("http://localhost:8081/wine/"+ this.selected_wine.id, this.selected_wine)
             .then(res => {
-                this.wineDialog = false;
+                this.wine_dialog = false;
                 location.reload()
             })
             .catch((error) => {
                 window.alert(`The API returned an error: ${error}`)
             })
+        },
+        getCountryName(wine){
+            return this.wineTypeMap[wine.data.wine_type].name
         }
     },
     mounted() {
+        this.getWineTypes()
+
         this.getWines()
     }
 }
