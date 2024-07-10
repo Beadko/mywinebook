@@ -1,6 +1,6 @@
 <template>
     <h1> Your Wine List</h1>
-    <AddWine></AddWine>
+    <AddWine :wineTypes="wine_types"></AddWine>
     <DataTable v-model:selection="selected_wine" :value="wines" dataKey="id" tableStyle="min-width: 60rem">
         <Column field="name" header="Name"></Column>
         <Column field="wine_type" header="Type">
@@ -128,7 +128,6 @@ export default {
     },
     mounted() {
         this.getWineTypes()
-
         this.getWines()
     }
 }

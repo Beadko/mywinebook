@@ -7,8 +7,8 @@
             <InputText id="name" class="flex-auto" autocomplete="off" v-model="selected.name" />
         </div>
         <div class="flex items-center gap-4 mb-8">
-            <label for="wine_types" class="font-semibold w-24">Type</label>
-            <Select v-model="selected.wine_type" :options="wine_types" optionLabel="name" optionValue="id" class="w-full md:w-[14rem]" />
+            <label for="wineTypes" class="font-semibold w-24">Type</label>
+            <Select v-model="selected.wineType" :options="wineTypes" optionLabel="name" optionValue="id" class="w-full md:w-[14rem]" />
         </div>
             <div class="flex justify-end gap-2">
                 <Button type="button" label="Cancel" severity="secondary" @click="visible = false" ></Button>
@@ -21,18 +21,21 @@
 <script>
 import axios from 'axios'
 import Select from 'primevue/select'
-import { ref } from "vue"
 
 export default {
     name: "AddWine",
+    props: {
+        wineTypes: {
+            type: Array,
+        }
+    },
     data() {
         return {            
             visible: false,
-            selected: ref({
+            selected: {
             name:'',
-            wine_type: ''
-            }),
-            wine_types: ref([])
+            wineType: {}
+            },
         }
     },
     methods: {
@@ -41,24 +44,11 @@ export default {
             axios.post("http://localhost:8081/wine", this.selected)
             .then(res => {
                 console.log(res.data)  
-                window.alert(`Yay! Another wine added to your library`);          
              })
             .catch((error) => {
                 window.alert(`The API returned an error: ${error}`);
             })
         },
-        getWineTypes() {
-            axios.get("http://localhost:8081/wine_type")
-            .then(res => {
-                this.wine_types = res.data;
-            })
-            .catch((error) => {
-                window.alert(`The API returned an error: ${error}`);
-            })
-        }
-    },
-    mounted() {
-        this.getWineTypes();
     }
 }
 </script>
