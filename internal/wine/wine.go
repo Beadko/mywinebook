@@ -1,12 +1,11 @@
 package wine
 
 type Wine struct {
-	ID     int `json:"id"`
-	TypeID int `json:"wine_type"`
-	Type   WineType
-	Name   string `json:"name"`
-	/*Country  Country   `json:"country"`
-	Producer string    `json:"producer"`
+	ID        int    `json:"id"`
+	TypeID    int    `json:"wine_type"`
+	Name      string `json:"name"`
+	CountryID int    `json:"country"`
+	/*Producer string    `json:"producer"`
 	Year     time.Time `json:"year"`
 	Alcohol  float64   `json:"alcohol"`
 	Nose     Nose      `json:"nose"`
@@ -19,17 +18,10 @@ type WineType struct {
 	Name string `json:"name"`
 }
 
-type Country string
-
-// Public Countries
-const (
-	France     Country = "France"
-	Italy      Country = "Italy"
-	Spain      Country = "Spain"
-	Australia  Country = "Australia"
-	NewZealand Country = "New_Zealand"
-	Chile      Country = "Chile"
-)
+type Country struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
 
 type Colour struct {
 	Red     RedColour

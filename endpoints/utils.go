@@ -20,6 +20,7 @@ func AddRouterEndpoints(r *mux.Router) *mux.Router {
 	r.HandleFunc("/wine/{id}", deleteWine).Methods("DELETE")
 	r.HandleFunc("/wine/{id}", updateWine).Methods("PUT")
 	r.HandleFunc("/wine_type", getWineTypes).Methods("GET")
+	r.HandleFunc("/country", getCountries).Methods("GET")
 	return r
 }
 
@@ -65,7 +66,7 @@ func updateWine(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to decode updateWine input", http.StatusInternalServerError)
 		return
 	}
-	err := data.UpdateWine(id, wine.Name, wine.TypeID)
+	err := data.UpdateWine(id, wine.Name, wine.TypeID, wine.CountryID)
 	if err != nil {
 		http.Error(w, "Failed to update the wine", http.StatusInternalServerError)
 		return
@@ -92,7 +93,7 @@ func addWine(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to decode addWine input", http.StatusInternalServerError)
 		return
 	}
-	err := data.AddWine(wine.Name, wine.TypeID)
+	err := data.AddWine(wine.Name, wine.TypeID, wine.CountryID)
 	if err != nil {
 		http.Error(w, "Failed to add the wine", http.StatusInternalServerError)
 		return
@@ -117,4 +118,22 @@ func getWineTypes(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "%s", wineTypesJSON)
+}
+
+func getCountries(w http.ResponseWriter, r *http.Request) {
+	countries, err := data.GetCountries()
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to get countries", http.StatusInternalServerError)
+		return
+	}
+	countriesJSON, err := json.Marshal(countries)
+	if err != nil {
+		fmt.Println("Could not not marshall to JSON.\nStopping here.", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "%s", countriesJSON)
 }

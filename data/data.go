@@ -28,12 +28,21 @@ func InitDB() {
 			);
 			INSERT INTO wine_types(name) VALUES ("Red"), ("White"), ("Rose"), ("Sparkling");`)
 	db.Exec(`
-			CREATE TABLE IF NOT EXISTS wines (
-				id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-				name TEXT,
-				wineType INT unsigned NOT NULL,
-				FOREIGN KEY (wineType) REFERENCES wine_types(id)
+		CREATE TABLE IF NOT EXISTS countries (
+		id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+		name TEXT UNIQUE
+		);
+		INSERT INTO countries(name) VALUES ("France"), ("Italy"), ("Australia");`)
+	db.Exec(`
+		CREATE TABLE IF NOT EXISTS wines (
+			id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+			name TEXT,
+			wineType INT unsigned NOT NULL,
+			country INT unsigned NOT NULL,
+			FOREIGN KEY (wineType) REFERENCES wine_types(id),
+			FOREIGN KEY (country) REFERENCES countries(id)
 	);`)
+
 	log.Println("Database created")
 }
 
@@ -58,13 +67,34 @@ func GetWineTypes() ([]wine.WineType, error) {
 	return wineTypes, nil
 }
 
-func AddWine(name string, wineType int) error {
-	insertNoteSQL := `INSERT INTO wines(name, wineType) VALUES (?, ?)`
+func GetCountries() ([]wine.Country, error) {
+	rows, err := db.Query(`SELECT * FROM countries ORDER by id`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	countries := []wine.Country{}
+	for rows.Next() {
+		c := wine.Country{}
+		if err := rows.Scan(&c.ID, &c.Name); err != nil {
+			return nil, err
+		}
+		countries = append(countries, c)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	log.Println(countries)
+	return countries, nil
+}
+
+func AddWine(name string, wineType int, country int) error {
+	insertNoteSQL := `INSERT INTO wines(name, wineType, country) VALUES (?, ?, ?)`
 	statement, err := db.Prepare(insertNoteSQL)
 	if err != nil {
 		return err
 	}
-	_, err = statement.Exec(name, wineType)
+	_, err = statement.Exec(name, wineType, country)
 	if err == nil {
 		log.Println("Wine added successfully")
 		return nil
@@ -73,7 +103,7 @@ func AddWine(name string, wineType int) error {
 }
 
 func GetWines() ([]wine.Wine, error) {
-	rows, err := db.Query("SELECT id, name, wineType FROM wines ORDER BY id")
+	rows, err := db.Query("SELECT * FROM wines ORDER BY id")
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +112,7 @@ func GetWines() ([]wine.Wine, error) {
 
 	for rows.Next() {
 		w := wine.Wine{}
-		if err := rows.Scan(&w.ID, &w.Name, &w.TypeID); err != nil {
+		if err := rows.Scan(&w.ID, &w.Name, &w.TypeID, &w.CountryID); err != nil {
 			return nil, err
 		}
 		wines = append(wines, w)
@@ -98,7 +128,7 @@ func GetWine(id string) (wine.Wine, error) {
 	log.Printf("Getting wine %s", id)
 	row := db.QueryRow("SELECT * FROM wines WHERE id = ?", id)
 	w := wine.Wine{}
-	if err := row.Scan(&w.ID, &w.Name, &w.TypeID); err != nil {
+	if err := row.Scan(&w.ID, &w.Name, &w.TypeID, &w.CountryID); err != nil {
 		return wine.Wine{}, err
 	}
 	if err := row.Err(); err != nil {
@@ -107,8 +137,8 @@ func GetWine(id string) (wine.Wine, error) {
 	return w, nil
 }
 
-func UpdateWine(id string, name string, wineType int) error {
-	_, err := db.Exec(`UPDATE wines SET name = ?, wineType = ? WHERE id = ?`, name, wineType, id)
+func UpdateWine(id string, name string, wineType int, country int) error {
+	_, err := db.Exec(`UPDATE wines SET name = ?, wineType = ?, country = ? WHERE id = ?`, name, wineType, country, id)
 	if err == nil {
 		log.Println("Wine updated successfully")
 		return nil
