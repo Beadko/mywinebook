@@ -15,44 +15,36 @@
             </template>
         </Column>
     </DataTable>
-    <Dialog v-model:visible="delete_dialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
-            <div class="flex items-center gap-4">
-                <i class="pi pi-exclamation-triangle !text-3xl" />
-                <span v-if="selected_wine">
-                    Are you sure you want to delete <b>{{ selected_wine.name }}</b>?
-                </span>
+    <DeleteWine v-model:visible="delete_dialog" :selectedWine="selected_wine" />
+    <Dialog v-model:visible="wine_dialog" :style="{ width: '450px' }" header="Wine Details" :modal="true">
+        <div class="flex flex-col gap-6 p-fluid">
+            <div>
+                <label for="name" class="font-semibold w-24">Name</label>
+                <InputText id="name" v-model="selected_wine.name" class="flex-auto" autocomplete="off"/>
             </div>
-            <template #footer>
-                <Button label="No" icon="pi pi-times" text @click="delete_dialog = false" />
-                <Button label="Yes" icon="pi pi-check" @click="deleteWine" />
-            </template>
-        </Dialog>
-        <Dialog v-model:visible="wine_dialog" :style="{ width: '450px' }" header="Wine Details" :modal="true">
-            <div class="flex flex-col gap-6 p-fluid">
-                <div>
-                    <label for="name" class="font-semibold w-24">Name</label>
-                    <InputText id="name" v-model="selected_wine.name" class="flex-auto" autocomplete="off"/>
-                </div>
-                <div>
-                    <label for="wine_type" class="block font-bold mb-3">Type</label>
-                    <Select v-model="selected_wine.wine_type" :options="wine_types" optionLabel="name" optionValue="id" />
-                </div>
+            <div>
+                <label for="wine_type" class="block font-bold mb-3">Type</label>
+                <Select v-model="selected_wine.wine_type" :options="wine_types" optionLabel="name" optionValue="id" />
             </div>
-            <template #footer>
-                <Button label="Cancel" icon="pi pi-times" text @click="wine_dialog = false" />
-                <Button label="Save" icon="pi pi-check" @click="updateWine" />
-            </template>
-        </Dialog>
+        </div>
+        <template #footer>
+            <Button label="Cancel" icon="pi pi-times" text @click="wine_dialog = false" />
+            <Button label="Save" icon="pi pi-check" @click="updateWine" />
+        </template>
+    </Dialog>
 </template>
 
 <script>
 import axios from 'axios'
 import AddWine from './AddWine.vue'
+import Column from 'primevue/column';
+import DeleteWine from './DeleteWine.vue';
 
 export default {
     name: "WineList",
     components: {
-        AddWine
+        AddWine,
+        DeleteWine
     },
     data() {
         return {
@@ -90,16 +82,6 @@ export default {
         confirmDelete(wn) {
             this.selected_wine = wn
             this.delete_dialog = true
-        },
-        deleteWine() {
-            axios.delete("http://localhost:8081/wine/"+ this.selected_wine.id)
-            .then(res => {
-                this.delete_dialog = false;
-                location.reload()
-            })
-            .catch((error) => {
-                window.alert(`The API returned an error: ${error}`)
-            })
         },
         selectWine(wn) {
             this.selected_wine = wn
