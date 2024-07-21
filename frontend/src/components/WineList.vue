@@ -2,14 +2,15 @@
 <script>
 import axios from 'axios'
 import AddWine from './AddWine.vue'
-import Column from 'primevue/column';
-import DeleteWine from './DeleteWine.vue';
+import DeleteWine from './DeleteWine.vue'
+import UpdateWine from './UpdateWine.vue'
 
 export default {
     name: "WineList",
     components: {
         AddWine,
-        DeleteWine
+        DeleteWine,
+        UpdateWine
     },
     data() {
         return {
@@ -48,16 +49,6 @@ export default {
             this.selected = wn
             this.wine_dialog = true
         },
-        updateWine() {
-            axios.put("http://localhost:8081/wine/"+ this.selected.id, this.selected)
-            .then(res => {
-                this.wine_dialog = false;
-                location.reload()
-            })
-            .catch((error) => {
-                window.alert(`The API returned an error: ${error}`)
-            })
-        },
         getWineTypeName(wine){
             return this.wineTypeMap[wine.data.wine_type].name
         }
@@ -82,26 +73,11 @@ export default {
         <Column field="country" header="Country"></Column>
         <Column headerStyle="width:4rem">
             <template #body="item">
-                <Button icon="pi pi-trash" severity="secondary" rounded text aria-label="Filter" @click="selectWine(item.data)"/>
-                <Button icon="pi pi-pencil" severity="secondary" rounded text aria-label="Filter" @click="selectWine(item.data)"/>
+                <Button icon="pi pi-trash" severity="secondary" rounded text aria-label="Filter" @click="selectWine(item.data)" />
+                <Button icon="pi pi-pencil" severity="secondary" rounded text aria-label="Filter" @click="selectWine(item.data)" />
             </template>
         </Column>
     </DataTable>
     <DeleteWine v-model:visible="delete_dialog" :selectedWine="selected" />
-    <Dialog v-model:visible="wine_dialog" :style="{ width: '450px' }" header="Wine Details" :modal="true">
-        <div class="flex flex-col gap-6 p-fluid">
-            <div>
-                <label for="name" class="font-semibold w-24">Name</label>
-                <InputText id="name" v-model="selected.name" class="flex-auto" autocomplete="off"/>
-            </div>
-            <div>
-                <label for="wine_type" class="block font-bold mb-3">Type</label>
-                <Select v-model="selected.wine_type" :options="wine_types" optionLabel="name" optionValue="id" />
-            </div>
-        </div>
-        <template #footer>
-            <Button label="Cancel" icon="pi pi-times" text @click="wine_dialog = false" />
-            <Button label="Save" icon="pi pi-check" @click="updateWine" />
-        </template>
-    </Dialog>
+    <UpdateWine v-model:visible="wine_dialog" :selectedWine="selected" :wineTypes="wine_types" />
 </template>
