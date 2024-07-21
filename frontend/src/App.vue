@@ -1,14 +1,5 @@
-<script>
-import WineList from '@/components/WineList.vue'
-export default {
-  components: {
-    WineList
-  }
-}
-</script>
-
 <template>
-  <WineList></WineList>
+  <WineList />
 </template>
 
 <style scoped>
@@ -25,3 +16,12 @@ export default {
   filter: drop-shadow(0 0 2em #42b883aa);
 }
 </style>
+
+<script>
+import WineList from '@/components/WineList.vue'
+export default {
+  components: {
+    WineList
+  }
+}
+</script>
