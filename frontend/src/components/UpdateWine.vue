@@ -5,7 +5,8 @@ export default {
     name: "UpdateWine",
     props: {
         selectedWine: Object,
-        wineTypes: Array
+        wineTypes: Array,
+        countries: Array
     },
     methods: {
     updateWine() {
@@ -23,16 +24,18 @@ export default {
 </script>
 
 <template>
-    <Dialog :style="{ width: '450px' }" header="Wine Details" :modal="true">
-        <div class="flex flex-col gap-6 p-fluid">
-            <div>
-                <label for="name" class="font-semibold w-24">Name</label>
-                <InputText id="name" v-model="selectedWine.name" class="flex-auto" autocomplete="off"/>
-            </div>
-            <div>
-                <label for="wineType" class="block font-bold mb-3">Type</label>
-                <Select v-model="selectedWine.wine_type" :options="wineTypes" optionLabel="name" optionValue="id" />
-            </div>
+    <Dialog :style="{ width: '25rem' }" header="Wine Details" modal>
+        <div class="flex items-center gap-4 mb-4">
+            <label for="name" class="font-semibold w-24">Name</label>
+            <InputText id="name" v-model="selectedWine.name" class="w-full md:w-[14rem]" autocomplete="off"/>
+        </div>
+        <div class="flex items-center gap-4 mb-4">
+            <label for="wineType" class="font-semibold w-24">Type</label>
+            <Select v-model="selectedWine.wine_type" :options="wineTypes" optionLabel="name" optionValue="id" class="w-full md:w-[14rem]" />
+        </div>
+        <div class="flex items-center gap-4 mb-8">
+            <label for="country" class="font-semibold w-24">Country</label>
+            <Select v-model="selectedWine.country" :options="countries" optionLabel="name" optionValue="id" class="w-full md:w-[14rem]" />
         </div>
         <template #footer>
             <Button label="Cancel" icon="pi pi-times" text @click="this.$parent.wine_dialog = false" />
