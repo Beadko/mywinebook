@@ -89,7 +89,17 @@ func createNewNote() {
 	if err != nil {
 		return
 	}
-	data.AddWine(name, tInt)
+
+	countryPromptContent := promptContent{
+		fmt.Sprintf("What is the type of %s?", name),
+		"Add a wine type?",
+	}
+	c := promptGetSelect(countryPromptContent)
+	cInt, err := strconv.Atoi(c)
+	if err != nil {
+		return
+	}
+	data.AddWine(name, tInt, cInt)
 }
 
 func promptGetSelect(pc promptContent) string {
@@ -98,9 +108,8 @@ func promptGetSelect(pc promptContent) string {
 
 	prompt := promptui.Select{
 		Label: pc.label,
-		Items: wine.WineType{},
+		Items: []wine.WineType{},
 	}
-
 	_, result, err = prompt.Run()
 	if err != nil {
 		fmt.Printf("Prompt failed %v\n", err)

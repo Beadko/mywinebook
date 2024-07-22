@@ -33,6 +33,7 @@ func (h *homeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func getWines(w http.ResponseWriter, r *http.Request) {
 	winelist, err := data.GetWines()
 	if err != nil {
+		log.Println(err)
 		http.Error(w, "Failed to get wines", http.StatusInternalServerError)
 		return
 	}
@@ -51,6 +52,7 @@ func getWine(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 	resp, err := data.GetWine(id)
 	if err != nil {
+		log.Println(err)
 		http.Error(w, "Failed to find the wine", http.StatusInternalServerError)
 		return
 	}
@@ -68,6 +70,7 @@ func updateWine(w http.ResponseWriter, r *http.Request) {
 	}
 	err := data.UpdateWine(id, wine.Name, wine.TypeID, wine.CountryID)
 	if err != nil {
+		log.Println(err)
 		http.Error(w, "Failed to update the wine", http.StatusInternalServerError)
 		return
 	}
@@ -95,6 +98,7 @@ func addWine(w http.ResponseWriter, r *http.Request) {
 	}
 	err := data.AddWine(wine.Name, wine.TypeID, wine.CountryID)
 	if err != nil {
+		log.Println(err)
 		http.Error(w, "Failed to add the wine", http.StatusInternalServerError)
 		return
 	}
