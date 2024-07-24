@@ -168,3 +168,12 @@ func AddCountry(name string) error {
 	}
 	return err
 }
+
+func AddWineType(name string) error {
+	_, err := db.Exec(`INSERT INTO wine_types(name) VALUES (?)`, name)
+	if err == nil {
+		log.Println("Wine type added successfully")
+		return nil
+	}
+	return err
+}
