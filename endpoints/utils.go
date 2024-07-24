@@ -23,6 +23,8 @@ func AddRouterEndpoints(r *mux.Router) *mux.Router {
 	r.HandleFunc("/wine_type", addWineType).Methods("POST")
 	r.HandleFunc("/country", getCountries).Methods("GET")
 	r.HandleFunc("/country", addCountry).Methods("POST")
+	r.HandleFunc("/country/{id}", updateCountry).Methods("PUT")
+
 	return r
 }
 
@@ -175,6 +177,23 @@ func addWineType(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusCreated)
-	fmt.Fprintln(w, "Wine type added successfully")
+	fmt.Fprintln(w, "Country added successfully")
+}
 
+func updateCountry(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+	var c wine.Country
+	if err := json.NewDecoder(r.Body).Decode(&c); err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to decode updateCountry input", http.StatusInternalServerError)
+		return
+	}
+	err := data.UpdateCountry(id, c.Name)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to update the country", http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintln(w, "Country updated successfully")
 }

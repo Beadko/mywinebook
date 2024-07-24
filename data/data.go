@@ -177,3 +177,12 @@ func AddWineType(name string) error {
 	}
 	return err
 }
+
+func UpdateCountry(id string, name string) error {
+	_, err := db.Exec(`UPDATE countries SET name = ? WHERE id = ?`, name, id)
+	if err == nil {
+		log.Println("Country updated successfully")
+		return nil
+	}
+	return err
+}
