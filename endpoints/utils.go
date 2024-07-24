@@ -21,6 +21,7 @@ func AddRouterEndpoints(r *mux.Router) *mux.Router {
 	r.HandleFunc("/wine/{id}", updateWine).Methods("PUT")
 	r.HandleFunc("/wine_type", getWineTypes).Methods("GET")
 	r.HandleFunc("/wine_type", addWineType).Methods("POST")
+	r.HandleFunc("/wine_type/{id}", updateWineType).Methods("PUT")
 	r.HandleFunc("/country", getCountries).Methods("GET")
 	r.HandleFunc("/country", addCountry).Methods("POST")
 	r.HandleFunc("/country/{id}", updateCountry).Methods("PUT")
@@ -146,23 +147,6 @@ func getCountries(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%s", countriesJSON)
 }
 
-func addCountry(w http.ResponseWriter, r *http.Request) {
-	var country wine.Country
-	if err := json.NewDecoder(r.Body).Decode(&country); err != nil {
-		log.Println(err)
-		http.Error(w, "Failed to decode addCountry input", http.StatusInternalServerError)
-		return
-	}
-	err := data.AddCountry(country.Name)
-	if err != nil {
-		log.Println(err)
-		http.Error(w, "Failed to add the country", http.StatusInternalServerError)
-		return
-	}
-	w.WriteHeader(http.StatusCreated)
-	fmt.Fprintln(w, "Country added successfully")
-}
-
 func addWineType(w http.ResponseWriter, r *http.Request) {
 	var wt wine.WineType
 	if err := json.NewDecoder(r.Body).Decode(&wt); err != nil {
@@ -174,6 +158,41 @@ func addWineType(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to add the wine type", http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusCreated)
+	fmt.Fprintln(w, "Wine type added successfully")
+}
+
+func updateWineType(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+	var wt wine.WineType
+	if err := json.NewDecoder(r.Body).Decode(&wt); err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to decode updateWineType input", http.StatusInternalServerError)
+		return
+	}
+	err := data.UpdateWineType(id, wt.Name)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to update the wine type", http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintln(w, "Wine type updated successfully")
+}
+
+func addCountry(w http.ResponseWriter, r *http.Request) {
+	var country wine.Country
+	if err := json.NewDecoder(r.Body).Decode(&country); err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to decode addCountry input", http.StatusInternalServerError)
+		return
+	}
+	err := data.AddCountry(country.Name)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to add the country", http.StatusInternalServerError)
 		return
 	}
 	w.WriteHeader(http.StatusCreated)
