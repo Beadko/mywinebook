@@ -159,3 +159,12 @@ func DeleteWine(id string) error {
 	}
 	return err
 }
+
+func AddCountry(name string) error {
+	_, err := db.Exec(`INSERT INTO countries(name) VALUES (?)`, name)
+	if err == nil {
+		log.Println("Country added successfully")
+		return nil
+	}
+	return err
+}
