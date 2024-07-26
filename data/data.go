@@ -23,13 +23,13 @@ func InitDB() {
 
 	db.Exec(`
 		CREATE TABLE IF NOT EXISTS wine_types (
-			id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			name TEXT UNIQUE
 			);
 			INSERT INTO wine_types(name) VALUES ("Red"), ("White"), ("Rose"), ("Sparkling");`)
 	db.Exec(`
 		CREATE TABLE IF NOT EXISTS countries (
-		id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		name TEXT UNIQUE
 		);
 		INSERT INTO countries(name) VALUES ("France"), ("Italy"), ("Australia");`)
@@ -37,8 +37,8 @@ func InitDB() {
 		CREATE TABLE IF NOT EXISTS wines (
 			id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 			name TEXT,
-			wineType INT unsigned NOT NULL,
-			country INT unsigned NOT NULL,
+			wineType INT unsigned,
+			country INT unsigned,
 			FOREIGN KEY (wineType) REFERENCES wine_types(id),
 			FOREIGN KEY (country) REFERENCES countries(id)
 	);`)
@@ -88,13 +88,13 @@ func GetCountries() ([]wine.Country, error) {
 	return countries, nil
 }
 
-func AddWine(name string, wineType int, country int) error {
+func AddWine(wine wine.Wine) error {
 	insertNoteSQL := `INSERT INTO wines(name, wineType, country) VALUES (?, ?, ?)`
 	statement, err := db.Prepare(insertNoteSQL)
 	if err != nil {
 		return err
 	}
-	_, err = statement.Exec(name, wineType, country)
+	_, err = statement.Exec(wine.Name, wine.TypeID, wine.CountryID)
 	if err == nil {
 		log.Println("Wine added successfully")
 		return nil
@@ -137,8 +137,8 @@ func GetWine(id string) (wine.Wine, error) {
 	return w, nil
 }
 
-func UpdateWine(id string, name string, wineType int, country int) error {
-	_, err := db.Exec(`UPDATE wines SET name = ?, wineType = ?, country = ? WHERE id = ?`, name, wineType, country, id)
+func UpdateWine(wine wine.Wine, id string) error {
+	_, err := db.Exec(`UPDATE wines SET name = ?, wineType = ?, country = ? WHERE id = ?`, wine.Name, wine.TypeID, wine.CountryID, id)
 	if err == nil {
 		log.Println("Wine updated successfully")
 		return nil
