@@ -1,15 +1,14 @@
 <script>
 import axios from 'axios'
 import Countries from './Countries.vue';
+import WineTypes from './WineTypes.vue';
 
 export default {
     name: "AddWine",
     inheritAttrs:false,
     components: {
-        Countries
-    },
-    props: {
-        wineTypes: Array,
+        Countries,
+        WineTypes
     },
     data() {
         return {            
@@ -34,6 +33,9 @@ export default {
         },
         onCountryAdded() {
             this.$emit('country-added');
+        },
+        onTypeAdded() {
+            this.$emit('type-added');
         }
     }
 }
@@ -47,11 +49,8 @@ export default {
                 <label for="name" class="font-semibold w-24">Name</label>
                 <InputText v-model="selected.name" id="name" class="w-full md:w-[14rem]" autocomplete="off" />
             </div>
-            <div class="flex items-center gap-4 mb-4">
-                <label for="wineTypes" class="font-semibold w-24">Type</label>
-                <Select v-model="selected.wine_type" :options="wineTypes" optionLabel="name" optionValue="id" class="w-full md:w-[14rem]" />
-            </div>
-            <Countries :selectedCountry="selected" @country-added="onCountryAdded"/>
+            <WineTypes :selected="selected" @type-added="onTypeAdded" />
+            <Countries :selected="selected" @country-added="onCountryAdded"/>
             <div class="flex justify-end gap-2">
                 <Button type="button" label="Cancel" severity="secondary" @click="visible = false"/>
                 <Button type="button" label="Save" @click="addWine" />

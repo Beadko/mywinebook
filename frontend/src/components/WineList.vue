@@ -26,7 +26,7 @@ export default {
     },
     computed: {
         wineTypeMap: function() {
-            return this.wine_types.reduce((acc,cur)=>{acc[cur.id]=cur; return acc},{})
+            return this.store.wine_types.reduce((acc,cur)=>{acc[cur.id]=cur; return acc},{})
         },
         countryMap: function() {
             return this.store.countries.reduce((acc,cur)=>{acc[cur.id]=cur; return acc},{})
@@ -45,7 +45,7 @@ export default {
         getWineTypes() {
             axios.get("http://localhost:8081/wine_type")
             .then(res => {
-                this.wine_types = res.data
+                this.store.wine_types = res.data
             })
             .catch((error) => {
                 window.alert(`The API returned an error: ${error}`);
@@ -81,7 +81,7 @@ export default {
 
 <template>
     <h1> Your Wine List</h1>
-    <AddWine :wineTypes="wine_types" @country-added="getCountries"/>
+    <AddWine :wineTypes="wine_types" @country-added="getCountries" @type-added="getWineTypes"/>
     <DataTable v-model:selection="selected" :value="wines" dataKey="id" tableStyle="min-width: 60rem">
         <Column field="name" header="Name"></Column>
         <Column field="wine_type" header="Type">

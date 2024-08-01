@@ -1,5 +1,6 @@
 import { reactive } from 'vue'
 
 export const store = reactive({
-    countries:[]
+    countries:[],
+    wine_types:[]
 })
