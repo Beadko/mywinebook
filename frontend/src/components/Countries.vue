@@ -6,7 +6,7 @@ export default {
     name: "Countries",
     inheritAttrs:false,
     props: {
-        selectedCountry: String,
+        selectedCountry: Object,
     },
     data() {
         return {
@@ -15,7 +15,6 @@ export default {
             new_country: {
                 name:''
             },
-            selected:{},
             store
         }    
     },
@@ -44,7 +43,7 @@ export default {
 <template>
     <div class="flex items-center gap-4 mb-8">
         <label for="country" class="font-semibold w-24">Country</label>
-        <Select v-model="selected" :options="[...store.countries, { id: 'add_country', name: '+ Add New' }]" optionLabel="name" optionValue="id" class="w-full md:w-[14rem]" @change="handleCountryChange($event.value)" />
+        <Select v-model="selectedCountry.country" :options="[...store.countries, { id: 'add_country', name: '+ Add New' }]" optionLabel="name" optionValue="id" class="w-full md:w-[14rem]" @change="handleCountryChange($event.value)" />
     </div>    
     <Dialog v-model:visible="visible" modal header="Add a new country" :style="{ width: '25rem' }">
         <div class="flex items-center gap-4 mb-4">

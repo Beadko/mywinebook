@@ -51,7 +51,7 @@ export default {
                 <label for="wineTypes" class="font-semibold w-24">Type</label>
                 <Select v-model="selected.wine_type" :options="wineTypes" optionLabel="name" optionValue="id" class="w-full md:w-[14rem]" />
             </div>
-            <Countries :selectedCountry="selected.country" @country-added="onCountryAdded"/>
+            <Countries :selectedCountry="selected" @country-added="onCountryAdded"/>
             <div class="flex justify-end gap-2">
                 <Button type="button" label="Cancel" severity="secondary" @click="visible = false"/>
                 <Button type="button" label="Save" @click="addWine" />
