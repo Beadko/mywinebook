@@ -81,7 +81,7 @@ export default {
 
 <template>
     <h1> Your Wine List</h1>
-    <AddWine :wineTypes="wine_types" @country-added="getCountries" @type-added="getWineTypes"/>
+    <AddWine @country-added="getCountries" @type-added="getWineTypes"/>
     <DataTable v-model:selection="selected" :value="wines" dataKey="id" tableStyle="min-width: 60rem">
         <Column field="name" header="Name"></Column>
         <Column field="wine_type" header="Type">
@@ -101,6 +101,6 @@ export default {
             </template>
         </Column>
     </DataTable>
-    <DeleteWine v-model:visible="delete_dialog" :selectedWine="selected" />
-    <UpdateWine v-model:visible="wine_dialog" :selectedWine="selected" :wineTypes="wine_types" />
+    <DeleteWine v-model:visible="delete_dialog" :selected="selected" />
+    <UpdateWine v-model:visible="wine_dialog" :selected="selected" @country-added="getCountries" @type-added="getWineTypes"/>
 </template>
