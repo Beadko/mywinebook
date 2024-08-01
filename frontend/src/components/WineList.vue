@@ -1,9 +1,11 @@
 
 <script>
 import axios from 'axios'
+import Column from 'primevue/column'
 import AddWine from './AddWine.vue'
 import DeleteWine from './DeleteWine.vue'
 import UpdateWine from './UpdateWine.vue'
+import { store } from './store'
 
 export default {
     name: "WineList",
@@ -14,10 +16,10 @@ export default {
     },
     data() {
         return {
+            store,
             wines: [],
             selected: {},
             wine_types: [],
-            countries: [],
             delete_dialog: false,
             wine_dialog: false,
         }
@@ -27,7 +29,7 @@ export default {
             return this.wine_types.reduce((acc,cur)=>{acc[cur.id]=cur; return acc},{})
         },
         countryMap: function() {
-            return this.countries.reduce((acc,cur)=>{acc[cur.id]=cur; return acc},{})
+            return this.store.countries.reduce((acc,cur)=>{acc[cur.id]=cur; return acc},{})
         },
     },
     methods: {
@@ -52,7 +54,7 @@ export default {
         getCountries() {
             axios.get("http://localhost:8081/country")
             .then(res => {
-                this.countries = res.data
+                this.store.countries = res.data
             })
             .catch((error) => {
                 window.alert(`The API returned an error: ${error}`);
@@ -69,7 +71,7 @@ export default {
             return this.countryMap[wine.data.country].name
         }
     },
-    mounted() {
+    async mounted() {
         this.getCountries()
         this.getWineTypes()
         this.getWines()
@@ -79,7 +81,7 @@ export default {
 
 <template>
     <h1> Your Wine List</h1>
-    <AddWine :wineTypes="wine_types" :countries="countries"/>
+    <AddWine :wineTypes="wine_types" @country-added="getCountries"/>
     <DataTable v-model:selection="selected" :value="wines" dataKey="id" tableStyle="min-width: 60rem">
         <Column field="name" header="Name"></Column>
         <Column field="wine_type" header="Type">
@@ -100,5 +102,5 @@ export default {
         </Column>
     </DataTable>
     <DeleteWine v-model:visible="delete_dialog" :selectedWine="selected" />
-    <UpdateWine v-model:visible="wine_dialog" :selectedWine="selected" :wineTypes="wine_types" :countries="countries"/>
+    <UpdateWine v-model:visible="wine_dialog" :selectedWine="selected" :wineTypes="wine_types" />
 </template>
