@@ -1,11 +1,15 @@
 <script>
 import axios from 'axios'
+import Countries from './Countries.vue';
 
 export default {
     name: "AddWine",
+    inheritAttrs:false,
+    components: {
+        Countries
+    },
     props: {
         wineTypes: Array,
-        countries: Array
     },
     data() {
         return {            
@@ -28,6 +32,9 @@ export default {
                 window.alert(`The API returned an error: ${error}`);
             })
         },
+        onCountryAdded() {
+            this.$emit('country-added');
+        }
     }
 }
 </script>
@@ -44,10 +51,7 @@ export default {
                 <label for="wineTypes" class="font-semibold w-24">Type</label>
                 <Select v-model="selected.wine_type" :options="wineTypes" optionLabel="name" optionValue="id" class="w-full md:w-[14rem]" />
             </div>
-            <div class="flex items-center gap-4 mb-8">
-                <label for="countries" class="font-semibold w-24">Country</label>
-                <Select v-model="selected.country" :options="countries" optionLabel="name" optionValue="id" class="w-full md:w-[14rem]" />
-            </div>
+            <Countries :selectedCountry="selected.country" @country-added="onCountryAdded"/>
             <div class="flex justify-end gap-2">
                 <Button type="button" label="Cancel" severity="secondary" @click="visible = false"/>
                 <Button type="button" label="Save" @click="addWine" />
