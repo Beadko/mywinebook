@@ -195,3 +195,21 @@ func UpdateWineType(id string, name string) error {
 	}
 	return err
 }
+
+func DeleteCountry(id string) error {
+	_, err := db.Exec(`DELETE FROM countries WHERE id = ?`, id)
+	if err == nil {
+		log.Println("Country deleted successfully")
+		return nil
+	}
+	return err
+}
+
+func DeleteWineType(id string) error {
+	_, err := db.Exec(`DELETE FROM wine_types WHERE id = ?`, id)
+	if err == nil {
+		log.Println("Wine type deleted successfully")
+		return nil
+	}
+	return err
+}

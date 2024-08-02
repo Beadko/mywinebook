@@ -22,9 +22,11 @@ func AddRouterEndpoints(r *mux.Router) *mux.Router {
 	r.HandleFunc("/wine_type", getWineTypes).Methods("GET")
 	r.HandleFunc("/wine_type", addWineType).Methods("POST")
 	r.HandleFunc("/wine_type/{id}", updateWineType).Methods("PUT")
+	r.HandleFunc("/wine_type/{id}", deleteWineType).Methods("DELETE")
 	r.HandleFunc("/country", getCountries).Methods("GET")
 	r.HandleFunc("/country", addCountry).Methods("POST")
 	r.HandleFunc("/country/{id}", updateCountry).Methods("PUT")
+	r.HandleFunc("/country/{id}", deleteCountry).Methods("DELETE")
 
 	return r
 }
@@ -220,4 +222,28 @@ func updateCountry(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintln(w, "Country updated successfully")
+}
+
+func deleteWineType(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+	err := data.DeleteWineType(id)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to delete the wine type", http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusCreated)
+	fmt.Fprintln(w, "Wine type deleted successfully")
+}
+
+func deleteCountry(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+	err := data.DeleteCountry(id)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to delete the country", http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusCreated)
+	fmt.Fprintln(w, "Country deleted successfully")
 }
