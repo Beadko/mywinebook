@@ -1,4 +1,3 @@
-
 <script>
 import axios from 'axios'
 import Column from 'primevue/column'
@@ -19,7 +18,6 @@ export default {
             store,
             wines: [],
             selected: {},
-            wine_types: [],
             delete_dialog: false,
             wine_dialog: false,
         }
@@ -94,6 +92,7 @@ export default {
                 {{ getCountryName(wine)}}
             </template>
         </Column>
+        <Column field="score" header="Score"></Column>
         <Column headerStyle="width:4rem">
             <template #body="item">
                 <Button icon="pi pi-trash" severity="secondary" rounded text aria-label="Filter" @click="selectWine(item.data)" />
