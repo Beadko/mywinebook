@@ -14,7 +14,7 @@ export default {
     },
     methods: {
     updateWine() {
-            axios.put("http://localhost:8081/wine/"+ this.selectedWine.id, this.selectedWine)
+            axios.put("http://localhost:8081/wine/"+ this.selected.id, this.selected)
             .then(res => {
                 this.update_dialog = false;
                 location.reload()
@@ -23,6 +23,12 @@ export default {
                 window.alert(`The API returned an error: ${error}`)
             })
         },
+    onCountryAdded() {
+        this.$emit('country-added');
+        },
+    onTypeAdded() {
+        this.$emit('type-added');
+        }
     }
 }
 </script>
