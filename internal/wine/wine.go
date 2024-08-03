@@ -1,17 +1,19 @@
 package wine
 
+import "github.com/guregu/null/v5/zero"
+
 type Wine struct {
-	ID        int    `json:"id"`
-	TypeID    int    `json:"wine_type"`
-	Name      string `json:"name"`
-	CountryID int    `json:"country"`
+	ID        int      `json:"id"`
+	TypeID    zero.Int `json:"wine_type"`
+	Name      string   `json:"name"`
+	CountryID zero.Int `json:"country"`
+	Score     zero.Int `json:"score"`
 	/*Producer string    `json:"producer"`
 	Year     time.Time `json:"year"`
 	Alcohol  float64   `json:"alcohol"`
 	Nose     Nose      `json:"nose"`
 	Palate   Palate    `json:"palate"`
-	Colour   Colour    `json:"colour"`
-	Score    int       `json:"score"`*/
+	Colour   Colour    `json:"colour"`*/
 }
 type WineType struct {
 	ID   int    `json:"id"`
