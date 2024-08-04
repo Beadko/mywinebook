@@ -20,10 +20,12 @@ var deleteCmd = &cobra.Command{
 			Help:    "The ID should be a string",
 		}, &ID)
 		if err != nil {
-			log.Fatalf("Failed to delete the wine: %v", err)
+			log.Fatalf("Failed to get the wine: %v", err)
 		}
-
-		data.DeleteWine(ID)
+		err = data.DeleteWine(ID)
+		if err != nil {
+			log.Fatalf("Failed to delete wine: %v", err)
+		}
 	},
 }
 
