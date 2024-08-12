@@ -21,129 +21,159 @@ func OpenDatabase() error {
 
 func InitDB() {
 
-	db.Exec(`
+	_, err := db.Exec(`
 		CREATE TABLE IF NOT EXISTS wine_types (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name VARCHAR(100) UNIQUE
+			name TEXT UNIQUE
 			);
 			INSERT INTO wine_types(name) VALUES ("Red"), ("White"), ("Rose"), ("Sparkling"), ("Orange");`)
-	db.Exec(`
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, err = db.Exec(`
 		CREATE TABLE IF NOT EXISTS countries (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name VARCHAR(100) UNIQUE
+			name TEXT UNIQUE
 		);
 		INSERT INTO countries(name) VALUES ("France"), ("Italy"), ("Australia"), ("Spain"), ("New Zealand"), ("Chile"), ("Germany"), ("Malta"), ("USA"), ("Argentina"), ("South Africa"), ("Portugal"), ("Hungary"), ("Georgia");`)
-	db.Exec(`
-		CREATE TABLE IF NOT EXISTS aromas (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name VARCHAR(100) UNIQUE
-		);
-		INSERT INTO aromas(name) VALUES ("Fruity"), ("Vegetal"), ("Floral"), ("Earthy"), ("Woody"), ("Spicy"), ("Mineral");`)
-	db.Exec(`
-		CREATE TABLE IF NOT EXISTS intensities (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name VARCHAR(100) UNIQUE		
-		);
-		INSERT INTO instensities(name) VALUES ("Weak"), ("Medium"), ("Pronounced");`)
-	db.Exec(`
-		CREATE TABLE IF NOT EXISTS flavours (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name VARCHAR(100) UNIQUE		
-		);
-		INSERT INTO flavours(name) VALUES ("Fruity"), ("Vegetal"), ("Floral"), ("Earthy"), ("Woody"), ("Spicy"), ("Mineral"), ("Herbal");`)
-	db.Exec(`
-		CREATE TABLE IF NOT EXISTS sweetness (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name VARCHAR(100) UNIQUE		
-		);
-		INSERT INTO sweetness(name) VALUES ("Bone dry"), ("Dry"), ("Off dry"), ("Medium sweet"), ("Sweet"), ("Very sweet");`)
-	db.Exec(`
-		CREATE TABLE IF NOT EXISTS acidities (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name VARCHAR(100) UNIQUE		
-		);
-		INSERT INTO acidities(name) VALUES ("Tart"), ("Crisp"), ("Fresh"), ("Smooth"), ("Not acidic");`)
-	db.Exec(`
-		CREATE TABLE IF NOT EXISTS tannins (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name VARCHAR(100) UNIQUE		
-		);
-		INSERT INTO tannins(name) VALUES ("Very light"), ("Light"), ("Medium"), ("Full Bodied"), ("Heavy");`)
-	db.Exec(`
-		CREATE TABLE IF NOT EXISTS bodies (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name VARCHAR(100) UNIQUE		
-		);
-		INSERT INTO bodies(name) VALUES ("Soft"), ("Round"), ("Dry"), ("Hard");`)
-	db.Exec(`
-		CREATE TABLE IF NOT EXISTS clarities (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name VARCHAR(100) UNIQUE		
-		);
-		INSERT INTO clarities(name) VALUES ("Clear"), ("Slightly hazy"), ("Hazy");`)
-	db.Exec(`
-		CREATE TABLE IF NOT EXISTS finishes (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name VARCHAR(100) UNIQUE		
-		);
-		INSERT INTO finishes(name) VALUES ("Short"), ("Medium"), ("Long"), ("Very long");`)
-	db.Exec(`
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, err = db.Exec(`
 		CREATE TABLE IF NOT EXISTS colours (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name VARCHAR(100) UNIQUE		
+			name TEXT UNIQUE		
 		);
 		INSERT INTO colours(name) VALUES ("Purple"), ("Ruby"), ("Garnet"), ("Tawny"), ("Straw"), ("Yellow"), ("Golden"), ("Blush"), ("Salmon"), ("Pink");`)
-	db.Exec(`
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, err = db.Exec(`
 		CREATE TABLE IF NOT EXISTS colour_depths (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name VARCHAR(100) UNIQUE		
+			name TEXT UNIQUE		
 		);
 		INSERT INTO colour_depths(name) VALUES ("Pale"), ("Medium"), ("Deep");`)
-	db.Exec(`
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, err = db.Exec(`
+		CREATE TABLE IF NOT EXISTS aromas (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			name TEXT UNIQUE
+		);
+		INSERT INTO aromas(name) VALUES ("Fruity"), ("Vegetal"), ("Floral"), ("Earthy"), ("Woody"), ("Spicy"), ("Mineral");`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, err = db.Exec(`
+		CREATE TABLE IF NOT EXISTS intensities (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			name TEXT UNIQUE		
+		);
+		INSERT INTO intensities(name) VALUES ("Weak"), ("Medium"), ("Pronounced");`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, err = db.Exec(`
+		CREATE TABLE IF NOT EXISTS flavours (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			name TEXT UNIQUE		
+		);
+		INSERT INTO flavours(name) VALUES ("Fruity"), ("Vegetal"), ("Floral"), ("Earthy"), ("Woody"), ("Spicy"), ("Mineral"), ("Herbal");`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, err = db.Exec(`
+		CREATE TABLE IF NOT EXISTS sweetnesses (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			name TEXT UNIQUE		
+		);
+		INSERT INTO sweetnesses(name) VALUES ("Bone dry"), ("Dry"), ("Off dry"), ("Medium sweet"), ("Sweet"), ("Very sweet");`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, err = db.Exec(`
+		CREATE TABLE IF NOT EXISTS acidities (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			name TEXT UNIQUE		
+		);
+		INSERT INTO acidities(name) VALUES ("Tart"), ("Crisp"), ("Fresh"), ("Smooth"), ("Not acidic");`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, err = db.Exec(`
+		CREATE TABLE IF NOT EXISTS tannins (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			name TEXT UNIQUE		
+		);
+		INSERT INTO tannins(name) VALUES ("Very light"), ("Light"), ("Medium"), ("Full Bodied"), ("Heavy");`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, err = db.Exec(`
+		CREATE TABLE IF NOT EXISTS bodies (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			name TEXT UNIQUE		
+		);
+		INSERT INTO bodies(name) VALUES ("Soft"), ("Round"), ("Dry"), ("Hard");`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, err = db.Exec(`
+		CREATE TABLE IF NOT EXISTS clarities (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			name TEXT UNIQUE		
+		);
+		INSERT INTO clarities(name) VALUES ("Clear"), ("Slightly hazy"), ("Hazy");`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, err = db.Exec(`
+		CREATE TABLE IF NOT EXISTS finishes (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			name TEXT UNIQUE		
+		);
+		INSERT INTO finishes(name) VALUES ("Short"), ("Medium"), ("Long"), ("Very long");`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, err = db.Exec(`
 		CREATE TABLE IF NOT EXISTS balances (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			name VARCHAR(100) UNIQUE		
 		);
 		INSERT INTO balances(name) VALUES ("Good"), ("Fair"), ("Unbalanced");`)
-	db.Exec(`
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, err = db.Exec(`
+	    PRAGMA foreign_keys = ON;
 		CREATE TABLE IF NOT EXISTS wines (
 			id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-			name VARCHAR(100),
-			wineType INT unsigned,
-			country INT unsigned,
-			score INT unsigned,
-			year INT unsigned,
-			producer VARCHAR(100),
-			alcohol DECIMAL(4, 2),
-			aroma INT unsigned,
-			intensity INT unsigned,
-			palate INT unsigned,
-			flavour INT unsigned,
-			sweetness INT unsigned,
-			acidity INT unsigned,
-			tannin INT unsigned,
-			body INT unsigned,
-			clarity INT unsigned,
-			finish INT unsigned,
-			colour INT unsigned,
-			colour_depth INT unsigned,
-			balance INT unsigned,
-			FOREIGN KEY (wineType) REFERENCES wine_types(id),
-			FOREIGN KEY (country) REFERENCES countries(id),
-			FOREIGN KEY (aroma) REFERENCES aromas(id),
-			FOREIGN KEY (instensity) REFERENCES intensities(id),
-			FOREIGN KEY (flavour) REFERENCES flavours(id),
-			FOREIGN KEY (sweetness) REFERENCES sweetness(id),
-			FOREIGN KEY (acidity) REFERENCES acidities(id),
-			FOREIGN KEY (tannin) REFERENCES tannins(id),
-			FOREIGN KEY (body) REFERENCES bodies(id),
-			FOREIGN KEY (clarity) REFERENCES clarities(id),
-			FOREIGN KEY (finish) REFERENCES finishes(id),
-			FOREIGN KEY (colour) REFERENCES colours(id)
-			FOREIGN KEY (colour_depth) REFERENCES colour_depths(id)
-			FOREIGN KEY (balance) REFERENCES balances(id)
+			name TEXT,
+			wine_type INTEGER REFERENCES wine_types(id),
+			country INTEGER REFERENCES countries(id),
+			score INTEGER,
+			producer TEXT, 
+			alcohol REAL,
+			year INTEGER,
+			colour INTEGER REFERENCES colours(id),
+			colour_depth INTEGER REFERENCES colour_depths(id),
+			clarity INTEGER REFERENCES clarities(id),
+			aroma INTEGER REFERENCES aromas(id),
+			intensity INTEGER REFERENCES intensities(id),
+			flavour INTEGER REFERENCES flavours(id),
+			sweetness INTEGER REFERENCES sweetnesses(id),
+			acidity INTEGER REFERENCES acidities(id),
+			tannin INTEGER REFERENCES tannins(id),
+			body INTEGER REFERENCES bodies(id),
+			finish INTEGER REFERENCES finishes(id),
+			balance INTEGER REFERENCES balances(id)
 	);`)
-
+	if err != nil {
+		log.Fatal(err)
+	}
 	log.Println("Database created")
 }
 
@@ -189,13 +219,13 @@ func GetCountries() ([]wine.Country, error) {
 	return countries, nil
 }
 
-func AddWine(wine wine.Wine) error {
-	insertNoteSQL := `INSERT INTO wines(name, wineType, country, score) VALUES (?, ?, ?, ?)`
+func AddWine(w wine.Wine) error {
+	insertNoteSQL := `INSERT INTO wines(name, wine_type, country, score, producer, alcohol, year, colour, colour_depth, clarity, aroma, intensity, flavour, sweetness, acidity, tannin, body, finish, balance) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
 	statement, err := db.Prepare(insertNoteSQL)
 	if err != nil {
 		return err
 	}
-	_, err = statement.Exec(wine.Name, wine.TypeID, wine.CountryID, wine.Score)
+	_, err = statement.Exec(w.Name, w.TypeID, w.CountryID, w.Score, w.Producer, w.Alcohol, w.Year, w.ColourID, w.DepthID, w.ClarityID, w.AromaID, w.IntensityID, w.FlavourID, w.SweetnessID, w.AcidityID, w.TanninID, w.BodyID, w.FinishID, w.BalanceID)
 	if err == nil {
 		log.Println("Wine added successfully")
 		return nil
@@ -204,7 +234,7 @@ func AddWine(wine wine.Wine) error {
 }
 
 func GetWines() ([]wine.Wine, error) {
-	rows, err := db.Query("SELECT * FROM wines ORDER BY id")
+	rows, err := db.Query("SELECT id, name, wine_type, country, score, producer, alcohol, year, colour, colour_depth, clarity, aroma, intensity, flavour, sweetness, acidity, tannin, body, finish, balance FROM wines ORDER BY id")
 	if err != nil {
 		return nil, err
 	}
@@ -213,7 +243,7 @@ func GetWines() ([]wine.Wine, error) {
 
 	for rows.Next() {
 		w := wine.Wine{}
-		if err := rows.Scan(&w.ID, &w.Name, &w.TypeID, &w.CountryID, &w.Score); err != nil {
+		if err := rows.Scan(&w.ID, &w.Name, &w.TypeID, &w.CountryID, &w.Score, &w.Producer, &w.Alcohol, &w.Year, &w.ColourID, &w.DepthID, &w.ClarityID, &w.AromaID, &w.IntensityID, &w.FlavourID, &w.SweetnessID, &w.AcidityID, &w.TanninID, &w.BodyID, &w.FinishID, &w.BalanceID); err != nil {
 			return nil, err
 		}
 		wines = append(wines, w)
@@ -229,17 +259,18 @@ func GetWine(id string) (wine.Wine, error) {
 	log.Printf("Getting wine %s", id)
 	row := db.QueryRow("SELECT * FROM wines WHERE id = ?", id)
 	w := wine.Wine{}
-	if err := row.Scan(&w.ID, &w.Name, &w.TypeID, &w.CountryID, &w.Score); err != nil {
+	if err := row.Scan(&w.ID, &w.Name, &w.TypeID, &w.CountryID, &w.Score, &w.Producer, &w.Alcohol, &w.Year, &w.ColourID, &w.DepthID, &w.ClarityID, &w.AromaID, &w.IntensityID, &w.FlavourID, &w.SweetnessID, &w.AcidityID, &w.TanninID, &w.BodyID, &w.FinishID, &w.BalanceID); err != nil {
 		return wine.Wine{}, err
 	}
 	if err := row.Err(); err != nil {
 		return wine.Wine{}, err
 	}
+	log.Println(w)
 	return w, nil
 }
 
-func UpdateWine(wine wine.Wine, id string) error {
-	_, err := db.Exec(`UPDATE wines SET name = ?, wineType = ?, country = ?, score = ? WHERE id = ?`, wine.Name, wine.TypeID, wine.CountryID, wine.Score, id)
+func UpdateWine(w wine.Wine, id string) error {
+	_, err := db.Exec(`UPDATE wines SET name = ?, wine_type = ?, country = ?, score = ?, producer = ?, alcohol = ?, year = ?, colour = ?, colour_depth = ?, clarity = ?, aroma = ?, intensity = ?, flavour = ?, sweetness = ?, acidity = ?, tannin = ?, body = ?, finish = ?, balance = ? WHERE id = ?`, w.Name, w.TypeID, w.CountryID, w.Score, w.Producer, w.Alcohol, w.Year, w.ColourID, w.DepthID, w.ClarityID, w.AromaID, w.IntensityID, w.FlavourID, w.SweetnessID, w.AcidityID, w.TanninID, w.BodyID, w.FinishID, w.BalanceID, id)
 	if err == nil {
 		log.Println("Wine updated successfully")
 		return nil
