@@ -25,6 +25,11 @@ func AddRouterEndpoints(r *mux.Router) *mux.Router {
 	r.HandleFunc("/country", addCountry).Methods("POST")
 	r.HandleFunc("/country/{id}", updateCountry).Methods("PUT")
 	r.HandleFunc("/country/{id}", deleteCountry).Methods("DELETE")
+	r.HandleFunc("/aroma", getAromas).Methods("GET")
+	r.HandleFunc("/aroma", addAroma).Methods("POST")
+	r.HandleFunc("/aroma/{id}", updateAroma).Methods("PUT")
+	r.HandleFunc("/aroma/{id}", deleteAroma).Methods("DELETE")
+
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 	return r
 }
@@ -238,4 +243,69 @@ func deleteCountry(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusCreated)
 	fmt.Fprintln(w, "Country deleted successfully")
+}
+
+func getAromas(w http.ResponseWriter, r *http.Request) {
+	a, err := data.GetAromas()
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to get aromas", http.StatusInternalServerError)
+		return
+	}
+	aJSON, err := json.Marshal(a)
+	if err != nil {
+		fmt.Println("Could not not marshall to JSON.\nStopping here.", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "%s", aJSON)
+}
+
+func addAroma(w http.ResponseWriter, r *http.Request) {
+	var a wine.Aroma
+	if err := json.NewDecoder(r.Body).Decode(&a); err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to decode addAroma input", http.StatusInternalServerError)
+		return
+	}
+	err := data.AddAroma(a.Name)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to add the aroma", http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusCreated)
+	fmt.Fprintln(w, "Aroma added successfully")
+}
+
+func updateAroma(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+	var a wine.Aroma
+	if err := json.NewDecoder(r.Body).Decode(&a); err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to decode updateAroma input", http.StatusInternalServerError)
+		return
+	}
+	err := data.UpdateAroma(id, a.Name)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to update the aroma", http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintln(w, "Aroma updated successfully")
+}
+
+func deleteAroma(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+	err := data.DeleteAroma(id)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to delete the aroma", http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusCreated)
+	fmt.Fprintln(w, "Aroma deleted successfully")
 }

@@ -346,3 +346,51 @@ func DeleteWineType(id string) error {
 	}
 	return err
 }
+
+func GetAromas() ([]wine.Aroma, error) {
+	rows, err := db.Query(`SELECT * FROM aromas ORDER by id`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	aromas := []wine.Aroma{}
+	for rows.Next() {
+		a := wine.Aroma{}
+		if err := rows.Scan(&a.ID, &a.Name); err != nil {
+			return nil, err
+		}
+		aromas = append(aromas, a)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	log.Println(aromas)
+	return aromas, nil
+}
+
+func AddAroma(name string) error {
+	_, err := db.Exec(`INSERT INTO aromas(name) VALUES (?)`, name)
+	if err == nil {
+		log.Println("Aroma added successfully")
+		return nil
+	}
+	return err
+}
+
+func UpdateAroma(id string, name string) error {
+	_, err := db.Exec(`UPDATE aromas SET name = ? WHERE id = ?`, name, id)
+	if err == nil {
+		log.Println("Aroma updated successfully")
+		return nil
+	}
+	return err
+}
+
+func DeleteAroma(id string) error {
+	_, err := db.Exec(`DELETE FROM aromas WHERE id = ?`, id)
+	if err == nil {
+		log.Println("Aroma deleted successfully")
+		return nil
+	}
+	return err
+}
