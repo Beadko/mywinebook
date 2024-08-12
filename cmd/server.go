@@ -44,7 +44,7 @@ func RunServer() {
 	})
 	handler := c.Handler(router)
 	endpoints.AddRouterEndpoints(router)
-	err := http.ListenAndServe(":8081", handler)
+	err := http.ListenAndServe(":80", handler)
 	if err != nil {
 		log.Fatalln("There's an error with the server", err)
 	}

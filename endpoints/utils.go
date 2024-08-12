@@ -12,8 +12,6 @@ import (
 )
 
 func AddRouterEndpoints(r *mux.Router) *mux.Router {
-	home := homeHandler{}
-	r.HandleFunc("/", home.ServeHTTP)
 	r.HandleFunc("/wine", getWines).Methods("GET")
 	r.HandleFunc("/wine/{id}", getWine).Methods("GET")
 	r.HandleFunc("/wine", addWine).Methods("POST")
@@ -27,14 +25,8 @@ func AddRouterEndpoints(r *mux.Router) *mux.Router {
 	r.HandleFunc("/country", addCountry).Methods("POST")
 	r.HandleFunc("/country/{id}", updateCountry).Methods("PUT")
 	r.HandleFunc("/country/{id}", deleteCountry).Methods("DELETE")
-
+	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 	return r
-}
-
-type homeHandler struct{}
-
-func (h *homeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("My wine book homepage"))
 }
 
 func getWines(w http.ResponseWriter, r *http.Request) {
