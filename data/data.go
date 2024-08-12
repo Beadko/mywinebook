@@ -26,7 +26,7 @@ func InitDB() {
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			name TEXT UNIQUE
 			);
-			INSERT INTO wine_types(name) VALUES ("Red"), ("White"), ("Rose"), ("Sparkling"), ("Orange");`)
+			INSERT INTO wine_types(name) VALUES ("Red"), ("White"), ("Rose"), ("Sparkling"), ("Dessert"), ("Fortified"), ("Orange");`)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -169,7 +169,8 @@ func InitDB() {
 			tannin INTEGER REFERENCES tannins(id),
 			body INTEGER REFERENCES bodies(id),
 			finish INTEGER REFERENCES finishes(id),
-			balance INTEGER REFERENCES balances(id)
+			balance INTEGER REFERENCES balances(id),
+			notes TEXT
 	);`)
 	if err != nil {
 		log.Fatal(err)
@@ -220,12 +221,12 @@ func GetCountries() ([]wine.Country, error) {
 }
 
 func AddWine(w wine.Wine) error {
-	insertNoteSQL := `INSERT INTO wines(name, wine_type, country, score, producer, alcohol, year, colour, colour_depth, clarity, aroma, intensity, flavour, sweetness, acidity, tannin, body, finish, balance) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+	insertNoteSQL := `INSERT INTO wines(name, wine_type, country, score, producer, alcohol, year, colour, colour_depth, clarity, aroma, intensity, flavour, sweetness, acidity, tannin, body, finish, balance, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
 	statement, err := db.Prepare(insertNoteSQL)
 	if err != nil {
 		return err
 	}
-	_, err = statement.Exec(w.Name, w.TypeID, w.CountryID, w.Score, w.Producer, w.Alcohol, w.Year, w.ColourID, w.DepthID, w.ClarityID, w.AromaID, w.IntensityID, w.FlavourID, w.SweetnessID, w.AcidityID, w.TanninID, w.BodyID, w.FinishID, w.BalanceID)
+	_, err = statement.Exec(w.Name, w.TypeID, w.CountryID, w.Score, w.Producer, w.Alcohol, w.Year, w.ColourID, w.DepthID, w.ClarityID, w.AromaID, w.IntensityID, w.FlavourID, w.SweetnessID, w.AcidityID, w.TanninID, w.BodyID, w.FinishID, w.BalanceID, w.Notes)
 	if err == nil {
 		log.Println("Wine added successfully")
 		return nil
@@ -234,7 +235,7 @@ func AddWine(w wine.Wine) error {
 }
 
 func GetWines() ([]wine.Wine, error) {
-	rows, err := db.Query("SELECT id, name, wine_type, country, score, producer, alcohol, year, colour, colour_depth, clarity, aroma, intensity, flavour, sweetness, acidity, tannin, body, finish, balance FROM wines ORDER BY id")
+	rows, err := db.Query("SELECT id, name, wine_type, country, score, producer, alcohol, year, colour, colour_depth, clarity, aroma, intensity, flavour, sweetness, acidity, tannin, body, finish, balance, notes FROM wines ORDER BY id")
 	if err != nil {
 		return nil, err
 	}
@@ -243,7 +244,7 @@ func GetWines() ([]wine.Wine, error) {
 
 	for rows.Next() {
 		w := wine.Wine{}
-		if err := rows.Scan(&w.ID, &w.Name, &w.TypeID, &w.CountryID, &w.Score, &w.Producer, &w.Alcohol, &w.Year, &w.ColourID, &w.DepthID, &w.ClarityID, &w.AromaID, &w.IntensityID, &w.FlavourID, &w.SweetnessID, &w.AcidityID, &w.TanninID, &w.BodyID, &w.FinishID, &w.BalanceID); err != nil {
+		if err := rows.Scan(&w.ID, &w.Name, &w.TypeID, &w.CountryID, &w.Score, &w.Producer, &w.Alcohol, &w.Year, &w.ColourID, &w.DepthID, &w.ClarityID, &w.AromaID, &w.IntensityID, &w.FlavourID, &w.SweetnessID, &w.AcidityID, &w.TanninID, &w.BodyID, &w.FinishID, &w.BalanceID, &w.Notes); err != nil {
 			return nil, err
 		}
 		wines = append(wines, w)
@@ -257,9 +258,9 @@ func GetWines() ([]wine.Wine, error) {
 
 func GetWine(id string) (wine.Wine, error) {
 	log.Printf("Getting wine %s", id)
-	row := db.QueryRow("SELECT * FROM wines WHERE id = ?", id)
+	row := db.QueryRow("SELECT id, name, wine_type, country, score, producer, alcohol, year, colour, colour_depth, clarity, aroma, intensity, flavour, sweetness, acidity, tannin, body, finish, balance, notes FROM wines WHERE id = ?", id)
 	w := wine.Wine{}
-	if err := row.Scan(&w.ID, &w.Name, &w.TypeID, &w.CountryID, &w.Score, &w.Producer, &w.Alcohol, &w.Year, &w.ColourID, &w.DepthID, &w.ClarityID, &w.AromaID, &w.IntensityID, &w.FlavourID, &w.SweetnessID, &w.AcidityID, &w.TanninID, &w.BodyID, &w.FinishID, &w.BalanceID); err != nil {
+	if err := row.Scan(&w.ID, &w.Name, &w.TypeID, &w.CountryID, &w.Score, &w.Producer, &w.Alcohol, &w.Year, &w.ColourID, &w.DepthID, &w.ClarityID, &w.AromaID, &w.IntensityID, &w.FlavourID, &w.SweetnessID, &w.AcidityID, &w.TanninID, &w.BodyID, &w.FinishID, &w.BalanceID, &w.Notes); err != nil {
 		return wine.Wine{}, err
 	}
 	if err := row.Err(); err != nil {
@@ -270,7 +271,7 @@ func GetWine(id string) (wine.Wine, error) {
 }
 
 func UpdateWine(w wine.Wine, id string) error {
-	_, err := db.Exec(`UPDATE wines SET name = ?, wine_type = ?, country = ?, score = ?, producer = ?, alcohol = ?, year = ?, colour = ?, colour_depth = ?, clarity = ?, aroma = ?, intensity = ?, flavour = ?, sweetness = ?, acidity = ?, tannin = ?, body = ?, finish = ?, balance = ? WHERE id = ?`, w.Name, w.TypeID, w.CountryID, w.Score, w.Producer, w.Alcohol, w.Year, w.ColourID, w.DepthID, w.ClarityID, w.AromaID, w.IntensityID, w.FlavourID, w.SweetnessID, w.AcidityID, w.TanninID, w.BodyID, w.FinishID, w.BalanceID, id)
+	_, err := db.Exec(`UPDATE wines SET name = ?, wine_type = ?, country = ?, score = ?, producer = ?, alcohol = ?, year = ?, colour = ?, colour_depth = ?, clarity = ?, aroma = ?, intensity = ?, flavour = ?, sweetness = ?, acidity = ?, tannin = ?, body = ?, finish = ?, balance = ?, notes = ? WHERE id = ?`, w.Name, w.TypeID, w.CountryID, w.Score, w.Producer, w.Alcohol, w.Year, w.ColourID, w.DepthID, w.ClarityID, w.AromaID, w.IntensityID, w.FlavourID, w.SweetnessID, w.AcidityID, w.TanninID, w.BodyID, w.FinishID, w.BalanceID, w.Notes, id)
 	if err == nil {
 		log.Println("Wine updated successfully")
 		return nil

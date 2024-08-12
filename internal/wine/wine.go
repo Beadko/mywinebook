@@ -25,6 +25,7 @@ type Wine struct {
 	BodyID      zero.Int   `json:"body"`
 	FinishID    zero.Int   `json:"finish"`
 	BalanceID   zero.Int   `json:"balance"`
+	Notes       string     `json:"notes`
 }
 type WineType struct {
 	ID   int    `json:"id"`
