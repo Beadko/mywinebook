@@ -29,6 +29,10 @@ func AddRouterEndpoints(r *mux.Router) *mux.Router {
 	r.HandleFunc("/aroma", addAroma).Methods("POST")
 	r.HandleFunc("/aroma/{id}", updateAroma).Methods("PUT")
 	r.HandleFunc("/aroma/{id}", deleteAroma).Methods("DELETE")
+	r.HandleFunc("/flavour", getFlavours).Methods("GET")
+	r.HandleFunc("/flavour", addFlavour).Methods("POST")
+	r.HandleFunc("/flavour/{id}", updateFlavour).Methods("PUT")
+	r.HandleFunc("/flavour/{id}", deleteFlavour).Methods("DELETE")
 
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 	return r
@@ -308,4 +312,69 @@ func deleteAroma(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusCreated)
 	fmt.Fprintln(w, "Aroma deleted successfully")
+}
+
+func getFlavours(w http.ResponseWriter, r *http.Request) {
+	f, err := data.GetFlavours()
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to get flavours", http.StatusInternalServerError)
+		return
+	}
+	fJSON, err := json.Marshal(f)
+	if err != nil {
+		fmt.Println("Could not not marshall to JSON.\nStopping here.", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "%s", fJSON)
+}
+
+func addFlavour(w http.ResponseWriter, r *http.Request) {
+	var f wine.Flavour
+	if err := json.NewDecoder(r.Body).Decode(&f); err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to decode addFlavour input", http.StatusInternalServerError)
+		return
+	}
+	err := data.AddFlavour(f.Name)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to add the flavour", http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusCreated)
+	fmt.Fprintln(w, "Flavour added successfully")
+}
+
+func updateFlavour(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+	var f wine.Flavour
+	if err := json.NewDecoder(r.Body).Decode(&f); err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to decode updateFlavour input", http.StatusInternalServerError)
+		return
+	}
+	err := data.UpdateFlavour(id, f.Name)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to update the flavour", http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintln(w, "Flavour updated successfully")
+}
+
+func deleteFlavour(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+	err := data.DeleteFlavour(id)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to delete the flavour", http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusCreated)
+	fmt.Fprintln(w, "Flavour deleted successfully")
 }

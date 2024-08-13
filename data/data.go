@@ -394,3 +394,51 @@ func DeleteAroma(id string) error {
 	}
 	return err
 }
+
+func GetFlavours() ([]wine.Flavour, error) {
+	rows, err := db.Query(`SELECT * FROM flavours ORDER by id`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	flavour := []wine.Flavour{}
+	for rows.Next() {
+		f := wine.Flavour{}
+		if err := rows.Scan(&f.ID, &f.Name); err != nil {
+			return nil, err
+		}
+		flavour = append(flavour, f)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	log.Println(flavour)
+	return flavour, nil
+}
+
+func AddFlavour(name string) error {
+	_, err := db.Exec(`INSERT INTO flavours(name) VALUES (?)`, name)
+	if err == nil {
+		log.Println("Flavour added successfully")
+		return nil
+	}
+	return err
+}
+
+func UpdateFlavour(id string, name string) error {
+	_, err := db.Exec(`UPDATE flavours SET name = ? WHERE id = ?`, name, id)
+	if err == nil {
+		log.Println("Flavour updated successfully")
+		return nil
+	}
+	return err
+}
+
+func DeleteFlavour(id string) error {
+	_, err := db.Exec(`DELETE FROM flavours WHERE id = ?`, id)
+	if err == nil {
+		log.Println("Flavour deleted successfully")
+		return nil
+	}
+	return err
+}
