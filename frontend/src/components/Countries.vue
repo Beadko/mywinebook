@@ -20,7 +20,7 @@ export default {
     },
     methods: {
         addCountry() {
-            axios.post("http://localhost:8081/country", this.new_country)
+            axios.post("/country", this.new_country)
             .then(res => {
                 console.log(res.data)  
                 this.visible = false

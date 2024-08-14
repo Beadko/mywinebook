@@ -24,7 +24,7 @@ export default {
     methods: {
         addWine() {
             this.visible = false
-            axios.post("http://localhost:8081/wine", this.selected)
+            axios.post("/wine", this.selected)
             .then(res => {
                 console.log(res.data)  
              })

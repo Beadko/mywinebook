@@ -20,7 +20,7 @@ export default {
     },
     methods: {
         addWineType() {
-            axios.post("http://localhost:8081/wine_type", this.new_type)
+            axios.post("/wine_type", this.new_type)
             .then(res => {
                 console.log(res.data)  
                 this.visible = false

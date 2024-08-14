@@ -1,5 +1,5 @@
 <script>
-    import axios from 'axios'
+import axios from 'axios'
 import WineTypes from './WineTypes.vue';
 import Countries from './Countries.vue';
 
@@ -12,17 +12,23 @@ export default {
     props: {
         selected: Object,
     },
+    data() {
+        return {
+            tempScore: this.selected.score
+        };
+    },
     methods: {
     updateWine() {
-            axios.put("http://localhost:8081/wine/"+ this.selected.id, this.selected)
-            .then(res => {
-                this.update_dialog = false;
-                location.reload()
-            })
-            .catch((error) => {
-                window.alert(`The API returned an error: ${error}`)
-            })
-        },
+        this.selected.score = this.tempScore;
+        axios.put("/wine/"+ this.selected.id, this.selected)
+        .then(
+            this.update_dialog = false,
+            location.reload()
+        )
+        .catch((error) => {
+            window.alert(`The API returned an error: ${error}`)
+        })
+    },
     onCountryAdded() {
         this.$emit('country-added');
         },
@@ -43,7 +49,7 @@ export default {
         <Countries :selected="selected" @country-added="onCountryAdded"/>
         <div class="flex items-center gap-4 mb-4">
                 <label for="score" class="font-semibold w-24">Score</label>
-                <InputText v-model="selected.score" id="score" class="w-full md:w-[14rem]" autocomplete="off" />
+                <Rating v-model="tempScore" />
         </div>
         <template #footer>
             <Button label="Cancel" icon="pi pi-times" text @click="this.$parent.wine_dialog = false" />

@@ -32,7 +32,7 @@ export default {
     },
     methods: {
         getWines() {
-            axios.get("http://localhost:8081/wine")
+            axios.get("/wine")
             .then(res => {
                 this.wines =res.data
             })
@@ -41,7 +41,7 @@ export default {
             })
         },
         getWineTypes() {
-            axios.get("http://localhost:8081/wine_type")
+            axios.get("/wine_type")
             .then(res => {
                 this.store.wine_types = res.data
             })
@@ -50,7 +50,7 @@ export default {
             })
         },
         getCountries() {
-            axios.get("http://localhost:8081/country")
+            axios.get("/country")
             .then(res => {
                 this.store.countries = res.data
             })
@@ -63,10 +63,10 @@ export default {
             this.wine_dialog = true
         },
         getWineTypeName(wine){
-            return this.wineTypeMap[wine.data.wine_type].name
+            return this.wineTypeMap[wine.data.wine_type]?.name || 'Unknown'
         },
         getCountryName(wine){
-            return this.countryMap[wine.data.country].name
+            return this.countryMap[wine.data.country]?.name || 'Unknown'
         }
     },
     async mounted() {
@@ -92,7 +92,11 @@ export default {
                 {{ getCountryName(wine)}}
             </template>
         </Column>
-        <Column field="score" header="Score"></Column>
+        <Column field="score" header="Score">
+            <template #body="wine">
+                <Rating v-model="wine.data.score" readonly/>
+            </template>
+        </Column>
         <Column headerStyle="width:4rem">
             <template #body="item">
                 <Button icon="pi pi-trash" severity="secondary" rounded text aria-label="Filter" @click="selectWine(item.data)" />
