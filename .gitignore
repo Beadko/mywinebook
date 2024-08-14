@@ -1,3 +1,4 @@
 mywinebook
 *.db
 .DS_Store
+static
