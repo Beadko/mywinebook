@@ -1,2 +1,3 @@
 mywinebook
 *.db
+.DS_Store
