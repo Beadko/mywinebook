@@ -62,6 +62,10 @@ export default {
             this.selected = wn
             this.wine_dialog = true
         },
+        deleteWine(wn) {
+            this.selected = wn
+            this.delete_dialog = true
+        },
         getWineTypeName(wine){
             return this.wineTypeMap[wine.data.wine_type]?.name || 'Unknown'
         },
@@ -99,7 +103,7 @@ export default {
         </Column>
         <Column headerStyle="width:4rem">
             <template #body="item">
-                <Button icon="pi pi-trash" severity="secondary" rounded text aria-label="Filter" @click="selectWine(item.data)" />
+                <Button icon="pi pi-trash" severity="secondary" rounded text aria-label="Filter" @click="deleteWine(item.data)" />
                 <Button icon="pi pi-pencil" severity="secondary" rounded text aria-label="Filter" @click="selectWine(item.data)" />
             </template>
         </Column>
