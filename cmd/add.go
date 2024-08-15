@@ -6,7 +6,6 @@ import (
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/Beadko/mywinebook/data"
 	"github.com/Beadko/mywinebook/internal/wine"
-	"github.com/guregu/null/v5/zero"
 	"github.com/spf13/cobra"
 )
 
@@ -15,9 +14,9 @@ var addWineCmd = &cobra.Command{
 	Short: "Add a new wine to the database",
 	Run: func(cmd *cobra.Command, args []string) {
 		var name string
-		var wineType zero.Int
-		var country zero.Int
-		var score zero.Int
+		var wineType wine.SafeInt
+		var country wine.SafeInt
+		var score wine.SafeInt
 
 		// Prompt for wine name
 		err := survey.AskOne(&survey.Input{

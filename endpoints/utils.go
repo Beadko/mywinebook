@@ -105,8 +105,8 @@ func deleteWine(w http.ResponseWriter, r *http.Request) {
 func addWine(w http.ResponseWriter, r *http.Request) {
 	var wine wine.Wine
 	if err := json.NewDecoder(r.Body).Decode(&wine); err != nil {
-		log.Println(err)
-		http.Error(w, "Failed to decode addWine input", http.StatusInternalServerError)
+		log.Printf("Failed to decode addWine input: %v", err)
+		http.Error(w, "Invalid input data", http.StatusBadRequest)
 		return
 	}
 	err := data.AddWine(wine)
