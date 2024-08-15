@@ -54,7 +54,7 @@ export default {
             <Countries :selected="selected" @country-added="onCountryAdded"/>
             <div class="flex items-center gap-4 mb-4">
                 <label for="score" class="font-semibold w-24">Score</label>
-                <InputText v-model="selected.score" id="score" class="w-full md:w-[14rem]" autocomplete="off" />
+                <Rating v-model="selected.score" />
             </div>
             <div class="flex justify-end gap-2">
                 <Button type="button" label="Cancel" severity="secondary" @click="visible = false"/>
