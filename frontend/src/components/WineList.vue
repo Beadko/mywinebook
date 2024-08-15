@@ -110,4 +110,4 @@ export default {
     </DataTable>
     <DeleteWine v-model:visible="delete_dialog" :selected="selected" />
     <UpdateWine v-model:visible="wine_dialog" :selected="selected" @country-added="getCountries" @type-added="getWineTypes"/>
-</template>
+</template> 

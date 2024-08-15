@@ -17,7 +17,9 @@ export default {
             name:'',
             wine_type: '',
             country: '',
-            score:''
+            score:'',
+            producer:'',
+            year: ''
             },
         }
     },
@@ -46,17 +48,33 @@ export default {
     <div class="card flex justify-center">
         <Button label="+ Add Wine" @click="visible = true" />
         <Dialog v-model:visible="visible" modal header="What wine would you like to add?" :style="{ width: '25rem' }">
-            <div class="flex items-center gap-4 mb-4">
+            <div class="flex items-center gap-2 mb-3">
                 <label for="name" class="font-semibold w-24">Name</label>
                 <InputText v-model="selected.name" id="name" class="w-full md:w-[14rem]" autocomplete="off" />
             </div>
             <WineTypes :selected="selected" @type-added="onTypeAdded" />
             <Countries :selected="selected" @country-added="onCountryAdded"/>
-            <div class="flex items-center gap-4 mb-4">
+            <div class="flex items-center gap-2 mb-3">
                 <label for="score" class="font-semibold w-24">Score</label>
                 <Rating v-model="selected.score" />
             </div>
-            <div class="flex justify-end gap-2">
+            <div class="items-center gap-2 mb-3">
+                <Panel header="Add more details" toggleable :collapsed="true">
+                    <div class="flex items-center gap-4 mb-4">
+                        <label for="producer" class="font-semibold w-24">Producer</label>
+                        <InputText v-model="selected.producer" id="producer" class="w-full md:w-[14rem]" autocomplete="off" />
+                    </div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <label for="year" class="font-semibold w-24">Year</label>
+                        <InputNumber v-model="selected.year" inputId="integeronly" class="w-full md:w-[8rem]" />
+                    </div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <label for="year" class="font-semibold w-24">Year</label>
+                        <InputNumber v-model="selected.year" inputId="integeronly" class="w-full md:w-[8rem]" />
+                    </div>
+                </Panel>
+            </div>
+            <div class="flex justify-end gap-4">
                 <Button type="button" label="Cancel" severity="secondary" @click="visible = false"/>
                 <Button type="button" label="Save" @click="addWine" />
             </div>
