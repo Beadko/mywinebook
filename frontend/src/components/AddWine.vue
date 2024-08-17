@@ -2,13 +2,12 @@
 import axios from 'axios'
 import Countries from './Countries.vue';
 import WineTypes from './WineTypes.vue';
-
 export default {
     name: "AddWine",
     inheritAttrs:false,
     components: {
         Countries,
-        WineTypes
+        WineTypes,
     },
     data() {
         return {            
@@ -19,7 +18,8 @@ export default {
             country: '',
             score:'',
             producer:'',
-            year: ''
+            year: '',
+            alcohol: '',
             },
         }
     },
@@ -66,11 +66,11 @@ export default {
                     </div>
                     <div class="flex items-center gap-2 mb-3">
                         <label for="year" class="font-semibold w-24">Year</label>
-                        <InputNumber v-model="selected.year" inputId="integeronly" class="w-full md:w-[8rem]" />
+                        <InputNumber v-model="selected.year" inputId="withoutgrouping" :useGrouping="false" fluidclass="w-full md:w-[8rem]" />
                     </div>
                     <div class="flex items-center gap-2 mb-3">
-                        <label for="year" class="font-semibold w-24">Year</label>
-                        <InputNumber v-model="selected.year" inputId="integeronly" class="w-full md:w-[8rem]" />
+                        <label for="alcohol" class="font-semibold w-24">Alcohol</label>
+                        <InputNumber v-model="selected.alcohol" inputId="decimal" :minFractionDigits="1" suffix="%" class="w-full md:w-[8rem]" />
                     </div>
                 </Panel>
             </div>

@@ -41,16 +41,24 @@ export default {
 
 <template>
     <Dialog :style="{ width: '25rem' }" header="Wine Details" modal>
-        <div class="flex items-center gap-4 mb-4">
+        <div class="flex items-center gap-2 mb-4">
             <label for="name" class="font-semibold w-24">Name</label>
             <InputText id="name" v-model="selected.name" class="w-full md:w-[14rem]" autocomplete="off"/>
         </div>
         <WineTypes :selected="selected" @type-added="onTypeAdded" />
         <Countries :selected="selected" @country-added="onCountryAdded"/>
-        <div class="flex items-center gap-4 mb-4">
-                <label for="score" class="font-semibold w-24">Score</label>
-                <Rating v-model="tempScore" />
+        <div class="flex items-center gap-2 mb-4">
+            <label for="score" class="font-semibold w-24">Score</label>
+            <Rating v-model="tempScore" />
         </div>
+        <div class="flex items-center gap-2 mb-3">
+            <label for="year" class="font-semibold w-24">Year</label>
+                <InputNumber v-model="selected.year" inputId="withoutgrouping" :useGrouping="false" fluidclass="w-full md:w-[8rem]" />
+        </div>
+        <div class="flex items-center gap-2 mb-3">
+            <label for="alcohol" class="font-semibold w-24">Alcohol</label>
+            <InputNumber v-model="selected.alcohol" inputId="decimal" :minFractionDigits="1" suffix="%" class="w-full md:w-[8rem]" />
+        </div>        
         <template #footer>
             <Button label="Cancel" icon="pi pi-times" text @click="this.$parent.wine_dialog = false" />
             <Button label="Save" icon="pi pi-check" @click="updateWine" />
