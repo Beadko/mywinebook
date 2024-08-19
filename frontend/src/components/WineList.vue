@@ -71,7 +71,10 @@ export default {
         },
         getCountryName(wine){
             return this.countryMap[wine.data.country]?.name || 'Unknown'
-        }
+        },
+        removeWine(wn) {
+            this.wines = this.wines.filter(wine => wine.id !== wn);
+    },
     },
     async mounted() {
         this.getCountries()
@@ -108,6 +111,6 @@ export default {
             </template>
         </Column>
     </DataTable>
-    <DeleteWine v-model:visible="delete_dialog" :selected="selected" />
+    <DeleteWine v-model:visible="delete_dialog" :selected="selected" @wine_deleted="removeWine"/>
     <UpdateWine v-model:visible="wine_dialog" :selected="selected" @country-added="getCountries" @type-added="getWineTypes"/>
 </template> 

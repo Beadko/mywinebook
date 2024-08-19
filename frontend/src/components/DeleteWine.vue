@@ -11,8 +11,8 @@ export default {
         confirmDelete() {
             axios.delete("/wine/"+ this.selected.id)
             .then(
+                this.$emit('wine_deleted', this.selected.id),
                 this.$parent.delete_dialog = false,
-                location.reload()
             )
             .catch((error) => {
                 window.alert(`The API returned an error: ${error}`)
