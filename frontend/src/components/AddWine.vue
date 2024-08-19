@@ -2,24 +2,28 @@
 import axios from 'axios'
 import Countries from './Countries.vue';
 import WineTypes from './WineTypes.vue';
+
 export default {
     name: "AddWine",
-    inheritAttrs:false,
+    inheritAttrs: false,
     components: {
         Countries,
         WineTypes,
     },
+    props: {
+        wines: Array
+    },
     data() {
-        return {            
+        return {
             visible: false,
             selected: {
-            name:'',
-            wine_type: '',
-            country: '',
-            score:'',
-            producer:'',
-            year: '',
-            alcohol: '',
+                name: '',
+                wine_type: '',
+                country: '',
+                score: '',
+                producer: '',
+                year: '',
+                alcohol: '',
             },
         }
     },
@@ -27,18 +31,18 @@ export default {
         addWine() {
             this.visible = false
             axios.post("/wine", this.selected)
-            .then(res => {
-                console.log(res.data)
-             })
+            .then(
+                this.wines.push(this.selected)
+            )
             .catch((error) => {
                 window.alert(`The API returned an error: ${error}`);
             })
         },
         onCountryAdded() {
-            this.$emit('country-added');
+            this.$emit('country-added')
         },
         onTypeAdded() {
-            this.$emit('type-added');
+            this.$emit('type-added')
         },
         cancelAdd() {
             this.selected = {},
@@ -60,7 +64,7 @@ export default {
             <Countries :selected="selected" @country-added="onCountryAdded"/>
             <div class="flex items-center gap-2 mb-3">
                 <label for="score" class="font-semibold w-24">Score</label>
-                <Rating v-model="selected.score" />
+                <Rating v-model="selected.score" id="score" />
             </div>
             <div class="items-center gap-2 mb-3">
                 <Panel header="Add more details" toggleable :collapsed="true">
@@ -70,11 +74,11 @@ export default {
                     </div>
                     <div class="flex items-center gap-2 mb-3">
                         <label for="year" class="font-semibold w-24">Year</label>
-                        <InputNumber v-model="selected.year" inputId="withoutgrouping" :useGrouping="false" fluid class="w-full md:w-[8rem]" />
+                        <InputNumber v-model="selected.year" id="year" inputId="withoutgrouping" :useGrouping="false" fluid class="w-full md:w-[8rem]" />
                     </div>
                     <div class="flex items-center gap-2 mb-3">
                         <label for="alcohol" class="font-semibold w-24">Alcohol</label>
-                        <InputNumber v-model="selected.alcohol" inputId="decimal" :minFractionDigits="1" suffix="%" class="w-full md:w-[8rem]" />
+                        <InputNumber v-model="selected.alcohol" id="alcohol" inputId="decimal" :minFractionDigits="1" suffix="%" class="w-full md:w-[8rem]" />
                     </div>
                 </Panel>
             </div>
