@@ -32,7 +32,7 @@ export default {
             this.visible = false
             axios.post("/wine", this.selected)
             .then(
-                this.wines.push(this.selected)
+                this.$emit('wine_added', this.selected)
             )
             .catch((error) => {
                 window.alert(`The API returned an error: ${error}`);

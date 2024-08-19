@@ -73,8 +73,11 @@ export default {
             return this.countryMap[wine.data.country]?.name || 'Unknown'
         },
         removeWine(wn) {
-            this.wines = this.wines.filter(wine => wine.id !== wn);
-    },
+            this.wines = this.wines.filter(wine => wine.id !== wn)
+        },
+        addNewWine(wn) {
+            this.wines.push(wn)
+        },
     },
     async mounted() {
         this.getCountries()
@@ -86,9 +89,11 @@ export default {
 
 <template>
     <h1> Your Wine List</h1>
-    <AddWine @country-added="getCountries" @type-added="getWineTypes"/>
-    <DataTable v-model:selection="selected" :value="wines" dataKey="id" tableStyle="min-width: 60rem">
-        <Column field="name" header="Name"></Column>
+    <AddWine :wines="wines" @country-added="getCountries" @type-added="getWineTypes" @wine-added="addNewWine"/> 
+   <!-- <DataTable v-model:expandedRows="expanded_row" :value="wines" dataKey="id"   tableStyle="min-width: 60rem" @row-click="ExpandRow($event.data)"> 
+            <Column expander style="width: 3em"></Column>-->
+    <DataTable v-model="wines" dataKey="id"   tableStyle="min-width: 60rem">
+        <Column field="name" header="Name" />
         <Column field="wine_type" header="Type">
             <template #body="wine">
                 {{ getWineTypeName(wine)}}
