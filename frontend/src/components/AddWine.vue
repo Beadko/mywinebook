@@ -28,7 +28,7 @@ export default {
             this.visible = false
             axios.post("/wine", this.selected)
             .then(res => {
-                console.log(res.data)  
+                console.log(res.data)
              })
             .catch((error) => {
                 window.alert(`The API returned an error: ${error}`);
@@ -39,8 +39,12 @@ export default {
         },
         onTypeAdded() {
             this.$emit('type-added');
+        },
+        cancelAdd() {
+            this.selected = {},
+            this.visible = false
         }
-    }
+    },
 }
 </script>
 
@@ -66,7 +70,7 @@ export default {
                     </div>
                     <div class="flex items-center gap-2 mb-3">
                         <label for="year" class="font-semibold w-24">Year</label>
-                        <InputNumber v-model="selected.year" inputId="withoutgrouping" :useGrouping="false" fluidclass="w-full md:w-[8rem]" />
+                        <InputNumber v-model="selected.year" inputId="withoutgrouping" :useGrouping="false" fluid class="w-full md:w-[8rem]" />
                     </div>
                     <div class="flex items-center gap-2 mb-3">
                         <label for="alcohol" class="font-semibold w-24">Alcohol</label>
@@ -75,7 +79,7 @@ export default {
                 </Panel>
             </div>
             <div class="flex justify-end gap-4">
-                <Button type="button" label="Cancel" severity="secondary" @click="visible = false"/>
+                <Button type="button" label="Cancel" severity="secondary" @click="cancelAdd"/>
                 <Button type="button" label="Save" @click="addWine" />
             </div>
         </Dialog>
