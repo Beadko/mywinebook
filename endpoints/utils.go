@@ -197,14 +197,22 @@ func addCountry(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to decode addCountry input", http.StatusInternalServerError)
 		return
 	}
-	err := data.AddCountry(country.Name)
+	id, err := data.AddCountry(country.Name)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to add the country", http.StatusInternalServerError)
 		return
 	}
-	w.WriteHeader(http.StatusCreated)
-	fmt.Fprintln(w, "Country added successfully")
+	country.ID = id
+	countryJSON, err := json.Marshal(country)
+	if err != nil {
+		fmt.Println("Could not not marshall to JSON.\nStopping here.", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprint(w, string(countryJSON))
 }
 
 func updateCountry(w http.ResponseWriter, r *http.Request) {
