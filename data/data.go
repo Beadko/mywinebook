@@ -307,13 +307,18 @@ func AddCountry(name string) (int, error) {
 	return id, nil
 }
 
-func AddWineType(name string) error {
-	_, err := db.Exec(`INSERT INTO wine_types(name) VALUES (?)`, name)
-	if err == nil {
-		log.Println("Wine type added successfully")
-		return nil
+func AddWineType(name string) (int, error) {
+	result, err := db.Exec(`INSERT INTO wine_types(name) VALUES (?)`, name)
+	if err != nil {
+		return 0, err
 	}
-	return err
+	lastInsertId, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+	id := int(lastInsertId)
+	log.Println("Wine type added successfully:", id, name)
+	return id, nil
 }
 
 func UpdateCountry(id string, name string) error {

@@ -162,14 +162,17 @@ func addWineType(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to decode addWineType input", http.StatusInternalServerError)
 		return
 	}
-	err := data.AddWineType(wt.Name)
+	id, err := data.AddWineType(wt.Name)
+	wt.ID = id
+	wtJSON, err := json.Marshal(wt)
 	if err != nil {
-		log.Println(err)
-		http.Error(w, "Failed to add the wine type", http.StatusInternalServerError)
+		fmt.Println("Could not not marshall to JSON.\nStopping here.", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
-	w.WriteHeader(http.StatusCreated)
-	fmt.Fprintln(w, "Wine type added successfully")
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprint(w, string(wtJSON))
 }
 
 func updateWineType(w http.ResponseWriter, r *http.Request) {
