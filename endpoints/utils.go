@@ -109,14 +109,22 @@ func addWine(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid input data", http.StatusBadRequest)
 		return
 	}
-	err := data.AddWine(wine)
+	id, err := data.AddWine(wine)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to add the wine", http.StatusInternalServerError)
 		return
 	}
-	w.WriteHeader(http.StatusCreated)
-	fmt.Fprintln(w, "Wine created successfully")
+	wine.ID = id
+	wJSON, err := json.Marshal(wine)
+	if err != nil {
+		fmt.Println("Could not not marshall to JSON.\nStopping here.", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprint(w, string(wJSON))
 }
 
 func getWineTypes(w http.ResponseWriter, r *http.Request) {
@@ -163,6 +171,11 @@ func addWineType(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	id, err := data.AddWineType(wt.Name)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to add the wine type", http.StatusInternalServerError)
+		return
+	}
 	wt.ID = id
 	wtJSON, err := json.Marshal(wt)
 	if err != nil {

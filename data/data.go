@@ -220,18 +220,23 @@ func GetCountries() ([]wine.Country, error) {
 	return countries, nil
 }
 
-func AddWine(w wine.Wine) error {
+func AddWine(w wine.Wine) (int, error) {
 	insertNoteSQL := `INSERT INTO wines(name, wine_type, country, score, producer, alcohol, year, colour, colour_depth, clarity, aroma, intensity, flavour, sweetness, acidity, tannin, body, finish, balance, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
 	statement, err := db.Prepare(insertNoteSQL)
 	if err != nil {
-		return err
+		return 0, err
 	}
-	_, err = statement.Exec(w.Name, w.TypeID, w.CountryID, w.Score, w.Producer, w.Alcohol, w.Year, w.ColourID, w.DepthID, w.ClarityID, w.AromaID, w.IntensityID, w.FlavourID, w.SweetnessID, w.AcidityID, w.TanninID, w.BodyID, w.FinishID, w.BalanceID, w.Notes)
-	if err == nil {
-		log.Println("Wine added successfully")
-		return nil
+	result, err := statement.Exec(w.Name, w.TypeID, w.CountryID, w.Score, w.Producer, w.Alcohol, w.Year, w.ColourID, w.DepthID, w.ClarityID, w.AromaID, w.IntensityID, w.FlavourID, w.SweetnessID, w.AcidityID, w.TanninID, w.BodyID, w.FinishID, w.BalanceID, w.Notes)
+	if err != nil {
+		return 0, err
 	}
-	return err
+	lastInsertId, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+	id := int(lastInsertId)
+	log.Println("Wined added successfully:", id, w)
+	return id, nil
 }
 
 func GetWines() ([]wine.Wine, error) {

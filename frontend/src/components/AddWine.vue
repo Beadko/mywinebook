@@ -15,7 +15,7 @@ export default {
     },
     data() {
         return {
-            visible: false,
+            dialog_visible: false,
             selected: {
                 name: '',
                 wine_type: '',
@@ -29,10 +29,10 @@ export default {
     },
     methods: {
         addWine() {
-            this.visible = false
+            this.dialog_visible = false
             axios.post("/wine", this.selected)
             .then(
-                this.$emit('wine_added', this.selected)
+                this.$emit('wine_added', res.data)
             )
             .catch((error) => {
                 window.alert(`The API returned an error: ${error}`);
@@ -46,7 +46,7 @@ export default {
         },
         cancelAdd() {
             this.selected = {},
-            this.visible = false
+            this.dialog_visible = false
         }
     },
 }
@@ -54,8 +54,8 @@ export default {
 
 <template>
     <div class="card flex justify-center">
-        <Button label="+ Add Wine" @click="visible = true" />
-        <Dialog v-model:visible="visible" modal header="What wine would you like to add?" :style="{ width: '25rem' }">
+        <Button label="+ Add Wine" @click="dialog_visible = true" />
+        <Dialog v-model:visible="dialog_visible" modal header="What wine would you like to add?" :style="{ width: '25rem' }">
             <div class="flex items-center gap-2 mb-3">
                 <label for="name" class="font-semibold w-24">Name</label>
                 <InputText v-model="selected.name" id="name" class="w-full md:w-[14rem]" autocomplete="off" />
