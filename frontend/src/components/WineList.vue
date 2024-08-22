@@ -1,6 +1,5 @@
 <script>
 import axios from 'axios'
-import Column from 'primevue/column'
 import AddWine from './AddWine.vue'
 import DeleteWine from './DeleteWine.vue'
 import UpdateWine from './UpdateWine.vue'
@@ -15,6 +14,7 @@ export default {
     },
     data() {
         return {
+            expanded_row: {},
             store,
             wines: [],
             selected: {},
@@ -31,6 +31,13 @@ export default {
         },
     },
     methods: {
+        ExpandRow(data) {
+            if (this.expanded_row[data.id]) {
+                delete this.expanded_row[data.id];
+            } else {
+                this.expanded_row[data.id] = true;
+            }
+        },
         getWines() {
             axios.get("/wine")
             .then(res => {
@@ -89,10 +96,14 @@ export default {
 
 <template>
     <h1> Your Wine List</h1>
-    <AddWine :wines="wines" @country-added="getCountries" @type-added="getWineTypes" @wine-added="addNewWine"/> 
-   <!-- <DataTable v-model:expandedRows="expanded_row" :value="wines" dataKey="id"   tableStyle="min-width: 60rem" @row-click="ExpandRow($event.data)"> 
-            <Column expander style="width: 3em"></Column>-->
-    <DataTable v-model="wines" dataKey="id"   tableStyle="min-width: 60rem">
+    <AddWine :wines="wines" @wine-added="addNewWine"/> 
+    <DataTable v-model:expandedRows="expanded_row" :value="wines" dataKey="id"   tableStyle="min-width: 60rem" @row-click="ExpandRow($event.data)">
+        <Column headerStyle="width:4rem">
+            <template #body="wine">
+                <i class="pi pi-chevron-right" style="color: #708090" v-if="!expanded_row[wine.data.id]" />
+                <i class="pi pi-chevron-down" style="color: #708090" v-else />
+            </template>
+        </Column>
         <Column field="name" header="Name" />
         <Column field="wine_type" header="Type">
             <template #body="wine">
@@ -115,7 +126,13 @@ export default {
                 <Button icon="pi pi-pencil" severity="secondary" rounded text aria-label="Filter" @click="selectWine(item.data)" />
             </template>
         </Column>
+        <template #expansion="slotProps">
+            <div class="p-4">
+                <p>Producer: {{ slotProps.data.producer }}</p>
+                <p>Year: {{ slotProps.data.year }}</p>
+            </div>
+        </template>
     </DataTable>
     <DeleteWine v-model:visible="delete_dialog" :selected="selected" @wine_deleted="removeWine"/>
-    <UpdateWine v-model:visible="wine_dialog" :selected="selected" @country-added="getCountries" @type-added="getWineTypes"/>
+    <UpdateWine v-model:visible="wine_dialog" :selected="selected" />
 </template> 
