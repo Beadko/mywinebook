@@ -2,6 +2,7 @@
 import axios from 'axios';
 import WineTypes from './WineTypes.vue'
 import Countries from './Countries.vue'
+import { store } from './store';
 
 export default {
     name: "WineForm",
@@ -25,6 +26,7 @@ export default {
                 producer: '',
                 year: null,
                 alcohol: null,
+                balance:''
             })
         }
     },
@@ -48,7 +50,14 @@ export default {
     },
     data() {
         return {
-            formData: { ...this.selected }
+            formData: { ...this.selected },
+            balances: [],
+            balanceSeverityMap: {
+                1: 'success',
+                2: 'warn',
+                3: 'danger'
+            },
+            store
         }
     },
     watch: {
@@ -120,6 +129,15 @@ export default {
                     <label for="alcohol" class="font-semibold w-24">Alcohol %</label>
                     <InputNumber v-model="displayedAlcohol" 
                     id="alcohol" inputId="decimal" :minFractionDigits="1" class="w-full md:w-[8rem]" />
+                </div>
+                <div class="flex items-center gap-2 mb-3">
+                    <label for="balance" class="font-semibold w-24">Balance</label>
+                    <div v-for="balance in store.balances" :key="balance.id" class="flex items-center gap-2">
+                    <Button :label="balance.name"
+                        :severity="balanceSeverityMap[balance.id]"
+                        outlined size="small"
+                        @click="formData.balance = balance.id" />
+                    </div>
                 </div>
             </Panel>
         </div>
