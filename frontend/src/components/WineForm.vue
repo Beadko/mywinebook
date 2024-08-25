@@ -26,6 +26,7 @@ export default {
                 producer: '',
                 year: null,
                 alcohol: null,
+                finish:'',
                 balance:''
             })
         },
@@ -55,6 +56,7 @@ export default {
     data() {
         return {
             formData: { ...this.selected },
+            finishes:[],
             balances: [],
             store
         }
@@ -128,6 +130,15 @@ export default {
                     <label for="alcohol" class="font-semibold w-24">Alcohol %</label>
                     <InputNumber v-model="displayedAlcohol" 
                     id="alcohol" inputId="decimal" :minFractionDigits="1" class="w-full md:w-[8rem]" />
+                </div>
+                <div class="flex items-center gap-2 mb-3">
+                    <label for="finish" class="font-semibold w-24">Finish</label>
+                    <div v-for="finish in store.finishes" :key="finish.id" class="flex items-center gap-2">
+                    <Button :label="finish.name"
+                        :severity="severityMap[finish.id]"
+                        outlined size="small"
+                        @click="formData.finish = finish.id" />
+                    </div>
                 </div>
                 <div class="flex items-center gap-2 mb-3">
                     <label for="balance" class="font-semibold w-24">Balance</label>

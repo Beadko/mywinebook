@@ -458,6 +458,27 @@ func DeleteFlavour(id string) error {
 	return err
 }
 
+func GetFinishes() ([]wine.Finish, error) {
+	rows, err := db.Query(`SELECT * FROM finishes ORDER by id`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	finishes := []wine.Finish{}
+	for rows.Next() {
+		f := wine.Finish{}
+		if err := rows.Scan(&f.ID, &f.Name); err != nil {
+			return nil, err
+		}
+		finishes = append(finishes, f)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	log.Println(finishes)
+	return finishes, nil
+}
+
 func GetBalances() ([]wine.Balance, error) {
 	rows, err := db.Query(`SELECT * FROM balances ORDER by id`)
 	if err != nil {
