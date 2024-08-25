@@ -187,6 +187,7 @@ export default {
                     <div class="font-medium mr-2">Alcohol:</div> {{ wine.data.alcohol }}%
                 </div>
                 <div class="flex items-center" v-if="wine.data.balance">
+                    <div class="font-medium mr-2">Balance:</div>
                     <Tag :value="getBalanceName(wine)" :severity="getBalanceColor(wine)"/>
                 </div>
             </div>
