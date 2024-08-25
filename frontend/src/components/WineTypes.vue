@@ -46,12 +46,12 @@ export default {
 
 <template>
     <div class="flex items-center gap-2 mb-3">
-        <label for="wine_type" class="font-semibold w-24">Type</label>
+        <label for="wine_type" class="font-semibold w-20">Type</label>
         <Select v-model="selected.wine_type" :options="[...store.wine_types, { id: 'add_type', name: '+ Add New' }]" optionLabel="name" optionValue="id" class="w-full md:w-[14rem]" @change="handleTypeChange($event.value)" />
     </div>    
     <Dialog v-model:visible="dialog_visible" modal header="Add a new wine type" :style="{ width: '25rem' }">
         <div class="flex items-center gap-2 mb-4">
-            <label for="name" class="font-semibold w-24">Wine Type</label>
+            <label for="name" class="font-semibold w-20">Wine Type</label>
             <InputText v-model="new_type.name" id="name" class="w-full md:w-[14rem]" autocomplete="off" />
         </div>
         <div class="flex justify-end gap-2">

@@ -47,12 +47,12 @@ export default {
 
 <template>
     <div class="flex items-center gap-2 mb-3">
-        <label for="country" class="font-semibold w-24">Country</label>
+        <label for="country" class="font-semibold w-20">Country</label>
         <Select v-model="selected.country" :options="[...store.countries, { id: 'add_country', name: '+ Add New' }]" optionLabel="name" optionValue="id" class="w-full md:w-[14rem]" @change="handleCountryChange($event.value)" />
     </div>    
     <Dialog v-model:visible="dialog_visible" modal header="Add a new country" :style="{ width: '25rem' }">
         <div class="flex items-center gap-2 mb-4">
-            <label for="name" class="font-semibold w-24">Country Name</label>
+            <label for="name" class="font-semibold w-20">Country Name</label>
             <InputText v-model="new_country.name" id="name" class="w-full md:w-[14rem]" autocomplete="off" />
         </div>
         <div class="flex justify-end gap-2">

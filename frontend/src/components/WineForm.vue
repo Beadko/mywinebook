@@ -111,46 +111,46 @@ export default {
 <template>
     <Dialog v-model:visible="dialog_visible" modal :header="mode === 'add' ? 'Add Wine' : 'Update Wine'" :style="{ width: '25rem' }">
         <div class="flex items-center gap-2 mb-3">
-            <label for="name" class="font-semibold w-24">Name</label>
+            <label for="name" class="font-semibold w-20">Name</label>
             <InputText v-model="formData.name" id="name" class="w-full md:w-[14rem]" autocomplete="off" />
         </div>
         <WineTypes :selected="formData" @type-added="onTypeAdded" />
         <Countries :selected="formData" @country-added="onCountryAdded"/>
         <div class="flex items-center gap-2 mb-3">
-            <label for="score" class="font-semibold w-24">Score</label>
+            <label for="score" class="font-semibold w-20">Score</label>
             <Rating v-model="formData.score" id="score" />
         </div>
         <div class="items-center gap-2 mb-3">
             <Panel header="More details" toggleable :collapsed="true">
                 <div class="flex items-center gap-4 mb-4">
-                    <label for="producer" class="font-semibold w-24">Producer</label>
-                    <InputText v-model="formData.producer" id="producer" class="w-full md:w-[14rem]" autocomplete="off" />
+                    <label for="producer" class="font-semibold w-18">Producer</label>
+                    <InputText v-model="formData.producer" id="producer" class="w-full md:w-[13.5rem]" autocomplete="off" />
                 </div>
                 <div class="flex items-center gap-2 mb-3">
-                    <label for="year" class="font-semibold w-24">Year</label>
+                    <label for="year" class="font-semibold w-20">Year</label>
                     <InputNumber v-model="displayedYear" id="year" :useGrouping="false" class="w-full md:w-[8rem]" />
                 </div>
-                <div class="flex items-center gap-2 mb-3">
-                    <label for="alcohol" class="font-semibold w-24">Alcohol %</label>
+                <div class="flex items-center gap-2 mb-5">
+                    <label for="alcohol" class="font-semibold w-20">Alcohol %</label>
                     <InputNumber v-model="displayedAlcohol" 
                     id="alcohol" inputId="decimal" :minFractionDigits="1" class="w-full md:w-[8rem]" />
                 </div>
-                <div class="flex flex-wrap items-center gap-2 mb-3">
-                    <label for="tannin" class="font-semibold w-24">Tannin</label>
+                <div class="flex flex-wrap items-center gap-2 mb-5">
+                    <label for="tannin" class="font-semibold w-20">Tannin</label>
                     <div v-for="tannin in store.tannins" :key="tannin.id" class="flex items-center gap-2">
                         <RadioButton v-model="formData.tannin" :value="tannin.id" :inputId="'tannin-' + tannin.id" />
                         <span class="text-sm">{{ tannin.name }}</span>
                     </div>
                 </div>
-                <div class="flex flex-wrap items-center gap-2 mb-3">
-                    <label for="body" class="font-semibold w-24">Body</label>
+                <div class="flex flex-wrap items-center gap-2 mb-5">
+                    <label for="body" class="font-semibold w-20">Body</label>
                     <div v-for="body in store.bodies" :key="body.id" class="flex items-center gap-2">
                         <RadioButton v-model="formData.body" :value="body.id" :inputId="'body-' + body.id" />
                         <span class="text-sm">{{ body.name }}</span>
                     </div>
                 </div>
                 <div class="flex items-center gap-2 mb-3">
-                    <label for="finish" class="font-semibold w-24">Finish</label>
+                    <label for="finish" class="font-semibold w-20">Finish</label>
                     <div v-for="finish in store.finishes" :key="finish.id" class="flex items-center gap-2">
                     <Button :label="finish.name"
                         :severity="severityMap[finish.id]"
@@ -159,7 +159,7 @@ export default {
                     </div>
                 </div>
                 <div class="flex items-center gap-2 mb-3">
-                    <label for="balance" class="font-semibold w-24">Balance</label>
+                    <label for="balance" class="font-semibold w-20">Balance</label>
                     <div v-for="balance in store.balances" :key="balance.id" class="flex items-center gap-2">
                     <Button :label="balance.name"
                         :severity="severityMap[balance.id]"
