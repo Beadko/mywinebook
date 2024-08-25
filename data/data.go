@@ -478,6 +478,27 @@ func GetBodies() ([]wine.Body, error) {
 	return bodies, nil
 }
 
+func GetTannins() ([]wine.Tannin, error) {
+	rows, err := db.Query(`SELECT * FROM tannins ORDER by id`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	tannins := []wine.Tannin{}
+	for rows.Next() {
+		t := wine.Tannin{}
+		if err := rows.Scan(&t.ID, &t.Name); err != nil {
+			return nil, err
+		}
+		tannins = append(tannins, t)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	log.Println(tannins)
+	return tannins, nil
+}
+
 func GetFinishes() ([]wine.Finish, error) {
 	rows, err := db.Query(`SELECT * FROM finishes ORDER by id`)
 	if err != nil {
