@@ -31,6 +31,13 @@ export default {
         balanceMap() {
             return this.store.balances.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {});
         },
+        severityMap() {
+          return  {
+                1: 'success',
+                2: 'warn',
+                3: 'danger'
+            }
+        }
     },
     methods: {
         ExpandRow(data) {
@@ -93,18 +100,6 @@ export default {
         },
         getBalanceName(wine) {
             return this.balanceMap[wine.data.balance]?.name;
-        },
-        getBalanceColor(wine) {
-            switch (wine.data.balance) {
-                case 1:
-                    return 'success';
-                case 2:
-                    return 'warn';
-                case 3:
-                    return 'danger';
-                default:
-                    return ;
-            }
         },
         removeWine(wn) {
             this.wines = this.wines.filter(wine => wine.id !== wn);
@@ -188,11 +183,11 @@ export default {
                 </div>
                 <div class="flex items-center" v-if="wine.data.balance">
                     <div class="font-medium mr-2">Balance:</div>
-                    <Tag :value="getBalanceName(wine)" :severity="getBalanceColor(wine)"/>
+                    <Tag :value="getBalanceName(wine)" :severity="severityMap[wine.data.balance]"/>
                 </div>
             </div>
         </template>
     </DataTable>
     <DeleteWine v-model:visible="delete_dialog" :selected="selected" @wine_deleted="removeWine" />
-    <WineForm v-model:visible="wine_dialog" :selected="selected" :mode="form_mode" @wine_added="handleWineAdded" @wine_updated="handleWineUpdated" />
+    <WineForm v-model:visible="wine_dialog" :selected="selected" :severity-map="severityMap" :mode="form_mode" @wine_added="handleWineAdded" @wine_updated="handleWineUpdated" />
 </template>

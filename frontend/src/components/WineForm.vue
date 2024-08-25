@@ -28,6 +28,10 @@ export default {
                 alcohol: null,
                 balance:''
             })
+        },
+        severityMap: {
+            type: Object,
+            required: true
         }
     },
     computed : {
@@ -52,11 +56,6 @@ export default {
         return {
             formData: { ...this.selected },
             balances: [],
-            balanceSeverityMap: {
-                1: 'success',
-                2: 'warn',
-                3: 'danger'
-            },
             store
         }
     },
@@ -134,7 +133,7 @@ export default {
                     <label for="balance" class="font-semibold w-24">Balance</label>
                     <div v-for="balance in store.balances" :key="balance.id" class="flex items-center gap-2">
                     <Button :label="balance.name"
-                        :severity="balanceSeverityMap[balance.id]"
+                        :severity="severityMap[balance.id]"
                         outlined size="small"
                         @click="formData.balance = balance.id" />
                     </div>
