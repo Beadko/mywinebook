@@ -107,7 +107,7 @@ func InitDB() {
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			name TEXT UNIQUE		
 		);
-		INSERT INTO tannins(name) VALUES ("Very light"), ("Light"), ("Medium"), ("Full Bodied"), ("Heavy");`)
+		INSERT INTO tannins(name) VALUES ("Soft"), ("Round"), ("Dry"), ("Hard");`)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -116,7 +116,7 @@ func InitDB() {
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			name TEXT UNIQUE		
 		);
-		INSERT INTO bodies(name) VALUES ("Soft"), ("Round"), ("Dry"), ("Hard");`)
+		INSERT INTO bodies(name) VALUES ("Very light"), ("Light"), ("Medium"), ("Full Bodied"), ("Heavy");`)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -456,6 +456,26 @@ func DeleteFlavour(id string) error {
 		return nil
 	}
 	return err
+}
+func GetBodies() ([]wine.Body, error) {
+	rows, err := db.Query(`SELECT * FROM bodies ORDER by id`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	bodies := []wine.Body{}
+	for rows.Next() {
+		b := wine.Body{}
+		if err := rows.Scan(&b.ID, &b.Name); err != nil {
+			return nil, err
+		}
+		bodies = append(bodies, b)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	log.Println(bodies)
+	return bodies, nil
 }
 
 func GetFinishes() ([]wine.Finish, error) {

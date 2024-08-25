@@ -28,6 +28,9 @@ export default {
         countryMap() {
             return this.store.countries.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {});
         },
+        bodyMap() {
+            return this.store.bodies.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {});
+        },
         finishMap() {
             return this.store.finishes.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {});
         },
@@ -77,6 +80,15 @@ export default {
                     window.alert(`The API returned an error: ${error}`);
                 });
         },
+        getBodies() {
+            axios.get("/body")
+                .then(res => {
+                    this.store.bodies = res.data;
+                })
+                .catch((error) => {
+                    window.alert(`The API returned an error: ${error}`);
+                });
+        },
         getFinishes() {
             axios.get("/finish")
                 .then(res => {
@@ -110,6 +122,9 @@ export default {
         getCountryName(wine) {
             return this.countryMap[wine.data.country]?.name || 'Unknown';
         },
+        getBodyName(wine) {
+            return this.bodyMap[wine.data.body]?.name;
+        },
         getFinishName(wine) {
             return this.finishMap[wine.data.finish]?.name;
         },
@@ -131,6 +146,7 @@ export default {
                 producer: '',
                 year: null,
                 alcohol: null,
+                body:'',
                 finish:'',
                 balance:''
             };
@@ -148,6 +164,7 @@ export default {
     async mounted() {
         this.getCountries();
         this.getWineTypes();
+        this.getBodies();
         this.getFinishes();
         this.getBalances();
         this.getWines();
@@ -197,6 +214,9 @@ export default {
                 </div>
                 <div class="flex items-center" v-if="wine.data.alcohol">
                     <div class="font-medium mr-2">Alcohol:</div> {{ wine.data.alcohol }}%
+                </div>
+                <div class="flex items-center" v-if="wine.data.finish">
+                    <div class="font-medium mr-2">Body:</div> {{ getBodyName(wine) }}
                 </div>
                 <div class="flex items-center" v-if="wine.data.finish">
                     <div class="font-medium mr-2">Finish:</div>

@@ -26,6 +26,7 @@ export default {
                 producer: '',
                 year: null,
                 alcohol: null,
+                body:'',
                 finish:'',
                 balance:''
             })
@@ -56,6 +57,7 @@ export default {
     data() {
         return {
             formData: { ...this.selected },
+            bodies:[],
             finishes:[],
             balances: [],
             store
@@ -130,6 +132,13 @@ export default {
                     <label for="alcohol" class="font-semibold w-24">Alcohol %</label>
                     <InputNumber v-model="displayedAlcohol" 
                     id="alcohol" inputId="decimal" :minFractionDigits="1" class="w-full md:w-[8rem]" />
+                </div>
+                <div class="flex flex-wrap items-center gap-2 mb-3">
+                    <label for="body" class="font-semibold w-24">Body</label>
+                    <div v-for="body in store.bodies" :key="body.id" class="flex items-center gap-2">
+                        <RadioButton v-model="formData.body" :value="body.id" :inputId="'body-' + body.id" />
+                        <span class="text-sm">{{ body.name }}</span>
+                    </div>
                 </div>
                 <div class="flex items-center gap-2 mb-3">
                     <label for="finish" class="font-semibold w-24">Finish</label>

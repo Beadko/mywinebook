@@ -35,6 +35,7 @@ func AddRouterEndpoints(r *mux.Router) *mux.Router {
 	r.HandleFunc("/flavour/{id}", deleteFlavour).Methods("DELETE")
 	r.HandleFunc("/balance", getBalances).Methods("GET")
 	r.HandleFunc("/finish", getFinishes).Methods("GET")
+	r.HandleFunc("/body", getBodies).Methods("GET")
 
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 	return r
@@ -403,6 +404,24 @@ func deleteFlavour(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusCreated)
 	fmt.Fprintln(w, "Flavour deleted successfully")
+}
+
+func getBodies(w http.ResponseWriter, r *http.Request) {
+	b, err := data.GetBodies()
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to get bodies", http.StatusInternalServerError)
+		return
+	}
+	bJSON, err := json.Marshal(b)
+	if err != nil {
+		fmt.Println("Could not not marshall to JSON.\nStopping here.", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprint(w, string(bJSON))
 }
 
 func getFinishes(w http.ResponseWriter, r *http.Request) {
