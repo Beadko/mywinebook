@@ -134,7 +134,7 @@ func InitDB() {
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			name TEXT UNIQUE		
 		);
-		INSERT INTO finishes(name) VALUES ("Short"), ("Medium"), ("Long"), ("Very long");`)
+		INSERT INTO finishes(name) VALUES ("Long"), ("Medium"), ("Short");`)
 	if err != nil {
 		log.Fatal(err)
 	}
