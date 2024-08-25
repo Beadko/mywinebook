@@ -177,13 +177,13 @@ export default {
         </Column>
         <template #expansion="wine">
             <div class="flex items-center p-4 gap-8">
-                <div class="flex items-center">
+                <div class="flex items-center" v-if="wine.data.producer">
                     <div class="font-medium mr-2">Producer:</div> {{ wine.data.producer }}
                 </div>
-                <div class="flex items-center">
+                <div class="flex items-center" v-if="wine.data.year">
                     <div class="font-medium mr-2">Year:</div> {{ wine.data.year }}
                 </div>
-                <div class="flex items-center">
+                <div class="flex items-center" v-if="wine.data.alcohol">
                     <div class="font-medium mr-2">Alcohol:</div> {{ wine.data.alcohol }}%
                 </div>
                 <div class="flex items-center" v-if="wine.data.balance">
