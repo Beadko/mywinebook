@@ -28,6 +28,9 @@ export default {
         countryMap() {
             return this.store.countries.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {});
         },
+        balanceMap() {
+            return this.store.balances.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {});
+        },
     },
     methods: {
         ExpandRow(data) {
@@ -64,6 +67,15 @@ export default {
                     window.alert(`The API returned an error: ${error}`);
                 });
         },
+        getBalances() {
+            axios.get("/balance")
+                .then(res => {
+                    this.store.balances = res.data;
+                })
+                .catch((error) => {
+                    window.alert(`The API returned an error: ${error}`);
+                });
+        },
         selectWine(wn) {
             this.selected = wn;
             this.form_mode = 'update';
@@ -78,6 +90,21 @@ export default {
         },
         getCountryName(wine) {
             return this.countryMap[wine.data.country]?.name || 'Unknown';
+        },
+        getBalanceName(wine) {
+            return this.balanceMap[wine.data.balance]?.name;
+        },
+        getBalanceColor(wine) {
+            switch (wine.data.balance) {
+                case 1:
+                    return 'success';
+                case 2:
+                    return 'warn';
+                case 3:
+                    return 'danger';
+                default:
+                    return ;
+            }
         },
         removeWine(wn) {
             this.wines = this.wines.filter(wine => wine.id !== wn);
@@ -94,6 +121,7 @@ export default {
                 producer: '',
                 year: null,
                 alcohol: null,
+                balance:''
             };
             this.form_mode = 'add';
             this.wine_dialog = true;
@@ -109,6 +137,7 @@ export default {
     async mounted() {
         this.getCountries();
         this.getWineTypes();
+        this.getBalances();
         this.getWines();
     }
 }
@@ -146,16 +175,19 @@ export default {
                 <Button icon="pi pi-pencil" severity="secondary" rounded text aria-label="Filter" @click="selectWine(item.data)" />
             </template>
         </Column>
-        <template #expansion="slotProps">
+        <template #expansion="wine">
             <div class="flex items-center p-4 gap-8">
                 <div class="flex items-center">
-                    <div class="font-medium mr-2">Producer:</div> {{ slotProps.data.producer }}
+                    <div class="font-medium mr-2">Producer:</div> {{ wine.data.producer }}
                 </div>
                 <div class="flex items-center">
-                    <div class="font-medium mr-2">Year:</div> {{ slotProps.data.year }}
+                    <div class="font-medium mr-2">Year:</div> {{ wine.data.year }}
                 </div>
                 <div class="flex items-center">
-                    <div class="font-medium mr-2">Alcohol:</div> {{ slotProps.data.alcohol }}%
+                    <div class="font-medium mr-2">Alcohol:</div> {{ wine.data.alcohol }}%
+                </div>
+                <div class="flex items-center" v-if="wine.data.balance">
+                    <Tag :value="getBalanceName(wine)" :severity="getBalanceColor(wine)"/>
                 </div>
             </div>
         </template>
