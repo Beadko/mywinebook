@@ -13,6 +13,7 @@ import Dialog from 'primevue/dialog'
 import Rating from 'primevue/rating'
 import Panel from 'primevue/panel'
 import RadioButton from 'primevue/radiobutton'
+import Tag from 'primevue/tag'
 import App from './App.vue'
 
 
@@ -32,5 +33,6 @@ app.component('Dialog', Dialog)
 app.component('Rating', Rating)
 app.component('Panel', Panel)
 app.component('RadioButton', RadioButton)
+app.component('Tag', Tag)
 
 app.mount('#app')
