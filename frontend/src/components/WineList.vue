@@ -148,7 +148,7 @@ export default {
         </Column>
         <template #expansion="slotProps">
             <div class="flex items-center p-4 gap-8">
-                <div lass="flex items-center">
+                <div class="flex items-center">
                     <div class="font-medium mr-2">Producer:</div> {{ slotProps.data.producer }}
                 </div>
                 <div class="flex items-center">
