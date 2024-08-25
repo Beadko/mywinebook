@@ -54,7 +54,7 @@ var addWineCmd = &cobra.Command{
 		}
 
 		// Add the wine to the database
-		err = data.AddWine(wine.Wine{
+		_, err = data.AddWine(wine.Wine{
 			Name:      name,
 			TypeID:    wineType,
 			CountryID: country,
