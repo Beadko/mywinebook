@@ -2,3 +2,5 @@ mywinebook
 *.db
 .DS_Store
 static
+tmp
+.air.toml
