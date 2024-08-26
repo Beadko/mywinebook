@@ -497,6 +497,26 @@ func GetAcidities() ([]wine.Acidity, error) {
 	log.Println(acidities)
 	return acidities, nil
 }
+func GetSweetness() ([]wine.Sweetness, error) {
+	rows, err := db.Query(`SELECT * FROM sweetnesses ORDER by id`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	sweetness := []wine.Sweetness{}
+	for rows.Next() {
+		s := wine.Sweetness{}
+		if err := rows.Scan(&s.ID, &s.Name); err != nil {
+			return nil, err
+		}
+		sweetness = append(sweetness, s)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	log.Println(sweetness)
+	return sweetness, nil
+}
 
 func GetTannins() ([]wine.Tannin, error) {
 	rows, err := db.Query(`SELECT * FROM tannins ORDER by id`)

@@ -33,6 +33,7 @@ func AddRouterEndpoints(r *mux.Router) *mux.Router {
 	r.HandleFunc("/flavour", addFlavour).Methods("POST")
 	r.HandleFunc("/flavour/{id}", updateFlavour).Methods("PUT")
 	r.HandleFunc("/flavour/{id}", deleteFlavour).Methods("DELETE")
+	r.HandleFunc("/sweetness", getSweetnesses).Methods("GET")
 	r.HandleFunc("/acidity", getAcidities).Methods("GET")
 	r.HandleFunc("/tannin", getTannins).Methods("GET")
 	r.HandleFunc("/balance", getBalances).Methods("GET")
@@ -406,6 +407,24 @@ func deleteFlavour(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusCreated)
 	fmt.Fprintln(w, "Flavour deleted successfully")
+}
+
+func getSweetnesses(w http.ResponseWriter, r *http.Request) {
+	s, err := data.GetSweetness()
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to get sweetnesses", http.StatusInternalServerError)
+		return
+	}
+	sJSON, err := json.Marshal(s)
+	if err != nil {
+		fmt.Println("Could not not marshall to JSON.\nStopping here.", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprint(w, string(sJSON))
 }
 
 func getAcidities(w http.ResponseWriter, r *http.Request) {

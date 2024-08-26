@@ -26,6 +26,7 @@ export default {
                 producer: '',
                 year: null,
                 alcohol: null,
+                sweetness: '',
                 acidity: '',
                 tannin: '',
                 body: '',
@@ -59,6 +60,7 @@ export default {
     data() {
         return {
             formData: { ...this.selected },
+            sweetnesses: [],
             acidities: [],
             tannins: [],
             bodies: [],
@@ -137,21 +139,28 @@ export default {
                     <InputNumber v-model="displayedAlcohol" 
                     id="alcohol" inputId="decimal" :minFractionDigits="1" class="w-full md:w-[8rem]" />
                 </div>
-                <div class="flex flex-wrap items-center gap-2 mb-5">
+                <div class="flex flex-wrap items-center gap-4 mb-5">
+                    <label for="sweetness" class="font-semibold w-20">Sweetness</label>
+                    <div v-for="sweetness in store.sweetnesses" :key="sweetness.id" class="flex items-center gap-2">
+                        <RadioButton v-model="formData.sweetness" :value="sweetness.id" :inputId="'sweetness-' + sweetness.id" />
+                        <span class="text-sm">{{ sweetness.name }}</span>
+                    </div>
+                </div>
+                <div class="flex flex-wrap items-center gap-4 mb-5">
                     <label for="acidity" class="font-semibold w-20">Acidity</label>
                     <div v-for="acidity in store.acidities" :key="acidity.id" class="flex items-center gap-2">
                         <RadioButton v-model="formData.acidity" :value="acidity.id" :inputId="'tannin-' + acidity.id" />
                         <span class="text-sm">{{ acidity.name }}</span>
                     </div>
                 </div>
-                <div class="flex flex-wrap items-center gap-2 mb-5">
+                <div class="flex flex-wrap items-center gap-4 mb-5">
                     <label for="tannin" class="font-semibold w-20">Tannin</label>
                     <div v-for="tannin in store.tannins" :key="tannin.id" class="flex items-center gap-2">
                         <RadioButton v-model="formData.tannin" :value="tannin.id" :inputId="'tannin-' + tannin.id" />
                         <span class="text-sm">{{ tannin.name }}</span>
                     </div>
                 </div>
-                <div class="flex flex-wrap items-center gap-2 mb-5">
+                <div class="flex flex-wrap items-center gap-4 mb-5">
                     <label for="body" class="font-semibold w-20">Body</label>
                     <div v-for="body in store.bodies" :key="body.id" class="flex items-center gap-2">
                         <RadioButton v-model="formData.body" :value="body.id" :inputId="'body-' + body.id" />
