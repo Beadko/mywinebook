@@ -107,6 +107,14 @@ export default {
         cancelForm() {
             this.formData = { ...this.selected }
             this.$emit('cancel')
+        },
+        getButtonClass(selectedValue, itemId) {
+            const severity = this.severityMap[itemId];
+            return {
+                'selected-success': selectedValue === itemId && severity === 'success',
+                'selected-warn': selectedValue === itemId && severity === 'warn',
+                'selected-danger': selectedValue === itemId && severity === 'danger'
+            };
         }
     }
 }
@@ -170,19 +178,22 @@ export default {
                 <div class="flex items-center gap-2 mb-3">
                     <label for="finish" class="font-semibold w-20">Finish</label>
                     <div v-for="finish in store.finishes" :key="finish.id" class="flex items-center gap-2">
-                    <Button :label="finish.name"
-                        :severity="severityMap[finish.id]"
-                        outlined size="small"
-                        @click="formData.finish = finish.id" />
+                        <Button :label="finish.name"
+                                :severity="severityMap[finish.id]"
+                                outlined size="small"
+                                @click="formData.finish = finish.id" 
+                                :class="getButtonClass(formData.finish, finish.id)"/>
                     </div>
                 </div>
                 <div class="flex items-center gap-2 mb-3">
                     <label for="balance" class="font-semibold w-20">Balance</label>
                     <div v-for="balance in store.balances" :key="balance.id" class="flex items-center gap-2">
-                    <Button :label="balance.name"
-                        :severity="severityMap[balance.id]"
-                        outlined size="small"
-                        @click="formData.balance = balance.id" />
+                        <Button :label="balance.name"
+                                :severity="severityMap[balance.id]"
+                                outlined 
+                                size="small"
+                                @click="formData.balance = balance.id" 
+                                :class="getButtonClass(formData.balance, balance.id)" />
                     </div>
                 </div>
             </Panel>
