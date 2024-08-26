@@ -2,7 +2,7 @@
 import axios from 'axios';
 import WineTypes from './WineTypes.vue'
 import Countries from './Countries.vue'
-import { store } from './store';
+import { store } from './store'
 
 export default {
     name: "WineForm",
@@ -26,11 +26,11 @@ export default {
                 producer: '',
                 year: null,
                 alcohol: null,
-                acidity:'',
-                tannin:'',
-                body:'',
-                finish:'',
-                balance:''
+                acidity: '',
+                tannin: '',
+                body: '',
+                finish: '',
+                balance: ''
             })
         },
         severityMap: {
@@ -60,9 +60,9 @@ export default {
         return {
             formData: { ...this.selected },
             acidities: [],
-            tannins:[],
-            bodies:[],
-            finishes:[],
+            tannins: [],
+            bodies: [],
+            finishes: [],
             balances: [],
             store
         }
