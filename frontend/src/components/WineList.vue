@@ -28,6 +28,9 @@ export default {
         countryMap() {
             return this.store.countries.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {});
         },
+        acidityMap() {
+            return this.store.acidities.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {});
+        },
         tanninMap() {
             return this.store.bodies.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {});
         },
@@ -78,6 +81,15 @@ export default {
             axios.get("/country")
                 .then(res => {
                     this.store.countries = res.data;
+                })
+                .catch((error) => {
+                    window.alert(`The API returned an error: ${error}`);
+                });
+        },
+        getAcidities() {
+            axios.get("/acidity")
+                .then(res => {
+                    this.store.acidities = res.data;
                 })
                 .catch((error) => {
                     window.alert(`The API returned an error: ${error}`);
@@ -134,6 +146,9 @@ export default {
         getCountryName(wine) {
             return this.countryMap[wine.data.country]?.name || 'Unknown';
         },
+        getAcidityName(wine) {
+            return this.acidityMap[wine.data.acidity]?.name;
+        },
         getTanninName(wine) {
             return this.tanninMap[wine.data.tannin]?.name;
         },
@@ -161,6 +176,7 @@ export default {
                 producer: '',
                 year: null,
                 alcohol: null,
+                acidity:'',
                 tannin:'',
                 body:'',
                 finish:'',
@@ -180,6 +196,7 @@ export default {
     async mounted() {
         this.getCountries();
         this.getWineTypes();
+        this.getAcidities();
         this.getTannins();
         this.getBodies();
         this.getFinishes();
@@ -231,6 +248,9 @@ export default {
                 </div>
                 <div class="flex items-center" v-if="wine.data.alcohol">
                     <div class="font-medium mr-2">Alcohol:</div> {{ wine.data.alcohol }}%
+                </div>
+                <div class="flex items-center" v-if="wine.data.acidity">
+                    <div class="font-medium mr-2">Acidity:</div> {{ getAcidityName(wine) }}
                 </div>
                 <div class="flex items-center" v-if="wine.data.tannin">
                     <div class="font-medium mr-2">Tannin:</div> {{ getTanninName(wine) }}

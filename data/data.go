@@ -477,6 +477,26 @@ func GetBodies() ([]wine.Body, error) {
 	log.Println(bodies)
 	return bodies, nil
 }
+func GetAcidities() ([]wine.Acidity, error) {
+	rows, err := db.Query(`SELECT * FROM acidities ORDER by id`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	acidities := []wine.Acidity{}
+	for rows.Next() {
+		a := wine.Acidity{}
+		if err := rows.Scan(&a.ID, &a.Name); err != nil {
+			return nil, err
+		}
+		acidities = append(acidities, a)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	log.Println(acidities)
+	return acidities, nil
+}
 
 func GetTannins() ([]wine.Tannin, error) {
 	rows, err := db.Query(`SELECT * FROM tannins ORDER by id`)

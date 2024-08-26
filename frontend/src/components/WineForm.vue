@@ -26,6 +26,7 @@ export default {
                 producer: '',
                 year: null,
                 alcohol: null,
+                acidity:'',
                 tannin:'',
                 body:'',
                 finish:'',
@@ -58,6 +59,7 @@ export default {
     data() {
         return {
             formData: { ...this.selected },
+            acidities: [],
             tannins:[],
             bodies:[],
             finishes:[],
@@ -134,6 +136,13 @@ export default {
                     <label for="alcohol" class="font-semibold w-20">Alcohol %</label>
                     <InputNumber v-model="displayedAlcohol" 
                     id="alcohol" inputId="decimal" :minFractionDigits="1" class="w-full md:w-[8rem]" />
+                </div>
+                <div class="flex flex-wrap items-center gap-2 mb-5">
+                    <label for="acidity" class="font-semibold w-20">Acidity</label>
+                    <div v-for="acidity in store.acidities" :key="acidity.id" class="flex items-center gap-2">
+                        <RadioButton v-model="formData.acidity" :value="acidity.id" :inputId="'tannin-' + acidity.id" />
+                        <span class="text-sm">{{ acidity.name }}</span>
+                    </div>
                 </div>
                 <div class="flex flex-wrap items-center gap-2 mb-5">
                     <label for="tannin" class="font-semibold w-20">Tannin</label>
