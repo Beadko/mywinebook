@@ -69,6 +69,158 @@ button:focus-visible {
 .selected-danger {
   background: var(--p-button-outlined-danger-hover-background) !important;
 }
+.fruity {
+  color: #271489 !important;
+  border-color: #271489 !important;
+}
+
+.vegetal {
+  color: #726405 !important;
+  border-color: #726405 !important;
+}
+
+.floral {
+  color: #9c1374 !important;
+  border-color: #9c1374 !important;
+}
+
+.earthy {
+  color: #6d5337 !important;
+  border-color: #6d5337 !important;
+}
+
+.woody {
+  color: #4b1c20 !important;
+  border-color: #4b1c20 !important;
+}
+
+.spicy {
+  color: #7a0000 !important;
+  border-color: #7a0000 !important;
+}
+
+.mineral {
+  color: #414141 !important;
+  border-color: #414141 !important;
+}
+
+.herbal {
+  color: #065111 !important;
+  border-color: #065111 !important;
+}
+
+.smoky {
+  color: #000000 !important;
+  border-color: #000000 !important;
+}
+
+.fruity:hover {
+  background: #e6e3f5 !important;
+  color: #271489 !important;
+  border-color: #271489 !important;
+}
+
+.vegetal:hover {
+  background: #fbf7e8 !important;
+  color: #726405 !important;
+  border-color: #726405 !important;
+}
+
+.floral:hover {
+  background: #ffebf9 !important;
+  color: #9c1374 !important;
+  border-color: #9c1374 !important;
+}
+
+.earthy:hover {
+  background: #faeee1 !important;
+  color: #6d5337 !important;
+  border-color: #6d5337 !important;
+}
+
+.woody:hover {
+  background: #f3eaea !important;
+  color: #4b1c20 !important;
+  border-color: #4b1c20 !important;
+}
+
+.spicy:hover {
+  background: #fff1f1 !important;
+  color: #7a0000 !important;
+  border-color: #7a0000 !important;
+}
+
+.mineral:hover {
+  background: #e7e7e7 !important;
+  color: #414141 !important;
+  border-color: #414141 !important;
+}
+
+.herbal:hover {
+  background: #e7ffeb !important;
+  color: #065111 !important;
+  border-color: #065111 !important;
+}
+
+.smoky:hover {
+  background: #f1f1f1 !important;
+  color: #000000 !important;
+  border-color: #000000 !important;
+}
+
+.fruity.active {
+  background: #e6e3f5 !important;
+  color: #271489 !important;
+  border-color: #271489 !important;
+}
+
+.vegetal.active {
+  background: #fbf7e8 !important;
+  color: #726405 !important;
+  border-color: #726405 !important;
+}
+
+.floral.active {
+  background: #ffebf9 !important;
+  color: #9c1374 !important;
+  border-color: #9c1374 !important;
+}
+
+.earthy.active {
+  background: #faeee1 !important;
+  color: #6d5337 !important;
+  border-color: #6d5337 !important;
+}
+
+.woody.active {
+  background: #f3eaea !important;
+  color: #4b1c20 !important;
+  border-color: #4b1c20 !important;
+}
+
+.spicy.active {
+  background: #fff1f1 !important;
+  color: #7a0000 !important;
+  border-color: #7a0000 !important;
+}
+
+.mineral.active {
+  background: #e7e7e7 !important;
+  color: #414141 !important;
+  border-color: #414141 !important;
+}
+
+.herbal.active {
+  background: #e7ffeb !important;
+  color: #065111 !important;
+  border-color: #065111 !important;
+}
+
+.smoky.active {
+  background: #f1f1f1 !important;
+  color: #000000 !important;
+  border-color: #000000 !important;
+}
 
 .card {
   padding: 2em;

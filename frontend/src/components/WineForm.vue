@@ -26,6 +26,7 @@ export default {
                 producer: '',
                 year: null,
                 alcohol: null,
+                flavour:'',
                 sweetness: '',
                 acidity: '',
                 tannin: '',
@@ -35,6 +36,10 @@ export default {
             })
         },
         severityMap: {
+            type: Object,
+            required: true
+        },
+        colourMap: {
             type: Object,
             required: true
         }
@@ -60,6 +65,7 @@ export default {
     data() {
         return {
             formData: { ...this.selected },
+            flavours: [],
             sweetnesses: [],
             acidities: [],
             tannins: [],
@@ -146,6 +152,17 @@ export default {
                     <label for="alcohol" class="font-semibold w-20">Alcohol %</label>
                     <InputNumber v-model="displayedAlcohol" 
                     id="alcohol" inputId="decimal" :minFractionDigits="1" class="w-full md:w-[8rem]" />
+                </div>
+                <div class="flex flex-wrap items-center gap-2 mb-3">
+                    <label for="flavour" class="font-semibold w-20">Flavour</label>
+                    <div v-for="flavour in store.flavours" :key="flavour.id" class="flex items-center gap-2">
+                        <Button :label="flavour.name"
+                                rounded
+                                outlined
+                                size="small"
+                                @click="formData.flavour = flavour.id" 
+                                :class="[colourMap[flavour.id], { 'active': formData.flavour === flavour.id }]" />
+                    </div>
                 </div>
                 <div class="flex flex-wrap items-center gap-4 mb-5">
                     <label for="sweetness" class="font-semibold w-20">Sweetness</label>

@@ -28,6 +28,9 @@ export default {
         countryMap() {
             return this.store.countries.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {})
         },
+        flavourMap() {
+            return this.store.flavours.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {})
+        },
         sweetnessMap() {
             return this.store.sweetnesses.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {})
         },
@@ -51,6 +54,19 @@ export default {
                 1: 'success',
                 2: 'warn',
                 3: 'danger'
+            }
+        },
+        colourMap() {
+            return {
+                1: 'fruity',
+                2: 'vegetal',
+                3: 'floral',
+                4: 'earthy',
+                5: 'woody',
+                6: 'spicy',
+                7: 'mineral',
+                8: 'herbal',
+                9: 'smoky'
             }
         }
     },
@@ -84,6 +100,15 @@ export default {
             axios.get("/country")
                 .then(res => {
                     this.store.countries = res.data
+                })
+                .catch((error) => {
+                    window.alert(`The API returned an error: ${error}`)
+                })
+        },
+        getFlavours() {
+            axios.get("/flavour")
+                .then(res => {
+                    this.store.flavours = res.data
                 })
                 .catch((error) => {
                     window.alert(`The API returned an error: ${error}`)
@@ -158,6 +183,9 @@ export default {
         getCountryName(wine) {
             return this.countryMap[wine.data.country]?.name || 'Unknown'
         },
+        getFlavourName(wine) {
+            return this.flavourMap[wine.data.flavour]?.name
+        },
         getSweetnessName(wine) {
             return this.sweetnessMap[wine.data.sweetness]?.name
         },
@@ -191,6 +219,7 @@ export default {
                 producer: '',
                 year: null,
                 alcohol: null,
+                flavour: '',
                 sweetness: '',
                 acidity: '',
                 tannin: '',
@@ -212,6 +241,7 @@ export default {
     async mounted() {
         this.getCountries()
         this.getWineTypes()
+        this.getFlavours()
         this.getSweetnesses()
         this.getAcidities()
         this.getTannins()
@@ -266,6 +296,10 @@ export default {
                 <div class="flex items-center p-2" v-if="wine.data.alcohol">
                     <div class="font-medium mr-2">Alcohol:</div> {{ wine.data.alcohol }}%
                 </div>
+                <div class="flex items-center p-2" v-if="wine.data.flavour">
+                    <div class="font-medium mr-2">Flavour:</div>
+                    <Tag :value="getFlavourName(wine)" rounded :class="[colourMap[wine.data.flavour], 'active']"/>
+                </div>
                 <div class="flex items-center p-2" v-if="wine.data.sweetness">
                     <div class="font-medium mr-2">Sweetness:</div> {{ getSweetnessName(wine) }}
                 </div>
@@ -290,5 +324,5 @@ export default {
         </template>
     </DataTable>
     <DeleteWine v-model:visible="delete_dialog" :selected="selected" @wine_deleted="removeWine" />
-    <WineForm v-model:visible="wine_dialog" :selected="selected" :severity-map="severityMap" :mode="form_mode" @wine_added="handleWineAdded" @wine_updated="handleWineUpdated" />
+    <WineForm v-model:visible="wine_dialog" :selected="selected" :severity-map="severityMap" :colour-map="colourMap" :mode="form_mode" @wine_added="handleWineAdded" @wine_updated="handleWineUpdated" />
 </template>
