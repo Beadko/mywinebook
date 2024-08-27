@@ -108,13 +108,13 @@ export default {
             this.formData = { ...this.selected }
             this.$emit('cancel')
         },
-        getButtonClass(selectedValue, itemId) {
-            const severity = this.severityMap[itemId];
+        getSeverityClass(selectedValue, itemId) {
+            const severity = this.severityMap[itemId]
             return {
                 'selected-success': selectedValue === itemId && severity === 'success',
                 'selected-warn': selectedValue === itemId && severity === 'warn',
                 'selected-danger': selectedValue === itemId && severity === 'danger'
-            };
+            }
         }
     }
 }
@@ -182,7 +182,7 @@ export default {
                                 :severity="severityMap[finish.id]"
                                 outlined size="small"
                                 @click="formData.finish = finish.id" 
-                                :class="getButtonClass(formData.finish, finish.id)"/>
+                                :class="getSeverityClass(formData.finish, finish.id)"/>
                     </div>
                 </div>
                 <div class="flex items-center gap-2 mb-3">
@@ -193,7 +193,7 @@ export default {
                                 outlined 
                                 size="small"
                                 @click="formData.balance = balance.id" 
-                                :class="getButtonClass(formData.balance, balance.id)" />
+                                :class="getSeverityClass(formData.balance, balance.id)" />
                     </div>
                 </div>
             </Panel>
