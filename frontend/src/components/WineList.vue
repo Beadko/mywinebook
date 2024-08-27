@@ -28,6 +28,9 @@ export default {
         countryMap() {
             return this.store.countries.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {})
         },
+        depthMap() {
+            return this.store.depths.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {})
+        },
         clarityMap() {
             return this.store.clarities.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {})
         },
@@ -106,6 +109,15 @@ export default {
             axios.get("/country")
                 .then(res => {
                     this.store.countries = res.data
+                })
+                .catch((error) => {
+                    window.alert(`The API returned an error: ${error}`)
+                })
+        },
+        getDepths() {
+            axios.get("/depth")
+                .then(res => {
+                    this.store.depths = res.data
                 })
                 .catch((error) => {
                     window.alert(`The API returned an error: ${error}`)
@@ -207,6 +219,9 @@ export default {
         getCountryName(wine) {
             return this.countryMap[wine.data.country]?.name || 'Unknown'
         },
+        getDepthName(wine) {
+            return this.depthMap[wine.data.depth]?.name
+        },
         getClarityName(wine) {
             return this.clarityMap[wine.data.clarity]?.name
         },
@@ -249,6 +264,7 @@ export default {
                 producer: '',
                 year: null,
                 alcohol: null,
+                depth: '',
                 clarity: '',
                 aroma: '',
                 flavour: '',
@@ -273,6 +289,7 @@ export default {
     async mounted() {
         this.getCountries()
         this.getWineTypes()
+        this.getDepths()
         this.getClarities()
         this.getAromas()
         this.getFlavours()
@@ -329,6 +346,9 @@ export default {
                 </div>
                 <div class="flex items-center p-2" v-if="wine.data.alcohol">
                     <div class="font-medium mr-2">Alcohol:</div> {{ wine.data.alcohol }}%
+                </div>
+                <div class="flex items-center p-2" v-if="wine.data.depth">
+                    <div class="font-medium mr-2">Depth:</div> {{ getDepthName(wine) }}
                 </div>
                 <div class="flex items-center p-2" v-if="wine.data.clarity">
                     <div class="font-medium mr-2">Clarity:</div> {{ getClarityName(wine) }}

@@ -25,6 +25,7 @@ func AddRouterEndpoints(r *mux.Router) *mux.Router {
 	r.HandleFunc("/country", addCountry).Methods("POST")
 	r.HandleFunc("/country/{id}", updateCountry).Methods("PUT")
 	r.HandleFunc("/country/{id}", deleteCountry).Methods("DELETE")
+	r.HandleFunc("/depth", getDepths).Methods("GET")
 	r.HandleFunc("/clarity", getClarities).Methods("GET")
 	r.HandleFunc("/aroma", getAromas).Methods("GET")
 	r.HandleFunc("/aroma", addAroma).Methods("POST")
@@ -278,6 +279,24 @@ func deleteCountry(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusCreated)
 	fmt.Fprintln(w, "Country deleted successfully")
+}
+
+func getDepths(w http.ResponseWriter, r *http.Request) {
+	d, err := data.GetDepths()
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to get depths", http.StatusInternalServerError)
+		return
+	}
+	dJSON, err := json.Marshal(d)
+	if err != nil {
+		fmt.Println("Could not not marshall to JSON.\nStopping here.", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "%s", dJSON)
 }
 
 func getClarities(w http.ResponseWriter, r *http.Request) {

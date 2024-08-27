@@ -362,6 +362,27 @@ func DeleteWineType(id string) error {
 	return err
 }
 
+func GetDepths() ([]wine.Depth, error) {
+	rows, err := db.Query(`SELECT * FROM colour_depths ORDER by id`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	depths := []wine.Depth{}
+	for rows.Next() {
+		d := wine.Depth{}
+		if err := rows.Scan(&d.ID, &d.Name); err != nil {
+			return nil, err
+		}
+		depths = append(depths, d)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	log.Println(depths)
+	return depths, nil
+}
+
 func GetClarities() ([]wine.Clarity, error) {
 	rows, err := db.Query(`SELECT * FROM clarities ORDER by id`)
 	if err != nil {
