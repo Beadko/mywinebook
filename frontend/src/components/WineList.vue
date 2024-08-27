@@ -28,6 +28,9 @@ export default {
         countryMap() {
             return this.store.countries.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {})
         },
+        aromaMap() {
+            return this.store.aromas.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {})
+        },
         flavourMap() {
             return this.store.flavours.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {})
         },
@@ -100,6 +103,15 @@ export default {
             axios.get("/country")
                 .then(res => {
                     this.store.countries = res.data
+                })
+                .catch((error) => {
+                    window.alert(`The API returned an error: ${error}`)
+                })
+        },
+        getAromas() {
+            axios.get("/aroma")
+                .then(res => {
+                    this.store.aromas = res.data
                 })
                 .catch((error) => {
                     window.alert(`The API returned an error: ${error}`)
@@ -183,6 +195,9 @@ export default {
         getCountryName(wine) {
             return this.countryMap[wine.data.country]?.name || 'Unknown'
         },
+        getAromaName(wine) {
+            return this.aromaMap[wine.data.aroma]?.name
+        },
         getFlavourName(wine) {
             return this.flavourMap[wine.data.flavour]?.name
         },
@@ -241,6 +256,7 @@ export default {
     async mounted() {
         this.getCountries()
         this.getWineTypes()
+        this.getAromas()
         this.getFlavours()
         this.getSweetnesses()
         this.getAcidities()
@@ -295,6 +311,10 @@ export default {
                 </div>
                 <div class="flex items-center p-2" v-if="wine.data.alcohol">
                     <div class="font-medium mr-2">Alcohol:</div> {{ wine.data.alcohol }}%
+                </div>
+                <div class="flex items-center p-2" v-if="wine.data.aroma">
+                    <div class="font-medium mr-2">Nose:</div>
+                    <Tag :value="getAromaName(wine)" rounded :class="[colourMap[wine.data.aroma], 'active']"/>
                 </div>
                 <div class="flex items-center p-2" v-if="wine.data.flavour">
                     <div class="font-medium mr-2">Flavour:</div>

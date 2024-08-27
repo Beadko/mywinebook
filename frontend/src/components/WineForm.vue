@@ -26,6 +26,7 @@ export default {
                 producer: '',
                 year: null,
                 alcohol: null,
+                aroma: '',
                 flavour:'',
                 sweetness: '',
                 acidity: '',
@@ -65,6 +66,7 @@ export default {
     data() {
         return {
             formData: { ...this.selected },
+            aromas: [],
             flavours: [],
             sweetnesses: [],
             acidities: [],
@@ -152,6 +154,17 @@ export default {
                     <label for="alcohol" class="font-semibold w-20">Alcohol %</label>
                     <InputNumber v-model="displayedAlcohol" 
                     id="alcohol" inputId="decimal" :minFractionDigits="1" class="w-full md:w-[8rem]" />
+                </div>
+                <div class="flex flex-wrap items-center gap-2 mb-3">
+                    <label for="aroma" class="font-semibold w-20">Nose</label>
+                    <div v-for="aroma in store.aromas" :key="aroma.id" class="flex items-center gap-2">
+                        <Button :label="aroma.name"
+                                rounded
+                                outlined
+                                size="small"
+                                @click="formData.aroma = aroma.id" 
+                                :class="[colourMap[aroma.id], { 'active': formData.aroma === aroma.id }]" />
+                    </div>
                 </div>
                 <div class="flex flex-wrap items-center gap-2 mb-3">
                     <label for="flavour" class="font-semibold w-20">Flavour</label>
