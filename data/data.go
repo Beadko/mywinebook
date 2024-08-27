@@ -62,7 +62,7 @@ func InitDB() {
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			name TEXT UNIQUE
 		);
-		INSERT INTO aromas(name) VALUES ("Fruity"), ("Vegetal"), ("Floral"), ("Earthy"), ("Woody"), ("Spicy"), ("Mineral");`)
+		INSERT INTO aromas(name) VALUES ("Fruity"), ("Vegetal"), ("Floral"), ("Earthy"), ("Woody"), ("Spicy"), ("Mineral"),("Herbal"), ("Smoky");`)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -80,7 +80,7 @@ func InitDB() {
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			name TEXT UNIQUE		
 		);
-		INSERT INTO flavours(name) VALUES ("Fruity"), ("Vegetal"), ("Floral"), ("Earthy"), ("Woody"), ("Spicy"), ("Mineral"), ("Herbal");`)
+		INSERT INTO flavours(name) VALUES ("Fruity"), ("Vegetal"), ("Floral"), ("Earthy"), ("Woody"), ("Spicy"), ("Mineral"), ("Herbal"), ("Smoky");`)
 	if err != nil {
 		log.Fatal(err)
 	}
