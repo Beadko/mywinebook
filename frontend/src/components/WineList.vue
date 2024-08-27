@@ -234,6 +234,7 @@ export default {
                 producer: '',
                 year: null,
                 alcohol: null,
+                aroma: '',
                 flavour: '',
                 sweetness: '',
                 acidity: '',
