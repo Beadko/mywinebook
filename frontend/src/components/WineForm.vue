@@ -26,6 +26,7 @@ export default {
                 producer: '',
                 year: null,
                 alcohol: null,
+                clarity: '',
                 aroma: '',
                 flavour:'',
                 sweetness: '',
@@ -66,6 +67,7 @@ export default {
     data() {
         return {
             formData: { ...this.selected },
+            clarities: [],
             aromas: [],
             flavours: [],
             sweetnesses: [],
@@ -154,6 +156,13 @@ export default {
                     <label for="alcohol" class="font-semibold w-20">Alcohol %</label>
                     <InputNumber v-model="displayedAlcohol" 
                     id="alcohol" inputId="decimal" :minFractionDigits="1" class="w-full md:w-[8rem]" />
+                </div>
+                <div class="flex flex-wrap items-center gap-4 mb-5">
+                    <label for="clarity" class="font-semibold w-20">Clarity</label>
+                    <div v-for="clarity in store.clarities" :key="clarity.id" class="flex items-center gap-2">
+                        <RadioButton v-model="formData.clarity" :value="clarity.id" :inputId="'clarity-' + clarity.id" />
+                        <span class="text-sm">{{ clarity.name }}</span>
+                    </div>
                 </div>
                 <div class="flex flex-wrap items-center gap-2 mb-3">
                     <label for="aroma" class="font-semibold w-20">Nose</label>

@@ -362,6 +362,27 @@ func DeleteWineType(id string) error {
 	return err
 }
 
+func GetClarities() ([]wine.Clarity, error) {
+	rows, err := db.Query(`SELECT * FROM clarities ORDER by id`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	clarities := []wine.Clarity{}
+	for rows.Next() {
+		c := wine.Clarity{}
+		if err := rows.Scan(&c.ID, &c.Name); err != nil {
+			return nil, err
+		}
+		clarities = append(clarities, c)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	log.Println(clarities)
+	return clarities, nil
+}
+
 func GetAromas() ([]wine.Aroma, error) {
 	rows, err := db.Query(`SELECT * FROM aromas ORDER by id`)
 	if err != nil {

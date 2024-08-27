@@ -28,6 +28,9 @@ export default {
         countryMap() {
             return this.store.countries.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {})
         },
+        clarityMap() {
+            return this.store.clarities.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {})
+        },
         aromaMap() {
             return this.store.aromas.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {})
         },
@@ -103,6 +106,15 @@ export default {
             axios.get("/country")
                 .then(res => {
                     this.store.countries = res.data
+                })
+                .catch((error) => {
+                    window.alert(`The API returned an error: ${error}`)
+                })
+        },
+        getClarities() {
+            axios.get("/clarity")
+                .then(res => {
+                    this.store.clarities = res.data
                 })
                 .catch((error) => {
                     window.alert(`The API returned an error: ${error}`)
@@ -195,6 +207,9 @@ export default {
         getCountryName(wine) {
             return this.countryMap[wine.data.country]?.name || 'Unknown'
         },
+        getClarityName(wine) {
+            return this.clarityMap[wine.data.clarity]?.name
+        },
         getAromaName(wine) {
             return this.aromaMap[wine.data.aroma]?.name
         },
@@ -234,6 +249,7 @@ export default {
                 producer: '',
                 year: null,
                 alcohol: null,
+                clarity: '',
                 aroma: '',
                 flavour: '',
                 sweetness: '',
@@ -257,6 +273,7 @@ export default {
     async mounted() {
         this.getCountries()
         this.getWineTypes()
+        this.getClarities()
         this.getAromas()
         this.getFlavours()
         this.getSweetnesses()
@@ -312,6 +329,9 @@ export default {
                 </div>
                 <div class="flex items-center p-2" v-if="wine.data.alcohol">
                     <div class="font-medium mr-2">Alcohol:</div> {{ wine.data.alcohol }}%
+                </div>
+                <div class="flex items-center p-2" v-if="wine.data.clarity">
+                    <div class="font-medium mr-2">Clarity:</div> {{ getClarityName(wine) }}
                 </div>
                 <div class="flex items-center p-2" v-if="wine.data.aroma">
                     <div class="font-medium mr-2">Nose:</div>
