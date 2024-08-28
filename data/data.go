@@ -44,7 +44,7 @@ func InitDB() {
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			name TEXT UNIQUE		
 		);
-		INSERT INTO colours(name) VALUES ("Purple"), ("Ruby"), ("Garnet"), ("Tawny"), ("Straw"), ("Yellow"), ("Golden"), ("Blush"), ("Salmon"), ("Pink"), ("Amber"), ("Copper");`)
+		INSERT INTO colours(name) VALUES ("Purple"), ("Ruby"), ("Garnet"), ("Tawny"), ("Straw"), ("Yellow"), ("Golden"), ("Copper"), ("Salmon"), ("Pink"), ("Amber");`)
 	if err != nil {
 		log.Fatal(err)
 	}

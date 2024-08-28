@@ -46,6 +46,10 @@ export default {
         attributeMap: {
             type: Object,
             required: true
+        },
+        shadeMap: {
+            type: Object,
+            required: true
         }
     },
     computed : {
@@ -76,7 +80,7 @@ export default {
                 4: [5, 6, 10, 2],
                 5: [6, 7, 10, 2],
                 6: [1, 2, 3, 4, 6, 10],
-                7: [7, 11, 12]
+                7: [7, 8, 11]
             }
             return this.store.colours.filter(colour => coloursByWineType[wineType]?.includes(colour.id))
         }
@@ -181,7 +185,14 @@ export default {
                 </div>
                 <div class="flex items-center gap-2 mb-3">
                     <label for="colour" class="font-semibold w-20">Colour</label>
-                     <Select v-model="formData.colour" :options="filteredColours" optionLabel="name" optionValue="id" class="w-full md:w-[14rem]" />
+                     <Select v-model="formData.colour" :options="filteredColours" optionLabel="name" optionValue="id" class="w-full md:w-[13.4rem]">
+                        <template #option="{ option }">
+                            <div class="flex items-center gap-2">
+                                <i class="pi pi-circle-fill" :style="{ color: shadeMap[option.id], fontSize: '2rem' }" />
+                                    {{ option.name }}
+                            </div>
+                        </template>
+                     </Select>
                 </div> 
                 <div class="flex flex-wrap items-center gap-4 mb-5">
                     <label for="depth" class="font-semibold w-20">Depth</label>

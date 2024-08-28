@@ -80,6 +80,21 @@ export default {
                 8: 'herbal',
                 9: 'smoky'
             }
+        },
+        shadeMap() {
+            return{
+                1: '#4a192c',
+                2: '#871b33',
+                3: '#951c21',
+                4: '#82321b',
+                5: '#efedbd',
+                6: '#f4ed83',
+                7: '#f2df78',
+                8: '#ef9151',
+                9: '#f49e8d',
+                10: '#ee8b8e',
+                11: '#f4a52c',
+            }
         }
     },
     methods: {
@@ -232,7 +247,7 @@ export default {
             return this.countryMap[wine.data.country]?.name || 'Unknown'
         },
         getColourName(wine) {
-            return this.depthMap[wine.data.colour]?.name
+            return this.colourMap[wine.data.colour]?.name
         },
         getDepthName(wine) {
             return this.depthMap[wine.data.depth]?.name
@@ -365,7 +380,11 @@ export default {
                     <div class="font-medium mr-2">Alcohol:</div> {{ wine.data.alcohol }}%
                 </div>
                 <div class="flex items-center p-2" v-if="wine.data.colour">
-                    <div class="font-medium mr-2">Colour:</div> {{ getColourName(wine) }}
+                    <div class="font-medium mr-2">Colour:</div>
+                    <div class="flex items-center gap-2">
+                        <i class="pi pi-circle-fill" :style="{ color: shadeMap[wine.data.colour], fontSize: '1.5rem' }" />
+                        {{ getColourName(wine) }}
+                    </div>
                 </div>
                 <div class="flex items-center p-2" v-if="wine.data.depth">
                     <div class="font-medium mr-2">Depth:</div> {{ getDepthName(wine) }}
@@ -405,5 +424,5 @@ export default {
         </template>
     </DataTable>
     <DeleteWine v-model:visible="delete_dialog" :selected="selected" @wine_deleted="removeWine" />
-    <WineForm v-model:visible="wine_dialog" :selected="selected" :severity-map="severityMap" :attribute-map="attributeMap" :mode="form_mode" @wine_added="handleWineAdded" @wine_updated="handleWineUpdated" />
+    <WineForm v-model:visible="wine_dialog" :selected="selected" :severity-map="severityMap" :attribute-map="attributeMap" :shade-map="shadeMap" :mode="form_mode" @wine_added="handleWineAdded" @wine_updated="handleWineUpdated" />
 </template>
