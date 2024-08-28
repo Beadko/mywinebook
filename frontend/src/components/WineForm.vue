@@ -27,7 +27,6 @@ export default {
                 year: null,
                 alcohol: null,
                 colour: '',
-                depth:'',
                 clarity: '',
                 aroma: '',
                 flavour:'',
@@ -74,13 +73,13 @@ export default {
             if (!wineType) return this.store.colours
 
             const coloursByWineType = {
-                1: [1, 2, 3, 4],
-                2: [5, 6, 7],
-                3: [7, 8, 9],
-                4: [5, 6, 10, 2],
-                5: [6, 7, 10, 2],
-                6: [1, 2, 3, 4, 6, 10],
-                7: [7, 8, 11]
+                1: this.range(25, 36),
+                2: this.range(1, 9),
+                3: this.range(19, 24),
+                4: [this.range(1, 9), 22, 25, 28],
+                5: this.range(9, 18),
+                6: this.range(25, 36),
+                7: this.range(10, 18)
             }
             return this.store.colours.filter(colour => coloursByWineType[wineType]?.includes(colour.id))
         }
@@ -89,7 +88,6 @@ export default {
         return {
             formData: { ...this.selected },
             colours: [],
-            depths: [],
             clarities: [],
             aromas: [],
             flavours: [],
@@ -151,6 +149,9 @@ export default {
                 'selected-warn': selectedValue === itemId && severity === 'warn',
                 'selected-danger': selectedValue === itemId && severity === 'danger'
             }
+        },
+        range(start, end) {
+            return Array.from({ length: end - start + 1 }, (_, i) => start + i)
         }
     }
 }
@@ -194,13 +195,6 @@ export default {
                         </template>
                      </Select>
                 </div> 
-                <div class="flex flex-wrap items-center gap-4 mb-4">
-                    <label for="depth" class="font-semibold w-20">Depth</label>
-                    <div v-for="depth in store.depths" :key="depth.id" class="flex items-center gap-2">
-                        <RadioButton v-model="formData.depth" :value="depth.id" :inputId="'depth-' + depth.id" />
-                        <span class="text-sm">{{ depth.name }}</span>
-                    </div>
-                </div>
                 <div class="flex flex-wrap items-center gap-4 mb-4">
                     <label for="clarity" class="font-semibold w-20">Clarity</label>
                     <div v-for="clarity in store.clarities" :key="clarity.id" class="flex items-center gap-2">

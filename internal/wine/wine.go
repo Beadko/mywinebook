@@ -38,7 +38,6 @@ type Wine struct {
 	Year        SafeInt   `json:"year,omitempty"`
 	Alcohol     SafeFloat `json:"alcohol,omitempty"`
 	ColourID    SafeInt   `json:"colour,omitempty"`
-	DepthID     SafeInt   `json:"colour_depth,omitempty"`
 	ClarityID   SafeInt   `json:"clarity,omitempty"`
 	AromaID     SafeInt   `json:"aroma,omitempty"`
 	IntensityID SafeInt   `json:"intensity,omitempty"`
@@ -102,11 +101,6 @@ type Clarity struct {
 }
 
 type Finish struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
-}
-
-type Depth struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
 }

@@ -31,9 +31,6 @@ export default {
         colourMap() {
             return this.store.colours.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {})
         },
-        depthMap() {
-            return this.store.depths.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {})
-        },
         clarityMap() {
             return this.store.clarities.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {})
         },
@@ -83,17 +80,42 @@ export default {
         },
         shadeMap() {
             return{
-                1: '#4a192c',
-                2: '#871b33',
-                3: '#951c21',
-                4: '#82321b',
-                5: '#efedbd',
-                6: '#f4ed83',
-                7: '#f2df78',
-                8: '#ef9151',
-                9: '#f49e8d',
-                10: '#ee8b8e',
-                11: '#f4a52c',
+                1: '#faf8e3',
+                2: '#f0efc3',
+                3: '#e7e29e',
+                4: '#f2f2c0',
+                5: '#f5f09e',
+                6: '#f3e64a',
+                7: '#f1ecc6',
+                8: '#f2e294',
+                9: '#f6d166',
+                10: '#ecb649',
+                11: '#d49234',
+                12: '#844927',
+                13: '#fdcd69',
+                14: '#fdcd69',
+                15: '#e97f27',
+                16: '#f3d0b2',
+                17: '#f7a978',
+                18: '#e37037',
+                19: '#f6d5ce',
+                20: '#f6d5ce',
+                21: '#ef7e60',
+                22: '#f7d5d6',
+                23: '#ef8f93',
+                24: '#ee626b',
+                25: '#b51e41',
+                26: '#a31c3a',
+                27: '#6c1a28',
+                28: '#a21d48',
+                29: '#651b36',
+                30: '#411526',
+                31: '#cc3628',
+                32: '#a11e23',
+                33: '#6b1516',
+                34: '#b34b28',
+                35: '#8f3721',
+                36: '#82241a'
             }
         }
     },
@@ -136,15 +158,6 @@ export default {
             axios.get("/colour")
                 .then(res => {
                     this.store.colours = res.data
-                })
-                .catch((error) => {
-                    window.alert(`The API returned an error: ${error}`)
-                })
-        },
-        getDepths() {
-            axios.get("/depth")
-                .then(res => {
-                    this.store.depths = res.data
                 })
                 .catch((error) => {
                     window.alert(`The API returned an error: ${error}`)
@@ -249,9 +262,6 @@ export default {
         getColourName(wine) {
             return this.colourMap[wine.data.colour]?.name
         },
-        getDepthName(wine) {
-            return this.depthMap[wine.data.depth]?.name
-        },
         getClarityName(wine) {
             return this.clarityMap[wine.data.clarity]?.name
         },
@@ -295,7 +305,6 @@ export default {
                 year: null,
                 alcohol: null,
                 colour: '',
-                depth: '',
                 clarity: '',
                 aroma: '',
                 flavour: '',
@@ -321,7 +330,6 @@ export default {
         this.getCountries()
         this.getWineTypes()
         this.getColours()
-        this.getDepths()
         this.getClarities()
         this.getAromas()
         this.getFlavours()
@@ -385,9 +393,6 @@ export default {
                         <i class="pi pi-circle-fill" :style="{ color: shadeMap[wine.data.colour], fontSize: '1.5rem' }" />
                         {{ getColourName(wine) }}
                     </div>
-                </div>
-                <div class="flex items-center p-2" v-if="wine.data.depth">
-                    <div class="font-medium mr-2">Depth:</div> {{ getDepthName(wine) }}
                 </div>
                 <div class="flex items-center p-2" v-if="wine.data.clarity">
                     <div class="font-medium mr-2">Clarity:</div> {{ getClarityName(wine) }}
