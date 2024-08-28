@@ -89,7 +89,7 @@ func InitDB() {
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			name TEXT UNIQUE		
 		);
-		INSERT INTO sweetnesses(name) VALUES ("Bone dry"), ("Dry"), ("Off dry"), ("Medium sweet"), ("Sweet"), ("Very sweet");`)
+		INSERT INTO sweetnesses(name) VALUES ("Dry"), ("Medium"), ("Sweet");`)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -98,7 +98,7 @@ func InitDB() {
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			name TEXT UNIQUE		
 		);
-		INSERT INTO acidities(name) VALUES ("Tart"), ("Crisp"), ("Fresh"), ("Smooth"), ("Not acidic");`)
+		INSERT INTO acidities(name) VALUES ("Tart"), ("Fresh"), ("Smooth");`)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -107,7 +107,7 @@ func InitDB() {
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			name TEXT UNIQUE		
 		);
-		INSERT INTO tannins(name) VALUES ("Soft"), ("Round"), ("Dry"), ("Hard");`)
+		INSERT INTO tannins(name) VALUES ("Soft"), ("Round"), ("Hard");`)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -116,7 +116,7 @@ func InitDB() {
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			name TEXT UNIQUE		
 		);
-		INSERT INTO bodies(name) VALUES ("Very light"), ("Light"), ("Medium"), ("Full Bodied"), ("Heavy");`)
+		INSERT INTO bodies(name) VALUES ("Light"), ("Medium"), ("Full Bodied");`)
 	if err != nil {
 		log.Fatal(err)
 	}
