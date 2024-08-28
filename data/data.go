@@ -44,7 +44,7 @@ func InitDB() {
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			name TEXT UNIQUE		
 		);
-		INSERT INTO colours(name) VALUES ("Purple"), ("Ruby"), ("Garnet"), ("Tawny"), ("Straw"), ("Yellow"), ("Golden"), ("Blush"), ("Salmon"), ("Pink");`)
+		INSERT INTO colours(name) VALUES ("Purple"), ("Ruby"), ("Garnet"), ("Tawny"), ("Straw"), ("Yellow"), ("Golden"), ("Blush"), ("Salmon"), ("Pink"), ("Amber"), ("Copper");`)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -360,6 +360,27 @@ func DeleteWineType(id string) error {
 		return nil
 	}
 	return err
+}
+
+func GetColours() ([]wine.Colour, error) {
+	rows, err := db.Query(`SELECT * FROM colours ORDER by id`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	colours := []wine.Colour{}
+	for rows.Next() {
+		c := wine.Colour{}
+		if err := rows.Scan(&c.ID, &c.Name); err != nil {
+			return nil, err
+		}
+		colours = append(colours, c)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	log.Println(colours)
+	return colours, nil
 }
 
 func GetDepths() ([]wine.Depth, error) {

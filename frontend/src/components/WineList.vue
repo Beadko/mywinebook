@@ -28,6 +28,9 @@ export default {
         countryMap() {
             return this.store.countries.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {})
         },
+        colourMap() {
+            return this.store.colours.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {})
+        },
         depthMap() {
             return this.store.depths.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {})
         },
@@ -65,7 +68,7 @@ export default {
                 3: 'danger'
             }
         },
-        colourMap() {
+        attributeMap() {
             return {
                 1: 'fruity',
                 2: 'vegetal',
@@ -109,6 +112,15 @@ export default {
             axios.get("/country")
                 .then(res => {
                     this.store.countries = res.data
+                })
+                .catch((error) => {
+                    window.alert(`The API returned an error: ${error}`)
+                })
+        },
+        getColours() {
+            axios.get("/colour")
+                .then(res => {
+                    this.store.colours = res.data
                 })
                 .catch((error) => {
                     window.alert(`The API returned an error: ${error}`)
@@ -219,6 +231,9 @@ export default {
         getCountryName(wine) {
             return this.countryMap[wine.data.country]?.name || 'Unknown'
         },
+        getColourName(wine) {
+            return this.depthMap[wine.data.colour]?.name
+        },
         getDepthName(wine) {
             return this.depthMap[wine.data.depth]?.name
         },
@@ -264,6 +279,7 @@ export default {
                 producer: '',
                 year: null,
                 alcohol: null,
+                colour: '',
                 depth: '',
                 clarity: '',
                 aroma: '',
@@ -289,6 +305,7 @@ export default {
     async mounted() {
         this.getCountries()
         this.getWineTypes()
+        this.getColours()
         this.getDepths()
         this.getClarities()
         this.getAromas()
@@ -347,6 +364,9 @@ export default {
                 <div class="flex items-center p-2" v-if="wine.data.alcohol">
                     <div class="font-medium mr-2">Alcohol:</div> {{ wine.data.alcohol }}%
                 </div>
+                <div class="flex items-center p-2" v-if="wine.data.colour">
+                    <div class="font-medium mr-2">Colour:</div> {{ getColourName(wine) }}
+                </div>
                 <div class="flex items-center p-2" v-if="wine.data.depth">
                     <div class="font-medium mr-2">Depth:</div> {{ getDepthName(wine) }}
                 </div>
@@ -355,11 +375,11 @@ export default {
                 </div>
                 <div class="flex items-center p-2" v-if="wine.data.aroma">
                     <div class="font-medium mr-2">Nose:</div>
-                    <Tag :value="getAromaName(wine)" rounded :class="[colourMap[wine.data.aroma], 'active']"/>
+                    <Tag :value="getAromaName(wine)" rounded :class="[attributeMap[wine.data.aroma], 'active']"/>
                 </div>
                 <div class="flex items-center p-2" v-if="wine.data.flavour">
                     <div class="font-medium mr-2">Flavour:</div>
-                    <Tag :value="getFlavourName(wine)" rounded :class="[colourMap[wine.data.flavour], 'active']"/>
+                    <Tag :value="getFlavourName(wine)" rounded :class="[attributeMap[wine.data.flavour], 'active']"/>
                 </div>
                 <div class="flex items-center p-2" v-if="wine.data.sweetness">
                     <div class="font-medium mr-2">Sweetness:</div> {{ getSweetnessName(wine) }}
@@ -385,5 +405,5 @@ export default {
         </template>
     </DataTable>
     <DeleteWine v-model:visible="delete_dialog" :selected="selected" @wine_deleted="removeWine" />
-    <WineForm v-model:visible="wine_dialog" :selected="selected" :severity-map="severityMap" :colour-map="colourMap" :mode="form_mode" @wine_added="handleWineAdded" @wine_updated="handleWineUpdated" />
+    <WineForm v-model:visible="wine_dialog" :selected="selected" :severity-map="severityMap" :attribute-map="attributeMap" :mode="form_mode" @wine_added="handleWineAdded" @wine_updated="handleWineUpdated" />
 </template>

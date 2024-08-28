@@ -25,6 +25,7 @@ func AddRouterEndpoints(r *mux.Router) *mux.Router {
 	r.HandleFunc("/country", addCountry).Methods("POST")
 	r.HandleFunc("/country/{id}", updateCountry).Methods("PUT")
 	r.HandleFunc("/country/{id}", deleteCountry).Methods("DELETE")
+	r.HandleFunc("/colour", getColours).Methods("GET")
 	r.HandleFunc("/depth", getDepths).Methods("GET")
 	r.HandleFunc("/clarity", getClarities).Methods("GET")
 	r.HandleFunc("/aroma", getAromas).Methods("GET")
@@ -279,6 +280,24 @@ func deleteCountry(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusCreated)
 	fmt.Fprintln(w, "Country deleted successfully")
+}
+
+func getColours(w http.ResponseWriter, r *http.Request) {
+	c, err := data.GetColours()
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to get colours", http.StatusInternalServerError)
+		return
+	}
+	cJSON, err := json.Marshal(c)
+	if err != nil {
+		fmt.Println("Could not not marshall to JSON.\nStopping here.", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "%s", cJSON)
 }
 
 func getDepths(w http.ResponseWriter, r *http.Request) {

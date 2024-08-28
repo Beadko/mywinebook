@@ -26,6 +26,7 @@ export default {
                 producer: '',
                 year: null,
                 alcohol: null,
+                colour: '',
                 depth:'',
                 clarity: '',
                 aroma: '',
@@ -42,7 +43,7 @@ export default {
             type: Object,
             required: true
         },
-        colourMap: {
+        attributeMap: {
             type: Object,
             required: true
         }
@@ -63,11 +64,27 @@ export default {
             set(value) {
                 this.formData.year = value
             }
+        },
+        filteredColours() {
+            const wineType = this.formData.wine_type
+            if (!wineType) return this.store.colours
+
+            const coloursByWineType = {
+                1: [1, 2, 3, 4],
+                2: [5, 6, 7],
+                3: [7, 8, 9],
+                4: [5, 6, 10, 2],
+                5: [6, 7, 10, 2],
+                6: [1, 2, 3, 4, 6, 10],
+                7: [7, 11, 12]
+            }
+            return this.store.colours.filter(colour => coloursByWineType[wineType]?.includes(colour.id))
         }
     },
     data() {
         return {
             formData: { ...this.selected },
+            colours: [],
             depths: [],
             clarities: [],
             aromas: [],
@@ -87,6 +104,9 @@ export default {
             handler(v) {
                 this.formData = { ...v }
             }
+        },
+        'formData.wine_type'() {
+            this.formData.colour = ''
         }
     },
     methods: {
@@ -159,6 +179,10 @@ export default {
                     <InputNumber v-model="displayedAlcohol" 
                     id="alcohol" inputId="decimal" :minFractionDigits="1" class="w-full md:w-[8rem]" />
                 </div>
+                <div class="flex items-center gap-2 mb-3">
+                    <label for="colour" class="font-semibold w-20">Colour</label>
+                     <Select v-model="formData.colour" :options="filteredColours" optionLabel="name" optionValue="id" class="w-full md:w-[14rem]" />
+                </div> 
                 <div class="flex flex-wrap items-center gap-4 mb-5">
                     <label for="depth" class="font-semibold w-20">Depth</label>
                     <div v-for="depth in store.depths" :key="depth.id" class="flex items-center gap-2">
@@ -181,7 +205,7 @@ export default {
                                 outlined
                                 size="small"
                                 @click="formData.aroma = aroma.id" 
-                                :class="[colourMap[aroma.id], { 'active': formData.aroma === aroma.id }]" />
+                                :class="[attributeMap[aroma.id], { 'active': formData.aroma === aroma.id }]" />
                     </div>
                 </div>
                 <div class="flex flex-wrap items-center gap-2 mb-3">
@@ -192,7 +216,7 @@ export default {
                                 outlined
                                 size="small"
                                 @click="formData.flavour = flavour.id" 
-                                :class="[colourMap[flavour.id], { 'active': formData.flavour === flavour.id }]" />
+                                :class="[attributeMap[flavour.id], { 'active': formData.flavour === flavour.id }]" />
                     </div>
                 </div>
                 <div class="flex flex-wrap items-center gap-4 mb-5">
