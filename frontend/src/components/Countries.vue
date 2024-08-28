@@ -46,7 +46,7 @@ export default {
 </script>
 
 <template>
-    <div class="flex items-center gap-2 mb-3">
+    <div class="flex items-center gap-2 mb-4">
         <label for="country" class="font-semibold w-20">Country</label>
         <Select v-model="selected.country" :options="[...store.countries, { id: 'add_country', name: '+ Add New' }]" optionLabel="name" optionValue="id" class="w-full md:w-[14rem]" @change="handleCountryChange($event.value)" />
     </div>    

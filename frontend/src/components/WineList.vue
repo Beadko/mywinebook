@@ -313,7 +313,7 @@ export default {
             this.addNewWine(wn)
             this.wine_dialog = false
         },
-        handleWineUpdated(wn) {
+        handleWineUpdated() {
             this.wine_dialog = false
         },
     },
