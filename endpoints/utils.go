@@ -25,6 +25,10 @@ func AddRouterEndpoints(r *mux.Router) *mux.Router {
 	r.HandleFunc("/country", addCountry).Methods("POST")
 	r.HandleFunc("/country/{id}", updateCountry).Methods("PUT")
 	r.HandleFunc("/country/{id}", deleteCountry).Methods("DELETE")
+	r.HandleFunc("/grapes", getGrapes).Methods("GET")
+	r.HandleFunc("/grapes", addGrapes).Methods("POST")
+	r.HandleFunc("/grapes/{id}", updateGrapes).Methods("PUT")
+	r.HandleFunc("/grapes/{id}", deleteGrapes).Methods("DELETE")
 	r.HandleFunc("/colour", getColours).Methods("GET")
 	r.HandleFunc("/clarity", getClarities).Methods("GET")
 	r.HandleFunc("/aroma", getAromas).Methods("GET")
@@ -279,6 +283,79 @@ func deleteCountry(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusCreated)
 	fmt.Fprintln(w, "Country deleted successfully")
+}
+
+func getGrapes(w http.ResponseWriter, r *http.Request) {
+	g, err := data.GetGrapes()
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to get grapes", http.StatusInternalServerError)
+		return
+	}
+	gJSON, err := json.Marshal(g)
+	if err != nil {
+		fmt.Println("Could not not marshall to JSON.\nStopping here.", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprint(w, string(gJSON))
+}
+
+func addGrapes(w http.ResponseWriter, r *http.Request) {
+	var g wine.Grapes
+	if err := json.NewDecoder(r.Body).Decode(&g); err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to decode addGrapes input", http.StatusInternalServerError)
+		return
+	}
+	id, err := data.AddGrapes(g.Name)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to add grapes", http.StatusInternalServerError)
+		return
+	}
+	g.ID = id
+	gJSON, err := json.Marshal(g)
+	if err != nil {
+		fmt.Println("Could not not marshall to JSON.\nStopping here.", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprint(w, string(gJSON))
+}
+
+func updateGrapes(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+	var g wine.Grapes
+	if err := json.NewDecoder(r.Body).Decode(&g); err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to decode updateGrapes input", http.StatusInternalServerError)
+		return
+	}
+	err := data.UpdateGrapes(id, g.Name)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to update the grapes", http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintln(w, "Grapes updated successfully")
+}
+
+func deleteGrapes(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+	err := data.DeleteGrapes(id)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to delete the grapes", http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusCreated)
+	fmt.Fprintln(w, "Grapes deleted successfully")
 }
 
 func getColours(w http.ResponseWriter, r *http.Request) {

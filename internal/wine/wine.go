@@ -33,6 +33,7 @@ type Wine struct {
 	Name        string    `json:"name"`
 	TypeID      SafeInt   `json:"wine_type,omitempty"`
 	CountryID   SafeInt   `json:"country,omitempty"`
+	GrapeIDs    []SafeInt `json:"grapes,omitempty"`
 	Score       SafeInt   `json:"score,omitempty"`
 	Producer    string    `json:"producer,omitempty"`
 	Year        SafeInt   `json:"year,omitempty"`
@@ -111,6 +112,11 @@ type Balance struct {
 }
 
 type Colour struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+type Grapes struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
 }
