@@ -437,7 +437,7 @@ export default {
                 <div class="flex items-center p-2" v-if="wine.data.tannin">
                     <div class="font-medium mr-2">Tannin:</div> {{ getTanninName(wine) }}
                 </div>
-                <div class="flex items-center p-2" v-if="wine.data.finish">
+                <div class="flex items-center p-2" v-if="wine.data.body">
                     <div class="font-medium mr-2">Body:</div> {{ getBodyName(wine) }}
                 </div>
                 <div class="flex items-center p-2" v-if="wine.data.finish">
