@@ -28,6 +28,9 @@ export default {
         countryMap() {
             return this.store.countries.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {})
         },
+        grapesMap() {
+            return this.store.grapes.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {})
+        },
         colourMap() {
             return this.store.colours.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {})
         },
@@ -154,6 +157,15 @@ export default {
                     window.alert(`The API returned an error: ${error}`)
                 })
         },
+        getGrapes() {
+            axios.get("/grapes")
+                .then(res => {
+                    this.store.grapes = res.data
+                })
+                .catch((error) => {
+                    window.alert(`The API returned an error: ${error}`)
+                })
+        },
         getColours() {
             axios.get("/colour")
                 .then(res => {
@@ -259,6 +271,9 @@ export default {
         getCountryName(wine) {
             return this.countryMap[wine.data.country]?.name || 'Unknown'
         },
+        getGrapesName(grapeId) {
+            return this.grapesMap[grapeId]?.name
+        },
         getColourName(wine) {
             return this.colourMap[wine.data.colour]?.name
         },
@@ -300,6 +315,7 @@ export default {
                 name: '',
                 wine_type: '',
                 country: '',
+                grapes:[],
                 score: '',
                 producer: '',
                 year: null,
@@ -324,11 +340,12 @@ export default {
         },
         handleWineUpdated() {
             this.wine_dialog = false
-        },
+        }
     },
     async mounted() {
         this.getCountries()
         this.getWineTypes()
+        this.getGrapes()
         this.getColours()
         this.getClarities()
         this.getAromas()
@@ -378,6 +395,12 @@ export default {
         </Column>
         <template #expansion="wine">
             <div class="flex flex-wrap items-center p-4 gap-8">
+                <div class="flex items-center" v-if="wine.data.grapes">
+                    <div class="font-medium mr-2">Grapes:</div>                    
+                    <div class="flex flex-wrap gap-2">
+                        <Tag v-for="id in wine.data.grapes" :key="id" :value="getGrapesName(id)" rounded />
+                     </div>
+                </div>
                 <div class="flex items-center p-2" v-if="wine.data.producer">
                     <div class="font-medium mr-2">Producer:</div> {{ wine.data.producer }}
                 </div>

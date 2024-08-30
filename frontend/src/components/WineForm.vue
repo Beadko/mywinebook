@@ -2,13 +2,15 @@
 import axios from 'axios';
 import WineTypes from './WineTypes.vue'
 import Countries from './Countries.vue'
+import Grapes from './Grapes.vue'
 import { store } from './store'
 
 export default {
     name: "WineForm",
     components: {
         WineTypes,
-        Countries
+        Countries,
+        Grapes
     },
     props: {
         mode: {
@@ -22,6 +24,7 @@ export default {
                 name: '',
                 wine_type: '',
                 country: '',
+                grapes:[],
                 score: '',
                 producer: '',
                 year: null,
@@ -138,6 +141,9 @@ export default {
         onTypeAdded() {
             this.$emit('type-added')
         },
+        onGrapesAdded() {
+            this.$emit('grapes-added')
+        },
         cancelForm() {
             this.formData = { ...this.selected }
             this.$emit('cancel')
@@ -171,6 +177,7 @@ export default {
         </div>
         <div class="items-center gap-2 mb-4">
             <Panel header="More details" toggleable :collapsed="true">
+                <Grapes :selected="formData" @grapes-added="onGrapesAdded" />
                 <div class="flex items-center gap-4 mb-4">
                     <label for="producer" class="font-semibold w-18">Producer</label>
                     <InputText v-model="formData.producer" id="producer" class="w-full md:w-[13.4rem]" />
