@@ -146,7 +146,7 @@ export default {
         },
         cancelForm() {
             this.formData = { ...this.selected }
-            this.$emit('cancel')
+            this.$parent.wine_dialog = false
         },
         getSeverityClass(selectedValue, itemId) {
             const severity = this.severityMap[itemId]
