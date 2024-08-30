@@ -79,7 +79,7 @@ export default {
                 1: this.range(25, 36),
                 2: this.range(1, 9),
                 3: this.range(19, 24),
-                4: [this.range(1, 9), 22, 25, 28],
+                4: [...this.range(1, 9), 22, 25, 28],
                 5: this.range(9, 18),
                 6: this.range(25, 36),
                 7: this.range(10, 18)
