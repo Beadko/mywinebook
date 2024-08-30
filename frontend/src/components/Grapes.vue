@@ -56,7 +56,7 @@ export default {
             optionLabel="name" 
             optionValue="id" 
             filter 
-            class="w-full md:w-[14rem]" 
+            class="ml-2 w-full md:w-[13.4rem]" 
         />
         <Button type="button" icon="pi pi-plus" size="small" @click="dialog_visible = true" />
     </div>    
