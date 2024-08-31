@@ -22,104 +22,47 @@ export default {
         }
     },
     computed: {
+        attributeMap() {
+            return (array) => array.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {})
+        },
         wineTypeMap() {
-            return this.store.wine_types.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {})
+            return this.attributeMap(this.store.wine_types)
         },
         countryMap() {
-            return this.store.countries.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {})
+            return this.attributeMap(this.store.countries)
         },
         grapesMap() {
-            return this.store.grapes.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {})
+            return this.attributeMap(this.store.grapes)
         },
         colourMap() {
-            return this.store.colours.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {})
+            return this.attributeMap(this.store.colours)
         },
         clarityMap() {
-            return this.store.clarities.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {})
+            return this.attributeMap(this.store.clarities)
         },
         aromaMap() {
-            return this.store.aromas.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {})
+            return this.attributeMap(this.store.aromas)
         },
         flavourMap() {
-            return this.store.flavours.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {})
+            return this.attributeMap(this.store.flavours)
         },
         sweetnessMap() {
-            return this.store.sweetnesses.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {})
+            return this.attributeMap(this.store.sweetnesses)
         },
         acidityMap() {
-            return this.store.acidities.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {})
+            return this.attributeMap(this.store.acidities)
         },
         tanninMap() {
-            return this.store.bodies.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {})
+            return this.attributeMap(this.store.tannins)
         },
         bodyMap() {
-            return this.store.bodies.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {})
+            return this.attributeMap(this.store.bodies)
         },
         finishMap() {
-            return this.store.finishes.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {})
+            return this.attributeMap(this.store.finishes)
         },
         balanceMap() {
-            return this.store.balances.reduce((acc, cur) => { acc[cur.id] = cur; return acc }, {})
-        },
-        severityMap() {
-          return  {
-                1: 'success',
-                2: 'warn',
-                3: 'danger'
-            }
-        },
-        attributeMap() {
-            return {
-                1: 'fruity',
-                2: 'vegetal',
-                3: 'floral',
-                4: 'earthy',
-                5: 'woody',
-                6: 'spicy',
-                7: 'mineral',
-                8: 'herbal',
-                9: 'smoky'
-            }
-        },
-        shadeMap() {
-            return{
-                1: '#faf8e3',
-                2: '#f0efc3',
-                3: '#e7e29e',
-                4: '#f2f2c0',
-                5: '#f5f09e',
-                6: '#f3e64a',
-                7: '#f1ecc6',
-                8: '#f2e294',
-                9: '#f6d166',
-                10: '#ecb649',
-                11: '#d49234',
-                12: '#844927',
-                13: '#fdcd69',
-                14: '#fdcd69',
-                15: '#e97f27',
-                16: '#f3d0b2',
-                17: '#f7a978',
-                18: '#e37037',
-                19: '#f6d5ce',
-                20: '#f6d5ce',
-                21: '#ef7e60',
-                22: '#f7d5d6',
-                23: '#ef8f93',
-                24: '#ee626b',
-                25: '#b51e41',
-                26: '#a31c3a',
-                27: '#6c1a28',
-                28: '#a21d48',
-                29: '#651b36',
-                30: '#411526',
-                31: '#cc3628',
-                32: '#a11e23',
-                33: '#6b1516',
-                34: '#b34b28',
-                35: '#8f3721',
-                36: '#82241a'
-            }
+            return this.attributeMap(this.store.balances)
         }
     },
     methods: {
@@ -130,131 +73,41 @@ export default {
                 this.expanded_row[data.id] = true
             }
         },
-        getWines() {
-            axios.get("/wine")
-                .then(res => {
-                    this.wines = res.data
-                })
-                .catch((error) => {
-                    window.alert(`The API returned an error: ${error}`)
-                })
-        },
-        getWineTypes() {
-            axios.get("/wine_type")
-                .then(res => {
-                    this.store.wine_types = res.data
-                })
-                .catch((error) => {
-                    window.alert(`The API returned an error: ${error}`)
-                })
-        },
-        getCountries() {
-            axios.get("/country")
-                .then(res => {
-                    this.store.countries = res.data
-                })
-                .catch((error) => {
-                    window.alert(`The API returned an error: ${error}`)
-                })
-        },
-        getGrapes() {
-            axios.get("/grapes")
-                .then(res => {
-                    this.store.grapes = res.data
-                })
-                .catch((error) => {
-                    window.alert(`The API returned an error: ${error}`)
-                })
-        },
-        getColours() {
-            axios.get("/colour")
-                .then(res => {
-                    this.store.colours = res.data
-                })
-                .catch((error) => {
-                    window.alert(`The API returned an error: ${error}`)
-                })
-        },
-        getClarities() {
-            axios.get("/clarity")
-                .then(res => {
-                    this.store.clarities = res.data
-                })
-                .catch((error) => {
-                    window.alert(`The API returned an error: ${error}`)
-                })
-        },
-        getAromas() {
-            axios.get("/aroma")
-                .then(res => {
-                    this.store.aromas = res.data
-                })
-                .catch((error) => {
-                    window.alert(`The API returned an error: ${error}`)
-                })
-        },
-        getFlavours() {
-            axios.get("/flavour")
-                .then(res => {
-                    this.store.flavours = res.data
-                })
-                .catch((error) => {
-                    window.alert(`The API returned an error: ${error}`)
-                })
-        },
-        getSweetnesses() {
-            axios.get("/sweetness")
-                .then(res => {
-                    this.store.sweetnesses = res.data
-                })
-                .catch((error) => {
-                    window.alert(`The API returned an error: ${error}`)
-                })
-        },
-        getAcidities() {
-            axios.get("/acidity")
-                .then(res => {
-                    this.store.acidities = res.data
-                })
-                .catch((error) => {
-                    window.alert(`The API returned an error: ${error}`)
-                })
-        },
-        getTannins() {
-            axios.get("/tannin")
-                .then(res => {
-                    this.store.tannins = res.data
-                })
-                .catch((error) => {
-                    window.alert(`The API returned an error: ${error}`)
-                })
-        },
-        getBodies() {
-            axios.get("/body")
-                .then(res => {
-                    this.store.bodies = res.data
-                })
-                .catch((error) => {
-                    window.alert(`The API returned an error: ${error}`)
-                });
-        },
-        getFinishes() {
-            axios.get("/finish")
-                .then(res => {
-                    this.store.finishes = res.data
-                })
-                .catch((error) => {
-                    window.alert(`The API returned an error: ${error}`)
-                })
-        },
-        getBalances() {
-            axios.get("/balance")
-                .then(res => {
-                    this.store.balances = res.data
-                })
-                .catch((error) => {
-                    window.alert(`The API returned an error: ${error}`)
-                })
+        async fetchData() {
+            try {
+                const [wines, wineTypes, countries, grapes, colours, clarities, aromas, flavours, sweetnesses, acidities, tannins, bodies, finishes, balances] = await Promise.all([
+                    axios.get("/wine"),
+                    axios.get("/wine_type"),
+                    axios.get("/country"),
+                    axios.get("/grapes"),
+                    axios.get("/colour"),
+                    axios.get("/clarity"),
+                    axios.get("/aroma"),
+                    axios.get("/flavour"),
+                    axios.get("/sweetness"),
+                    axios.get("/acidity"),
+                    axios.get("/tannin"),
+                    axios.get("/body"),
+                    axios.get("/finish"),
+                    axios.get("/balance")
+                ])
+                this.wines = wines.data;
+                this.store.wine_types = wineTypes.data;
+                this.store.countries = countries.data;
+                this.store.grapes = grapes.data;
+                this.store.colours = colours.data;
+                this.store.clarities = clarities.data;
+                this.store.aromas = aromas.data;
+                this.store.flavours = flavours.data;
+                this.store.sweetnesses = sweetnesses.data;
+                this.store.acidities = acidities.data;
+                this.store.tannins = tannins.data;
+                this.store.bodies = bodies.data;
+                this.store.finishes = finishes.data;
+                this.store.balances = balances.data;
+            } catch (error) {
+                window.alert(`The API returned an error: ${error}`)
+            }
         },
         selectWine(wn) {
             this.selected = wn
@@ -265,44 +118,47 @@ export default {
             this.selected = wn
             this.delete_dialog = true
         },
+        getName(map, id) {
+            return map[id]?.name
+        },
         getWineTypeName(wine) {
-            return this.wineTypeMap[wine.data.wine_type]?.name || 'Unknown'
+            return this.getName(this.wineTypeMap, wine.data.wine_type)
         },
         getCountryName(wine) {
-            return this.countryMap[wine.data.country]?.name || 'Unknown'
+            return this.getName(this.countryMap, wine.data.country)
         },
         getGrapesName(grapeId) {
-            return this.grapesMap[grapeId]?.name
+            return this.getName(this.grapesMap, grapeId)
         },
         getColourName(wine) {
-            return this.colourMap[wine.data.colour]?.name
+            return this.getName(this.colourMap, wine.data.colour)
         },
         getClarityName(wine) {
-            return this.clarityMap[wine.data.clarity]?.name
+            return this.getName(this.clarityMap, wine.data.clarity)
         },
         getAromaName(wine) {
-            return this.aromaMap[wine.data.aroma]?.name
+            return this.getName(this.aromaMap, wine.data.aroma)
         },
         getFlavourName(wine) {
-            return this.flavourMap[wine.data.flavour]?.name
+            return this.getName(this.flavourMap, wine.data.flavour)
         },
         getSweetnessName(wine) {
-            return this.sweetnessMap[wine.data.sweetness]?.name
+            return this.getName(this.sweetnessMap, wine.data.sweetness)
         },
         getAcidityName(wine) {
-            return this.acidityMap[wine.data.acidity]?.name
+            return this.getName(this.acidityMap, wine.data.acidity)
         },
         getTanninName(wine) {
-            return this.tanninMap[wine.data.tannin]?.name
+            return this.getName(this.tanninMap, wine.data.tannin)
         },
         getBodyName(wine) {
-            return this.bodyMap[wine.data.body]?.name
+            return this.getName(this.bodyMap, wine.data.body)
         },
         getFinishName(wine) {
-            return this.finishMap[wine.data.finish]?.name
+            return this.getName(this.finishMap, wine.data.finish)
         },
         getBalanceName(wine) {
-            return this.balanceMap[wine.data.balance]?.name
+            return this.getName(this.balanceMap, wine.data.balance)
         },
         removeWine(wn) {
             this.wines = this.wines.filter(wine => wine.id !== wn)
@@ -343,20 +199,7 @@ export default {
         }
     },
     async mounted() {
-        this.getCountries()
-        this.getWineTypes()
-        this.getGrapes()
-        this.getColours()
-        this.getClarities()
-        this.getAromas()
-        this.getFlavours()
-        this.getSweetnesses()
-        this.getAcidities()
-        this.getTannins()
-        this.getBodies()
-        this.getFinishes()
-        this.getBalances()
-        this.getWines()
+        this.fetchData()
     }
 }
 </script>
@@ -413,7 +256,7 @@ export default {
                 <div class="flex items-center p-2" v-if="wine.data.colour">
                     <div class="font-medium mr-2">Colour:</div>
                     <div class="flex items-center gap-2">
-                        <i class="pi pi-circle-fill" :style="{ color: shadeMap[wine.data.colour], fontSize: '1.5rem' }" />
+                        <i class="pi pi-circle-fill" :style="{ color: store.shade[wine.data.colour], fontSize: '1.5rem' }" />
                         {{ getColourName(wine) }}
                     </div>
                 </div>
@@ -422,11 +265,11 @@ export default {
                 </div>
                 <div class="flex items-center p-2" v-if="wine.data.aroma">
                     <div class="font-medium mr-2">Nose:</div>
-                    <Tag :value="getAromaName(wine)" rounded :class="[attributeMap[wine.data.aroma], 'active']"/>
+                    <Tag :value="getAromaName(wine)" rounded :class="[store.characteristic[wine.data.aroma], 'active']"/>
                 </div>
                 <div class="flex items-center p-2" v-if="wine.data.flavour">
                     <div class="font-medium mr-2">Flavour:</div>
-                    <Tag :value="getFlavourName(wine)" rounded :class="[attributeMap[wine.data.flavour], 'active']"/>
+                    <Tag :value="getFlavourName(wine)" rounded :class="[store.characteristic[wine.data.flavour], 'active']"/>
                 </div>
                 <div class="flex items-center p-2" v-if="wine.data.sweetness">
                     <div class="font-medium mr-2">Sweetness:</div> {{ getSweetnessName(wine) }}
@@ -442,15 +285,15 @@ export default {
                 </div>
                 <div class="flex items-center p-2" v-if="wine.data.finish">
                     <div class="font-medium mr-2">Finish:</div>
-                    <Tag :value="getFinishName(wine)" :severity="severityMap[wine.data.finish]"/>
+                    <Tag :value="getFinishName(wine)" :severity="store.severity[wine.data.finish]"/>
                 </div>
                 <div class="flex items-center p-2" v-if="wine.data.balance">
                     <div class="font-medium mr-2">Balance:</div>
-                    <Tag :value="getBalanceName(wine)" :severity="severityMap[wine.data.balance]"/>
+                    <Tag :value="getBalanceName(wine)" :severity="store.severity[wine.data.balance]"/>
                 </div>
             </div>
         </template>
     </DataTable>
     <DeleteWine v-model:visible="delete_dialog" :selected="selected" @wine_deleted="removeWine" />
-    <WineForm v-model:visible="wine_dialog" :selected="selected" :severity-map="severityMap" :attribute-map="attributeMap" :shade-map="shadeMap" :mode="form_mode" @wine_added="handleWineAdded" @wine_updated="handleWineUpdated" />
+    <WineForm v-model:visible="wine_dialog" :selected="selected" :mode="form_mode" @wine_added="handleWineAdded" @wine_updated="handleWineUpdated" />
 </template>

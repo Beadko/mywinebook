@@ -41,18 +41,6 @@ export default {
                 balance: ''
             })
         },
-        severityMap: {
-            type: Object,
-            required: true
-        },
-        attributeMap: {
-            type: Object,
-            required: true
-        },
-        shadeMap: {
-            type: Object,
-            required: true
-        }
     },
     computed : {
         displayedAlcohol: {
@@ -149,7 +137,7 @@ export default {
             this.$parent.wine_dialog = false
         },
         getSeverityClass(selectedValue, itemId) {
-            const severity = this.severityMap[itemId]
+            const severity = this.store.severity[itemId]
             return {
                 'selected-success': selectedValue === itemId && severity === 'success',
                 'selected-warn': selectedValue === itemId && severity === 'warn',
@@ -196,7 +184,7 @@ export default {
                      <Select v-model="formData.colour" :options="filteredColours" optionLabel="name" optionValue="id" class="w-full md:w-[13.4rem]">
                         <template #option="{ option }">
                             <div class="flex items-center gap-2">
-                                <i class="pi pi-circle-fill" :style="{ color: shadeMap[option.id], fontSize: '2rem' }" />
+                                <i class="pi pi-circle-fill" :style="{ color: store.shade[option.id], fontSize: '2rem' }" />
                                     {{ option.name }}
                             </div>
                         </template>
@@ -217,7 +205,7 @@ export default {
                                 outlined
                                 size="small"
                                 @click="formData.aroma = aroma.id" 
-                                :class="[attributeMap[aroma.id], { 'active': formData.aroma === aroma.id }]" />
+                                :class="[store.characteristic[aroma.id], { 'active': formData.aroma === aroma.id }]" />
                     </div>
                 </div>
                 <div class="flex flex-wrap items-center gap-2 mb-4">
@@ -228,7 +216,7 @@ export default {
                                 outlined
                                 size="small"
                                 @click="formData.flavour = flavour.id" 
-                                :class="[attributeMap[flavour.id], { 'active': formData.flavour === flavour.id }]" />
+                                :class="[store.characteristic[flavour.id], { 'active': formData.flavour === flavour.id }]" />
                     </div>
                 </div>
                 <div class="flex flex-wrap items-center gap-4 mb-4">
@@ -263,7 +251,7 @@ export default {
                     <label for="finish" class="font-semibold w-20">Finish</label>
                     <div v-for="finish in store.finishes" :key="finish.id" class="flex items-center gap-2">
                         <Button :label="finish.name"
-                                :severity="severityMap[finish.id]"
+                                :severity="store.severity[finish.id]"
                                 outlined size="small"
                                 @click="formData.finish = finish.id" 
                                 :class="getSeverityClass(formData.finish, finish.id)"/>
@@ -273,7 +261,7 @@ export default {
                     <label for="balance" class="font-semibold w-20">Balance</label>
                     <div v-for="balance in store.balances" :key="balance.id" class="flex items-center gap-2">
                         <Button :label="balance.name"
-                                :severity="severityMap[balance.id]"
+                                :severity="store.severity[balance.id]"
                                 outlined 
                                 size="small"
                                 @click="formData.balance = balance.id" 
