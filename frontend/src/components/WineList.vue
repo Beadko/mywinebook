@@ -122,43 +122,43 @@ export default {
             return map[id]?.name
         },
         getWineTypeName(wine) {
-            return this.getName(this.wineTypeMap, wine.data.wine_type)
+            return this.getName(this.wineTypeMap, wine.wine_type)
         },
         getCountryName(wine) {
-            return this.getName(this.countryMap, wine.data.country)
+            return this.getName(this.countryMap, wine.country)
         },
         getGrapesName(grapeId) {
             return this.getName(this.grapesMap, grapeId)
         },
         getColourName(wine) {
-            return this.getName(this.colourMap, wine.data.colour)
+            return this.getName(this.colourMap, wine.colour)
         },
         getClarityName(wine) {
-            return this.getName(this.clarityMap, wine.data.clarity)
+            return this.getName(this.clarityMap, wine.clarity)
         },
         getAromaName(wine) {
-            return this.getName(this.aromaMap, wine.data.aroma)
+            return this.getName(this.aromaMap, wine.aroma)
         },
         getFlavourName(wine) {
-            return this.getName(this.flavourMap, wine.data.flavour)
+            return this.getName(this.flavourMap, wine.flavour)
         },
         getSweetnessName(wine) {
-            return this.getName(this.sweetnessMap, wine.data.sweetness)
+            return this.getName(this.sweetnessMap, wine.sweetness)
         },
         getAcidityName(wine) {
-            return this.getName(this.acidityMap, wine.data.acidity)
+            return this.getName(this.acidityMap, wine.acidity)
         },
         getTanninName(wine) {
-            return this.getName(this.tanninMap, wine.data.tannin)
+            return this.getName(this.tanninMap, wine.tannin)
         },
         getBodyName(wine) {
-            return this.getName(this.bodyMap, wine.data.body)
+            return this.getName(this.bodyMap, wine.body)
         },
         getFinishName(wine) {
-            return this.getName(this.finishMap, wine.data.finish)
+            return this.getName(this.finishMap, wine.finish)
         },
         getBalanceName(wine) {
-            return this.getName(this.balanceMap, wine.data.balance)
+            return this.getName(this.balanceMap, wine.balance)
         },
         removeWine(wn) {
             this.wines = this.wines.filter(wine => wine.id !== wn)
@@ -205,38 +205,80 @@ export default {
 </script>
 
 <template>
-    <h1> Your Wine List</h1>
-    <Button label="+ Add Wine" @click="openAddWineForm" class="m-8"/>
-    <DataTable v-model:expandedRows="expanded_row" :value="wines" dataKey="id" tableStyle="min-width: 60rem" @row-click="ExpandRow($event.data)">
-        <Column headerStyle="width:4rem">
-            <template #body="wine">
-                <i class="pi pi-chevron-right" style="color: #708090" v-if="!expanded_row[wine.data.id]" />
-                <i class="pi pi-chevron-down" style="color: #708090" v-else />
+    <div class="flex flex-row justify-evenly">
+        <div class="flex items-center justify-start">
+            <span class="material-symbols-outlined text-4xl">wine_bar</span>
+            <div class="text-xl font-large ml-2">My Wine Book</div>
+        </div>
+        <Button icon="pi pi-plus" size="small" @click="openAddWineForm" />
+    </div>
+    <div class="card w-screen md:w-auto">
+        <DataView v-model:expandedRows="expanded_row" :value="wines" @row-click="ExpandRow($event.data)">
+            <template #list="slotProps">
+                <div class="flex flex-col gap-4">
+                    <div v-for="item in slotProps.items" :key="item.id">
+                        <div class="flex flex-col shadow-md rounded w-full">                       
+                            <div class="flex flex-row justify-between items-center gap-4 w-full">
+                                <div class="flex items-center justify-center w-6">
+                                    <i
+                                        class="pi pi-chevron-right"
+                                        style="color: #708090"
+                                        v-if="!expanded_row[item.id]"
+                                    />
+                                    <i
+                                        class="pi pi-chevron-down"
+                                        style="color: #708090"
+                                        v-else
+                                    />
+                                </div>
+                                <div class="flex flex-row justify-between items-start w-full">
+                                    <div class="flex flex-col">
+                                        <span class="text-lg font-semibold">{{ item.name }}</span>
+                                        <div class="text-medium font-medium mt-2">
+                                            {{ getWineTypeName(item) }}
+                                        </div>
+                                        <span
+                                            class="font-medium text-surface-500 dark:text-surface-400 text-sm"
+                                            >{{ getCountryName(item) }}</span>
+                                    </div>
+                                    <div class="bg-surface-100 p-1" style="border-radius: 30px">
+                                        <div class="bg-surface-0 flex items-center gap-2 justify-center py-1 px-2" style="border-radius: 20px; box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.04), 0px 1px 2px 0px rgba(0, 0, 0, 0.06)">
+                                            <span class="text-surface-900 font-medium text-sm">{{ item.score }}</span>
+                                            <i class="pi pi-star-fill text-yellow-500"></i>
+                                        </div>
+                                        <div class="flex items-center p-2" v-if="item.flavour">
+                                            <Tag
+                                                :value="getFlavourName(item)"
+                                                rounded
+                                                :class="[store.characteristic[item.flavour], 'active']"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <Button
+                                            icon="pi pi-pencil"
+                                            severity="secondary"
+                                            rounded
+                                            text
+                                            aria-label="Edit"
+                                            @click="selectWine(item)"
+                                        />
+                                        <Button
+                                            icon="pi pi-trash"
+                                            severity="secondary"
+                                            rounded
+                                            text
+                                            aria-label="Delete"
+                                            @click="deleteWine(item)"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </template>
-        </Column>
-        <Column field="name" header="Name" />
-        <Column field="wine_type" header="Type">
-            <template #body="wine">
-                {{ getWineTypeName(wine) }}
-            </template>
-        </Column>
-        <Column field="country" header="Country">
-            <template #body="wine">
-                {{ getCountryName(wine) }}
-            </template>
-        </Column>
-        <Column field="score" header="Score">
-            <template #body="wine">
-                <Rating v-model="wine.data.score" readonly />
-            </template>
-        </Column>
-        <Column headerStyle="width:4rem">
-            <template #body="item">
-                <Button icon="pi pi-trash" severity="secondary" rounded text aria-label="Filter" @click="deleteWine(item.data)" />
-                <Button icon="pi pi-pencil" severity="secondary" rounded text aria-label="Filter" @click="selectWine(item.data)" />
-            </template>
-        </Column>
-        <template #expansion="wine">
+            <template #expansion="wine">
             <div class="flex flex-wrap items-center p-4 gap-8">
                 <div class="flex items-center" v-if="wine.data.grapes">
                     <div class="font-medium mr-2">Grapes:</div>                    
@@ -293,7 +335,8 @@ export default {
                 </div>
             </div>
         </template>
-    </DataTable>
+        </DataView>
+    </div>
     <DeleteWine v-model:visible="delete_dialog" :selected="selected" @wine_deleted="removeWine" />
     <WineForm v-model:visible="wine_dialog" :selected="selected" :mode="form_mode" @wine_added="handleWineAdded" @wine_updated="handleWineUpdated" />
 </template>

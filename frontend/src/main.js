@@ -15,6 +15,7 @@ import Panel from 'primevue/panel'
 import RadioButton from 'primevue/radiobutton'
 import Tag from 'primevue/tag'
 import MultiSelect from 'primevue/multiselect'
+import DataView from 'primevue/dataview'
 import App from './App.vue'
 
 
@@ -36,5 +37,6 @@ app.component('Panel', Panel)
 app.component('RadioButton', RadioButton)
 app.component('Tag', Tag)
 app.component('MultiSelect', MultiSelect)
+app.component('DataView', DataView)
 
 app.mount('#app')
