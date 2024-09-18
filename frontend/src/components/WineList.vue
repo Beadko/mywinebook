@@ -12,12 +12,12 @@ export default {
     },
     data() {
         return {
-            expanded_row: {},
             store,
             wines: [],
             selected: {},
             delete_dialog: false,
             wine_dialog: false,
+            wine_card: {},
             form_mode: 'add',
         }
     },
@@ -66,13 +66,6 @@ export default {
         }
     },
     methods: {
-        ExpandRow(data) {
-            if (this.expanded_row[data.id]) {
-                delete this.expanded_row[data.id]
-            } else {
-                this.expanded_row[data.id] = true
-            }
-        },
         async fetchData() {
             try {
                 const [wines, wineTypes, countries, grapes, colours, clarities, aromas, flavours, sweetnesses, acidities, tannins, bodies, finishes, balances] = await Promise.all([
@@ -117,6 +110,13 @@ export default {
         deleteWine(wn) {
             this.selected = wn
             this.delete_dialog = true
+        },
+        showCard(wn) {
+            if (this.wine_card[wn.id]) {
+                delete this.wine_card[wn.id];
+            } else {
+                this.wine_card = { ...this.wine_card, [wn.id]: true };
+            }
         },
         getName(map, id) {
             return map[id]?.name
@@ -205,72 +205,96 @@ export default {
 </script>
 
 <template>
-    <div class="flex flex-row justify-evenly">
-        <div class="flex items-center justify-start">
-            <span class="material-symbols-outlined text-4xl">wine_bar</span>
-            <div class="text-xl font-large ml-2">My Wine Book</div>
+    <div class="card w-full top-4">
+        <div class="flex flex-row justify-between gap-4 my-6">
+            <div class="flex items-center justify-start">
+                <span class="material-symbols-outlined text-4xl">wine_bar</span>
+                <div class="text-xl font-large ml-2">My Wine Book</div>
+            </div>
+            <Button icon="pi pi-plus" size="small" @click="openAddWineForm" />
         </div>
-        <Button icon="pi pi-plus" size="small" @click="openAddWineForm" />
-    </div>
-    <div class="card w-screen md:w-auto">
-        <DataView v-model:expandedRows="expanded_row" :value="wines" @row-click="ExpandRow($event.data)">
+        <DataView :value="wines">
             <template #list="slotProps">
-                <div class="flex flex-col gap-4">
-                    <div v-for="item in slotProps.items" :key="item.id">
-                        <div class="flex flex-col shadow-md rounded w-full">                       
-                            <div class="flex flex-row justify-between items-center gap-4 w-full">
-                                <div class="flex items-center justify-center w-6">
-                                    <i
-                                        class="pi pi-chevron-right"
-                                        style="color: #708090"
-                                        v-if="!expanded_row[item.id]"
-                                    />
-                                    <i
-                                        class="pi pi-chevron-down"
-                                        style="color: #708090"
-                                        v-else
-                                    />
-                                </div>
-                                <div class="flex flex-row justify-between items-start w-full">
-                                    <div class="flex flex-col">
-                                        <span class="text-lg font-semibold">{{ item.name }}</span>
-                                        <div class="text-medium font-medium mt-2">
-                                            {{ getWineTypeName(item) }}
-                                        </div>
-                                        <span
-                                            class="font-medium text-surface-500 dark:text-surface-400 text-sm"
-                                            >{{ getCountryName(item) }}</span>
+                <div class="flex flex-col">
+                    <div v-for="item in slotProps.items" :key="item.id" @click="showCard(item)">
+                        <div class="flex flex-col shadow-md rounded hover:border p-4">                       
+                            <div class="flex flex-row justify-between items-center">
+                                <div class="flex justify-around">
+                                    <div class="flex flex-col px-6">
+                                        <span class="text-xl font-bold">{{ item.name }}</span>
+                                        <div class="text-lg font-semibold mt-2">{{ getWineTypeName(item) }}</div>
+                                        <span class="text-md font-medium">{{ getCountryName(item) }}</span>
                                     </div>
-                                    <div class="bg-surface-100 p-1" style="border-radius: 30px">
+                                </div>
+                                <div class="flex flex-row justify-end items-center">
+                                    <div class="px-6">
+                                        <div class="bg-surface-100 p-1" style="border-radius: 30px" >
                                         <div class="bg-surface-0 flex items-center gap-2 justify-center py-1 px-2" style="border-radius: 20px; box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.04), 0px 1px 2px 0px rgba(0, 0, 0, 0.06)">
                                             <span class="text-surface-900 font-medium text-sm">{{ item.score }}</span>
                                             <i class="pi pi-star-fill text-yellow-500"></i>
                                         </div>
-                                        <div class="flex items-center p-2" v-if="item.flavour">
-                                            <Tag
-                                                :value="getFlavourName(item)"
-                                                rounded
-                                                :class="[store.characteristic[item.flavour], 'active']"
-                                            />
-                                        </div>
+                                    </div>
                                     </div>
                                     <div class="flex flex-col">
-                                        <Button
-                                            icon="pi pi-pencil"
-                                            severity="secondary"
-                                            rounded
-                                            text
-                                            aria-label="Edit"
-                                            @click="selectWine(item)"
-                                        />
-                                        <Button
-                                            icon="pi pi-trash"
-                                            severity="secondary"
-                                            rounded
-                                            text
-                                            aria-label="Delete"
-                                            @click="deleteWine(item)"
-                                        />
+                                        <Button icon="pi pi-pencil" severity="secondary" rounded text aria-label="Edit" @click="selectWine(item)" />
+                                        <Button icon="pi pi-trash" severity="secondary" rounded text aria-label="Delete" @click="deleteWine(item)" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-if="wine_card[item.id]" class="mt-4">
+                                <div class="flex flex-wrap items-center p-4 gap-8">
+                                    <div class="flex items-center" v-if="item.grapes">
+                                        <div class="font-medium mr-2">Grapes:</div>                    
+                                        <div class="flex flex-wrap gap-2">
+                                            <Tag v-for="id in item.grapes" :key="id" :value="getGrapesName(id)" rounded />
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center p-2" v-if="item.producer">
+                                        <div class="font-medium mr-2">Producer:</div> {{ item.producer }}
+                                    </div>
+                                    <div class="flex items-center p-2" v-if="item.year">
+                                        <div class="font-medium mr-2">Year:</div> {{ item.year }}
+                                    </div>
+                                    <div class="flex items-center p-2" v-if="item.alcohol">
+                                        <div class="font-medium mr-2">Alcohol:</div> {{ item.alcohol }}%
+                                    </div>
+                                    <div class="flex items-center p-2" v-if="item.colour">
+                                        <div class="font-medium mr-2">Colour:</div>
+                                        <div class="flex items-center gap-2">
+                                            <i class="pi pi-circle-fill" :style="{ color: store.shade[item.colour], fontSize: '1.5rem' }" />
+                                            {{ getColourName(item) }}
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center p-2" v-if="item.clarity">
+                                        <div class="font-medium mr-2">Clarity:</div> {{ getClarityName(item) }}
+                                    </div>
+                                    <div class="flex items-center p-2" v-if="item.aroma">
+                                        <div class="font-medium mr-2">Nose:</div>
+                                        <Tag :value="getAromaName(item)" rounded :class="[store.characteristic[item.aroma], 'active']"/>
+                                    </div>
+                                    <div class="flex items-center p-2" v-if="item.flavour">
+                                        <div class="font-medium mr-2">Flavour:</div>
+                                        <Tag :value="getFlavourName(item)" rounded :class="[store.characteristic[item.flavour], 'active']"/>
+                                    </div>
+                                    <div class="flex items-center p-2" v-if="item.sweetness">
+                                        <div class="font-medium mr-2">Sweetness:</div> {{ getSweetnessName(item) }}
+                                    </div>
+                                    <div class="flex items-center p-2" v-if="item.acidity">
+                                        <div class="font-medium mr-2">Acidity:</div> {{ getAcidityName(item) }}
+                                    </div>
+                                    <div class="flex items-center p-2" v-if="item.tannin">
+                                        <div class="font-medium mr-2">Tannin:</div> {{ getTanninName(item) }}
+                                    </div>
+                                    <div class="flex items-center p-2" v-if="item.body">
+                                        <div class="font-medium mr-2">Body:</div> {{ getBodyName(item) }}
+                                    </div>
+                                    <div class="flex items-center p-2" v-if="item.finish">
+                                        <div class="font-medium mr-2">Finish:</div>
+                                        <Tag :value="getFinishName(item)" :severity="store.severity[item.finish]"/>
+                                    </div>
+                                    <div class="flex items-center p-2" v-if="item.balance">
+                                        <div class="font-medium mr-2">Balance:</div>
+                                        <Tag :value="getBalanceName(item)" :severity="store.severity[item.balance]"/>
                                     </div>
                                 </div>
                             </div>
@@ -278,63 +302,6 @@ export default {
                     </div>
                 </div>
             </template>
-            <template #expansion="wine">
-            <div class="flex flex-wrap items-center p-4 gap-8">
-                <div class="flex items-center" v-if="wine.data.grapes">
-                    <div class="font-medium mr-2">Grapes:</div>                    
-                    <div class="flex flex-wrap gap-2">
-                        <Tag v-for="id in wine.data.grapes" :key="id" :value="getGrapesName(id)" rounded />
-                     </div>
-                </div>
-                <div class="flex items-center p-2" v-if="wine.data.producer">
-                    <div class="font-medium mr-2">Producer:</div> {{ wine.data.producer }}
-                </div>
-                <div class="flex items-center p-2" v-if="wine.data.year">
-                    <div class="font-medium mr-2">Year:</div> {{ wine.data.year }}
-                </div>
-                <div class="flex items-center p-2" v-if="wine.data.alcohol">
-                    <div class="font-medium mr-2">Alcohol:</div> {{ wine.data.alcohol }}%
-                </div>
-                <div class="flex items-center p-2" v-if="wine.data.colour">
-                    <div class="font-medium mr-2">Colour:</div>
-                    <div class="flex items-center gap-2">
-                        <i class="pi pi-circle-fill" :style="{ color: store.shade[wine.data.colour], fontSize: '1.5rem' }" />
-                        {{ getColourName(wine) }}
-                    </div>
-                </div>
-                <div class="flex items-center p-2" v-if="wine.data.clarity">
-                    <div class="font-medium mr-2">Clarity:</div> {{ getClarityName(wine) }}
-                </div>
-                <div class="flex items-center p-2" v-if="wine.data.aroma">
-                    <div class="font-medium mr-2">Nose:</div>
-                    <Tag :value="getAromaName(wine)" rounded :class="[store.characteristic[wine.data.aroma], 'active']"/>
-                </div>
-                <div class="flex items-center p-2" v-if="wine.data.flavour">
-                    <div class="font-medium mr-2">Flavour:</div>
-                    <Tag :value="getFlavourName(wine)" rounded :class="[store.characteristic[wine.data.flavour], 'active']"/>
-                </div>
-                <div class="flex items-center p-2" v-if="wine.data.sweetness">
-                    <div class="font-medium mr-2">Sweetness:</div> {{ getSweetnessName(wine) }}
-                </div>
-                <div class="flex items-center p-2" v-if="wine.data.acidity">
-                    <div class="font-medium mr-2">Acidity:</div> {{ getAcidityName(wine) }}
-                </div>
-                <div class="flex items-center p-2" v-if="wine.data.tannin">
-                    <div class="font-medium mr-2">Tannin:</div> {{ getTanninName(wine) }}
-                </div>
-                <div class="flex items-center p-2" v-if="wine.data.body">
-                    <div class="font-medium mr-2">Body:</div> {{ getBodyName(wine) }}
-                </div>
-                <div class="flex items-center p-2" v-if="wine.data.finish">
-                    <div class="font-medium mr-2">Finish:</div>
-                    <Tag :value="getFinishName(wine)" :severity="store.severity[wine.data.finish]"/>
-                </div>
-                <div class="flex items-center p-2" v-if="wine.data.balance">
-                    <div class="font-medium mr-2">Balance:</div>
-                    <Tag :value="getBalanceName(wine)" :severity="store.severity[wine.data.balance]"/>
-                </div>
-            </div>
-        </template>
         </DataView>
     </div>
     <DeleteWine v-model:visible="delete_dialog" :selected="selected" @wine_deleted="removeWine" />
