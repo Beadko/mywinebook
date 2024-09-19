@@ -1,10 +1,10 @@
 <script>
-import WineList from './components/WineList.vue'
+import WineList from "./components/WineList.vue";
 export default {
   components: {
-    WineList
-  }
-}
+    WineList,
+  },
+};
 </script>
 
 <template>
