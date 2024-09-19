@@ -205,7 +205,7 @@ export default {
 </script>
 
 <template>
-    <div class="card w-full top-4">
+    <div class="card w-full">
         <div class="flex flex-row justify-between gap-4 my-6">
             <div class="flex items-center justify-start">
                 <span class="material-symbols-outlined text-4xl">wine_bar</span>
