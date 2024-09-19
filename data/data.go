@@ -2,6 +2,7 @@ package data
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 
 	"github.com/Beadko/mywinebook/internal/wine"
@@ -24,7 +25,7 @@ func InitDB() {
 	_, err := db.Exec(`
 		CREATE TABLE IF NOT EXISTS wine_types (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name TEXT UNIQUE
+			name TEXT UNIQUE NOT NULL
 			);
 			INSERT INTO wine_types(name) VALUES ("Red"), ("White"), ("Rose"), ("Sparkling"), ("Dessert"), ("Fortified"), ("Orange");`)
 	if err != nil {
@@ -33,7 +34,7 @@ func InitDB() {
 	_, err = db.Exec(`
 		CREATE TABLE IF NOT EXISTS countries (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name TEXT UNIQUE
+			name TEXT UNIQUE NOT NULL
 		);
 		INSERT INTO countries(name) VALUES ("France"), ("Italy"), ("Australia"), ("Spain"), ("New Zealand"), ("Chile"), ("Germany"), ("Malta"), ("USA"), ("Argentina"), ("South Africa"), ("Portugal"), ("Hungary"), ("Georgia");`)
 	if err != nil {
@@ -42,7 +43,7 @@ func InitDB() {
 	_, err = db.Exec(`
 		CREATE TABLE IF NOT EXISTS grapes (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name TEXT UNIQUE
+			name TEXT UNIQUE NOT NULL
 		);
 		INSERT INTO grapes(name) VALUES ("Albariño"), ("Bordeaux"), ("Cabernet Franc"), ("Cabernet Sauvignon"), ("Carménère"), ("Chardonnay"), ("Chenin Blanc"), ("Malbec"), ("Merlot"), ("Moscato"), ("Muscat"), ("Pinot Gris"), ("Pinot Noir"), ("Pinotage"), ("Riesling"), ("Sauvignon Blanc"), ("Syrah"), ("Tempranillo"), ("Zinfandel");`)
 	if err != nil {
@@ -51,7 +52,7 @@ func InitDB() {
 	_, err = db.Exec(`
 		CREATE TABLE IF NOT EXISTS colours (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name TEXT UNIQUE		
+			name TEXT UNIQUE NOT NULL		
 		);
 		INSERT INTO colours(name) VALUES ("Pale Straw"), ("Medium Straw"), ("Deep Straw"), ("Pale Yellow"),  ("Medium Yellow"), ("Deep Yellow"), ("Pale Gold"), ("Medium Gold"), ("Deep Gold"), ("Pale Brown"), ("Medium Brown"), ("Deep Brown"), ("Pale Copper"), ("Medium Copper"), ("Deep Copper"), ("Pale Amber"), ("Medium Amber"), ("Deep Amber"), ("Pale Salmon"),  ("Medium Salmon"), ("Deep Salmon"), ("Pale Pink"), ("Medium Pink"), ("Deep Pink"), ("Pale Purple"), ("Medium Purple"), ("Deep Purple"), ("Pale Ruby"), (" Medium Ruby"), ("Deep Ruby"), ("Pale Garnet"), ("Medium Garnet"), ("Deep Garnet"), ("Pale Tawny"), ("Medium Tawny"), ("Deep Tawny");`)
 	if err != nil {
@@ -60,7 +61,7 @@ func InitDB() {
 	_, err = db.Exec(`
 		CREATE TABLE IF NOT EXISTS aromas (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name TEXT UNIQUE
+			name TEXT UNIQUE NOT NULL
 		);
 		INSERT INTO aromas(name) VALUES ("Fruity"), ("Vegetal"), ("Floral"), ("Earthy"), ("Woody"), ("Spicy"), ("Mineral"),("Herbal"), ("Smoky");`)
 	if err != nil {
@@ -69,7 +70,7 @@ func InitDB() {
 	_, err = db.Exec(`
 		CREATE TABLE IF NOT EXISTS intensities (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name TEXT UNIQUE		
+			name TEXT UNIQUE NOT NULL
 		);
 		INSERT INTO intensities(name) VALUES ("Weak"), ("Medium"), ("Pronounced");`)
 	if err != nil {
@@ -78,7 +79,7 @@ func InitDB() {
 	_, err = db.Exec(`
 		CREATE TABLE IF NOT EXISTS flavours (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name TEXT UNIQUE		
+			name TEXT UNIQUE NOT NULL
 		);
 		INSERT INTO flavours(name) VALUES ("Fruity"), ("Vegetal"), ("Floral"), ("Earthy"), ("Woody"), ("Spicy"), ("Mineral"), ("Herbal"), ("Smoky");`)
 	if err != nil {
@@ -87,7 +88,7 @@ func InitDB() {
 	_, err = db.Exec(`
 		CREATE TABLE IF NOT EXISTS sweetnesses (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name TEXT UNIQUE		
+			name TEXT UNIQUE NOT NULL
 		);
 		INSERT INTO sweetnesses(name) VALUES ("Dry"), ("Medium"), ("Sweet");`)
 	if err != nil {
@@ -96,7 +97,7 @@ func InitDB() {
 	_, err = db.Exec(`
 		CREATE TABLE IF NOT EXISTS acidities (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name TEXT UNIQUE		
+			name TEXT UNIQUE NOT NULL		
 		);
 		INSERT INTO acidities(name) VALUES ("Tart"), ("Fresh"), ("Smooth");`)
 	if err != nil {
@@ -105,7 +106,7 @@ func InitDB() {
 	_, err = db.Exec(`
 		CREATE TABLE IF NOT EXISTS tannins (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name TEXT UNIQUE		
+			name TEXT UNIQUE NOT NULL
 		);
 		INSERT INTO tannins(name) VALUES ("Soft"), ("Round"), ("Hard");`)
 	if err != nil {
@@ -114,7 +115,7 @@ func InitDB() {
 	_, err = db.Exec(`
 		CREATE TABLE IF NOT EXISTS bodies (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name TEXT UNIQUE		
+			name TEXT UNIQUE NOT NULL	
 		);
 		INSERT INTO bodies(name) VALUES ("Light"), ("Medium"), ("Full Bodied");`)
 	if err != nil {
@@ -123,7 +124,7 @@ func InitDB() {
 	_, err = db.Exec(`
 		CREATE TABLE IF NOT EXISTS clarities (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name TEXT UNIQUE		
+			name TEXT UNIQUE NOT NULL	
 		);
 		INSERT INTO clarities(name) VALUES ("Clear"), ("Slightly hazy"), ("Hazy");`)
 	if err != nil {
@@ -132,7 +133,7 @@ func InitDB() {
 	_, err = db.Exec(`
 		CREATE TABLE IF NOT EXISTS finishes (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name TEXT UNIQUE		
+			name TEXT UNIQUE NOT NULL
 		);
 		INSERT INTO finishes(name) VALUES ("Long"), ("Medium"), ("Short");`)
 	if err != nil {
@@ -141,7 +142,7 @@ func InitDB() {
 	_, err = db.Exec(`
 		CREATE TABLE IF NOT EXISTS balances (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name VARCHAR(100) UNIQUE		
+			name TEXT UNIQUE NOT NULL
 		);
 		INSERT INTO balances(name) VALUES ("Good"), ("Fair"), ("Unbalanced");`)
 	if err != nil {
@@ -369,6 +370,10 @@ func DeleteWine(id string) error {
 }
 
 func AddCountry(name string) (int, error) {
+	if len(name) == 0 {
+		return 0, fmt.Errorf("Country cannot be empty")
+	}
+
 	result, err := db.Exec(`INSERT INTO countries(name) VALUES (?)`, name)
 	if err != nil {
 		return 0, err
@@ -383,6 +388,10 @@ func AddCountry(name string) (int, error) {
 }
 
 func AddWineType(name string) (int, error) {
+	if len(name) == 0 {
+		return 0, fmt.Errorf("Wine type cannot be empty")
+	}
+
 	result, err := db.Exec(`INSERT INTO wine_types(name) VALUES (?)`, name)
 	if err != nil {
 		return 0, err
@@ -397,6 +406,10 @@ func AddWineType(name string) (int, error) {
 }
 
 func UpdateCountry(id string, name string) error {
+	if len(name) == 0 {
+		return fmt.Errorf("Country cannot be empty")
+	}
+
 	_, err := db.Exec(`UPDATE countries SET name = ? WHERE id = ?`, name, id)
 	if err == nil {
 		log.Println("Country updated successfully")
@@ -406,6 +419,10 @@ func UpdateCountry(id string, name string) error {
 }
 
 func UpdateWineType(id string, name string) error {
+	if len(name) == 0 {
+		return fmt.Errorf("Wine type cannot be empty")
+	}
+
 	_, err := db.Exec(`UPDATE wine_types SET name = ? WHERE id = ?`, name, id)
 	if err == nil {
 		log.Println("Wine type updated successfully")
@@ -454,6 +471,10 @@ func GetGrapes() ([]wine.Grapes, error) {
 }
 
 func AddGrapes(name string) (int, error) {
+	if len(name) == 0 {
+		return 0, fmt.Errorf("Grape name cannot be empty")
+	}
+
 	result, err := db.Exec(`INSERT INTO grapes(name) VALUES (?)`, name)
 	if err != nil {
 		return 0, err
@@ -468,6 +489,10 @@ func AddGrapes(name string) (int, error) {
 }
 
 func UpdateGrapes(id string, name string) error {
+	if len(name) == 0 {
+		return fmt.Errorf("Grape name cannot be empty")
+	}
+
 	_, err := db.Exec(`UPDATE grapes SET name = ? WHERE id = ?`, name, id)
 	if err == nil {
 		log.Println("Grapes updated successfully")
@@ -479,7 +504,7 @@ func UpdateGrapes(id string, name string) error {
 func DeleteGrapes(id string) error {
 	_, err := db.Exec(`DELETE FROM grapes WHERE id = ?`, id)
 	if err == nil {
-		log.Println("Wine type grapes successfully")
+		log.Println("Grapes deleted successfully")
 		return nil
 	}
 	return err
@@ -549,6 +574,10 @@ func GetAromas() ([]wine.Aroma, error) {
 }
 
 func AddAroma(name string) error {
+	if len(name) == 0 {
+		return fmt.Errorf("Aroma cannot be empty")
+	}
+
 	_, err := db.Exec(`INSERT INTO aromas(name) VALUES (?)`, name)
 	if err == nil {
 		log.Println("Aroma added successfully")
@@ -558,6 +587,10 @@ func AddAroma(name string) error {
 }
 
 func UpdateAroma(id string, name string) error {
+	if len(name) == 0 {
+		return fmt.Errorf("Aroma cannot be empty")
+	}
+
 	_, err := db.Exec(`UPDATE aromas SET name = ? WHERE id = ?`, name, id)
 	if err == nil {
 		log.Println("Aroma updated successfully")
@@ -597,6 +630,10 @@ func GetFlavours() ([]wine.Flavour, error) {
 }
 
 func AddFlavour(name string) error {
+	if len(name) == 0 {
+		return fmt.Errorf("Flavour cannot be empty")
+	}
+
 	_, err := db.Exec(`INSERT INTO flavours(name) VALUES (?)`, name)
 	if err == nil {
 		log.Println("Flavour added successfully")
@@ -606,6 +643,10 @@ func AddFlavour(name string) error {
 }
 
 func UpdateFlavour(id string, name string) error {
+	if len(name) == 0 {
+		return fmt.Errorf("Flavour cannot be empty")
+	}
+
 	_, err := db.Exec(`UPDATE flavours SET name = ? WHERE id = ?`, name, id)
 	if err == nil {
 		log.Println("Flavour updated successfully")
