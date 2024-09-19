@@ -47,7 +47,7 @@ export default {
 </script>
 
 <template>
-    <div class="flex items-center gap-2 mb-4">
+    <div class="flex shrink items-center gap-2 mb-4">
         <label for="grapes" class="font-semibold w-20">Grapes</label>
         <MultiSelect 
             v-model="selected.grapes"
@@ -56,7 +56,8 @@ export default {
             optionLabel="name" 
             optionValue="id" 
             filter 
-            class="ml-2 w-full md:w-[13.4rem]" 
+            class="ml-auto flex-grow"
+            style="min-width: 0;"
         />
         <Button type="button" icon="pi pi-plus" size="small" @click="dialog_visible = true" />
     </div>    
@@ -64,7 +65,7 @@ export default {
         v-model:visible="dialog_visible" 
         modal 
         header="Add a new grape variety" 
-        :style="{ width: '25rem' }"
+        class="w-full md:w-[25rem]"
     >
         <div class="flex items-center gap-2 mb-4">
             <label for="name" class="font-semibold w-20">Variety Name</label>
