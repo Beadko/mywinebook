@@ -5,10 +5,10 @@ package main
 
 import (
 	"github.com/Beadko/mywinebook/cmd"
-	"github.com/Beadko/mywinebook/data"
+	"github.com/Beadko/mywinebook/db"
 )
 
 func main() {
-	data.OpenDatabase()
+	db.OpenDatabase()
 	cmd.Execute()
 }

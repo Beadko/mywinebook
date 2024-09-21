@@ -3,7 +3,7 @@ package cmd
 import (
 	"log"
 
-	"github.com/Beadko/mywinebook/data"
+	"github.com/Beadko/mywinebook/db"
 	"github.com/spf13/cobra"
 )
 
@@ -13,7 +13,7 @@ var listCmd = &cobra.Command{
 	Short: "See a list of wines you tried",
 	Long:  `Get a full list wine entries that you have added to your diary `,
 	Run: func(cmd *cobra.Command, args []string) {
-		if _, err := data.GetWines(); err != nil {
+		if _, err := db.GetWines(); err != nil {
 			log.Println("Failed to get wines")
 			return
 		}

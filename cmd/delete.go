@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/AlecAivazis/survey/v2"
-	"github.com/Beadko/mywinebook/data"
+	"github.com/Beadko/mywinebook/db"
 	"github.com/spf13/cobra"
 )
 
@@ -22,7 +22,7 @@ var deleteCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalf("Failed to get the wine: %v", err)
 		}
-		err = data.DeleteWine(ID)
+		err = db.DeleteWine(ID)
 		if err != nil {
 			log.Fatalf("Failed to delete wine: %v", err)
 		}

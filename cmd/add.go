@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/AlecAivazis/survey/v2"
-	"github.com/Beadko/mywinebook/data"
+	"github.com/Beadko/mywinebook/db"
 	"github.com/Beadko/mywinebook/internal/wine"
 	"github.com/spf13/cobra"
 )
@@ -54,7 +54,7 @@ var addWineCmd = &cobra.Command{
 		}
 
 		// Add the wine to the database
-		_, err = data.AddWine(wine.Wine{
+		_, err = db.AddWine(wine.Wine{
 			Name:      name,
 			TypeID:    wineType,
 			CountryID: country,

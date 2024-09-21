@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Beadko/mywinebook/data"
+	"github.com/Beadko/mywinebook/db"
 	"github.com/Beadko/mywinebook/internal/wine"
 	"github.com/gorilla/mux"
 )
@@ -51,7 +51,7 @@ func AddRouterEndpoints(r *mux.Router) *mux.Router {
 }
 
 func getWines(w http.ResponseWriter, r *http.Request) {
-	winelist, err := data.GetWines()
+	winelist, err := db.GetWines()
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to get wines", http.StatusInternalServerError)
@@ -70,7 +70,7 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 
 func getWine(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
-	resp, err := data.GetWine(id)
+	resp, err := db.GetWine(id)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to find the wine", http.StatusInternalServerError)
@@ -82,7 +82,7 @@ func getWine(w http.ResponseWriter, r *http.Request) {
 
 func updateWine(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
-	wine, err := data.GetWine(id)
+	wine, err := db.GetWine(id)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to find the wine", http.StatusInternalServerError)
@@ -93,7 +93,7 @@ func updateWine(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to decode updateWine input", http.StatusInternalServerError)
 		return
 	}
-	err = data.UpdateWine(wine, id)
+	err = db.UpdateWine(wine, id)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to update the wine", http.StatusInternalServerError)
@@ -105,7 +105,7 @@ func updateWine(w http.ResponseWriter, r *http.Request) {
 
 func deleteWine(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
-	err := data.DeleteWine(id)
+	err := db.DeleteWine(id)
 	if err != nil {
 		http.Error(w, "Failed to delete the wine", http.StatusInternalServerError)
 		return
@@ -118,10 +118,10 @@ func addWine(w http.ResponseWriter, r *http.Request) {
 	var wine wine.Wine
 	if err := json.NewDecoder(r.Body).Decode(&wine); err != nil {
 		log.Printf("Failed to decode addWine input: %v", err)
-		http.Error(w, "Invalid input data", http.StatusBadRequest)
+		http.Error(w, "Invalid input db", http.StatusBadRequest)
 		return
 	}
-	id, err := data.AddWine(wine)
+	id, err := db.AddWine(wine)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to add the wine", http.StatusInternalServerError)
@@ -140,7 +140,7 @@ func addWine(w http.ResponseWriter, r *http.Request) {
 }
 
 func getWineTypes(w http.ResponseWriter, r *http.Request) {
-	winetypes, err := data.GetWineTypes()
+	winetypes, err := db.GetWineTypes()
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to get wine types", http.StatusInternalServerError)
@@ -158,7 +158,7 @@ func getWineTypes(w http.ResponseWriter, r *http.Request) {
 }
 
 func getCountries(w http.ResponseWriter, r *http.Request) {
-	countries, err := data.GetCountries()
+	countries, err := db.GetCountries()
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to get countries", http.StatusInternalServerError)
@@ -182,7 +182,7 @@ func addWineType(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to decode addWineType input", http.StatusInternalServerError)
 		return
 	}
-	id, err := data.AddWineType(wt.Name)
+	id, err := db.AddWineType(wt.Name)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to add the wine type", http.StatusInternalServerError)
@@ -208,7 +208,7 @@ func updateWineType(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to decode updateWineType input", http.StatusInternalServerError)
 		return
 	}
-	err := data.UpdateWineType(id, wt.Name)
+	err := db.UpdateWineType(id, wt.Name)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to update the wine type", http.StatusInternalServerError)
@@ -225,7 +225,7 @@ func addCountry(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to decode addCountry input", http.StatusInternalServerError)
 		return
 	}
-	id, err := data.AddCountry(country.Name)
+	id, err := db.AddCountry(country.Name)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to add the country", http.StatusInternalServerError)
@@ -251,7 +251,7 @@ func updateCountry(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to decode updateCountry input", http.StatusInternalServerError)
 		return
 	}
-	err := data.UpdateCountry(id, c.Name)
+	err := db.UpdateCountry(id, c.Name)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to update the country", http.StatusInternalServerError)
@@ -263,7 +263,7 @@ func updateCountry(w http.ResponseWriter, r *http.Request) {
 
 func deleteWineType(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
-	err := data.DeleteWineType(id)
+	err := db.DeleteWineType(id)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to delete the wine type", http.StatusInternalServerError)
@@ -275,7 +275,7 @@ func deleteWineType(w http.ResponseWriter, r *http.Request) {
 
 func deleteCountry(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
-	err := data.DeleteCountry(id)
+	err := db.DeleteCountry(id)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to delete the country", http.StatusInternalServerError)
@@ -286,7 +286,7 @@ func deleteCountry(w http.ResponseWriter, r *http.Request) {
 }
 
 func getGrapes(w http.ResponseWriter, r *http.Request) {
-	g, err := data.GetGrapes()
+	g, err := db.GetGrapes()
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to get grapes", http.StatusInternalServerError)
@@ -310,7 +310,7 @@ func addGrapes(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to decode addGrapes input", http.StatusInternalServerError)
 		return
 	}
-	id, err := data.AddGrapes(g.Name)
+	id, err := db.AddGrapes(g.Name)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to add grapes", http.StatusInternalServerError)
@@ -336,7 +336,7 @@ func updateGrapes(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to decode updateGrapes input", http.StatusInternalServerError)
 		return
 	}
-	err := data.UpdateGrapes(id, g.Name)
+	err := db.UpdateGrapes(id, g.Name)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to update the grapes", http.StatusInternalServerError)
@@ -348,7 +348,7 @@ func updateGrapes(w http.ResponseWriter, r *http.Request) {
 
 func deleteGrapes(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
-	err := data.DeleteGrapes(id)
+	err := db.DeleteGrapes(id)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to delete the grapes", http.StatusInternalServerError)
@@ -359,7 +359,7 @@ func deleteGrapes(w http.ResponseWriter, r *http.Request) {
 }
 
 func getColours(w http.ResponseWriter, r *http.Request) {
-	c, err := data.GetColours()
+	c, err := db.GetColours()
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to get colours", http.StatusInternalServerError)
@@ -377,7 +377,7 @@ func getColours(w http.ResponseWriter, r *http.Request) {
 }
 
 func getClarities(w http.ResponseWriter, r *http.Request) {
-	c, err := data.GetClarities()
+	c, err := db.GetClarities()
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to get clarities", http.StatusInternalServerError)
@@ -395,7 +395,7 @@ func getClarities(w http.ResponseWriter, r *http.Request) {
 }
 
 func getAromas(w http.ResponseWriter, r *http.Request) {
-	a, err := data.GetAromas()
+	a, err := db.GetAromas()
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to get aromas", http.StatusInternalServerError)
@@ -419,7 +419,7 @@ func addAroma(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to decode addAroma input", http.StatusInternalServerError)
 		return
 	}
-	err := data.AddAroma(a.Name)
+	err := db.AddAroma(a.Name)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to add the aroma", http.StatusInternalServerError)
@@ -437,7 +437,7 @@ func updateAroma(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to decode updateAroma input", http.StatusInternalServerError)
 		return
 	}
-	err := data.UpdateAroma(id, a.Name)
+	err := db.UpdateAroma(id, a.Name)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to update the aroma", http.StatusInternalServerError)
@@ -449,7 +449,7 @@ func updateAroma(w http.ResponseWriter, r *http.Request) {
 
 func deleteAroma(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
-	err := data.DeleteAroma(id)
+	err := db.DeleteAroma(id)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to delete the aroma", http.StatusInternalServerError)
@@ -460,7 +460,7 @@ func deleteAroma(w http.ResponseWriter, r *http.Request) {
 }
 
 func getFlavours(w http.ResponseWriter, r *http.Request) {
-	f, err := data.GetFlavours()
+	f, err := db.GetFlavours()
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to get flavours", http.StatusInternalServerError)
@@ -484,7 +484,7 @@ func addFlavour(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to decode addFlavour input", http.StatusInternalServerError)
 		return
 	}
-	err := data.AddFlavour(f.Name)
+	err := db.AddFlavour(f.Name)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to add the flavour", http.StatusInternalServerError)
@@ -502,7 +502,7 @@ func updateFlavour(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to decode updateFlavour input", http.StatusInternalServerError)
 		return
 	}
-	err := data.UpdateFlavour(id, f.Name)
+	err := db.UpdateFlavour(id, f.Name)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to update the flavour", http.StatusInternalServerError)
@@ -514,7 +514,7 @@ func updateFlavour(w http.ResponseWriter, r *http.Request) {
 
 func deleteFlavour(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
-	err := data.DeleteFlavour(id)
+	err := db.DeleteFlavour(id)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to delete the flavour", http.StatusInternalServerError)
@@ -525,7 +525,7 @@ func deleteFlavour(w http.ResponseWriter, r *http.Request) {
 }
 
 func getSweetnesses(w http.ResponseWriter, r *http.Request) {
-	s, err := data.GetSweetness()
+	s, err := db.GetSweetness()
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to get sweetnesses", http.StatusInternalServerError)
@@ -543,7 +543,7 @@ func getSweetnesses(w http.ResponseWriter, r *http.Request) {
 }
 
 func getAcidities(w http.ResponseWriter, r *http.Request) {
-	a, err := data.GetAcidities()
+	a, err := db.GetAcidities()
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to get acidities", http.StatusInternalServerError)
@@ -561,7 +561,7 @@ func getAcidities(w http.ResponseWriter, r *http.Request) {
 }
 
 func getTannins(w http.ResponseWriter, r *http.Request) {
-	t, err := data.GetTannins()
+	t, err := db.GetTannins()
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to get tannins", http.StatusInternalServerError)
@@ -579,7 +579,7 @@ func getTannins(w http.ResponseWriter, r *http.Request) {
 }
 
 func getBodies(w http.ResponseWriter, r *http.Request) {
-	b, err := data.GetBodies()
+	b, err := db.GetBodies()
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to get bodies", http.StatusInternalServerError)
@@ -597,7 +597,7 @@ func getBodies(w http.ResponseWriter, r *http.Request) {
 }
 
 func getFinishes(w http.ResponseWriter, r *http.Request) {
-	f, err := data.GetFinishes()
+	f, err := db.GetFinishes()
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to get finishes", http.StatusInternalServerError)
@@ -615,7 +615,7 @@ func getFinishes(w http.ResponseWriter, r *http.Request) {
 }
 
 func getBalances(w http.ResponseWriter, r *http.Request) {
-	b, err := data.GetBalances()
+	b, err := db.GetBalances()
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to get balances", http.StatusInternalServerError)
