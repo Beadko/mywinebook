@@ -23,8 +23,11 @@ export default {
       axios
         .post("/grapes", this.new_grapes)
         .then((res) => {
-          this.store.grapes.push(res.data),
-            (this.selected.grapes = res.data.id),
+          this.store.grapes.push(res.data);
+          if (!Array.isArray(this.selected.grapes)) {
+        this.selected.grapes = [];
+      }
+      this.selected.grapes.push(res.data.id);
             (this.dialog_visible = false);
           this.new_grapes.name = "";
         })
@@ -32,13 +35,8 @@ export default {
           window.alert(`The API returned an error: ${error}`);
         });
     },
-    handleGrapesChange(value) {
-      if (value === "add_grapes") {
-        (this.dialog_visible = true), (this.selected.grapes = []);
-      }
-    },
     clearSelection() {
-      (this.selected.grapes = []), (this.dialog_visible = false);
+      (this.new_grapes.name = ""), (this.dialog_visible = false);
     },
   },
 };
