@@ -13,7 +13,7 @@ var db *sql.DB
 
 func OpenDatabase() error {
 	var err error
-	db, err = sql.Open("sqlite3", "data/sqlite-database.db?_foreign_keys=on")
+	db, err = sql.Open("sqlite3", "./data/sqlite-database.db?_foreign_keys=on")
 	if err != nil {
 		return err
 	}
