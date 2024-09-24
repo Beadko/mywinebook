@@ -9,6 +9,8 @@ import (
 )
 
 func main() {
-	db.OpenDatabase()
+	if err := db.OpenDatabase(); err != nil {
+		panic(err.Error())
+	}
 	cmd.Execute()
 }
