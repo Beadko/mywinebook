@@ -48,6 +48,7 @@ func AddRouterEndpoints(r *mux.Router) *mux.Router {
 	r.HandleFunc("/finish", getFinishes).Methods("GET")
 	r.HandleFunc("/body", getBodies).Methods("GET")
 
+	r.PathPrefix("/wine/images/").Handler(http.StripPrefix("/wine/images", http.FileServer(http.Dir("./data/images"))))
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 	return r
 }
@@ -55,13 +56,21 @@ func AddRouterEndpoints(r *mux.Router) *mux.Router {
 func getWines(w http.ResponseWriter, r *http.Request) {
 	winelist, err := db.GetWines()
 	if err != nil {
-		log.Println(err)
+		fmt.Println("Error fetching wines:", err)
 		http.Error(w, "Failed to get wines", http.StatusInternalServerError)
 		return
 	}
+
+	for i := range winelist {
+		imageFilePath := fmt.Sprintf("./data/images/wine_%d", winelist[i].ID)
+		if _, err := os.Stat(imageFilePath); err == nil {
+			winelist[i].ImagePath = fmt.Sprintf("/uploads/wine_%d", winelist[i].ID)
+		}
+	}
+
 	winelistJson, err := json.Marshal(winelist)
 	if err != nil {
-		fmt.Println("Could not not marshall to JSON.\nStopping here.", err)
+		fmt.Println("Could not not marshall to JSON:", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
@@ -78,6 +87,11 @@ func getWine(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to find the wine", http.StatusInternalServerError)
 		return
 	}
+	imageFilePath := fmt.Sprintf("./data/images/wine_%d", resp.ID)
+	if _, err := os.Stat(imageFilePath); err == nil {
+		resp.ImagePath = fmt.Sprintf("/uploads/wine_%d", resp.ID)
+	}
+
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(resp)
 }

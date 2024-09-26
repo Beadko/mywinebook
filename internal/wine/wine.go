@@ -50,6 +50,7 @@ type Wine struct {
 	FinishID    SafeInt   `json:"finish,omitempty"`
 	BalanceID   SafeInt   `json:"balance,omitempty"`
 	Notes       string    `json:"notes,omitempty"`
+	ImagePath   string    `json:"image_path,omitempty"`
 }
 type WineType struct {
 	ID   int    `json:"id"`
