@@ -48,7 +48,7 @@ func AddRouterEndpoints(r *mux.Router) *mux.Router {
 	r.HandleFunc("/finish", getFinishes).Methods("GET")
 	r.HandleFunc("/body", getBodies).Methods("GET")
 
-	r.PathPrefix("/wine/images/").Handler(http.StripPrefix("/wine/images", http.FileServer(http.Dir("./data/images"))))
+	r.PathPrefix("/wine/images/").Handler(http.StripPrefix("/wine/images", http.FileServer(http.Dir("./data/wine/images"))))
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 	return r
 }
@@ -62,9 +62,9 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for i := range winelist {
-		imageFilePath := fmt.Sprintf("./data/images/wine_%d", winelist[i].ID)
+		imageFilePath := fmt.Sprintf("./data/wine/images/wine_%d", winelist[i].ID)
 		if _, err := os.Stat(imageFilePath); err == nil {
-			winelist[i].ImagePath = fmt.Sprintf("/uploads/wine_%d", winelist[i].ID)
+			winelist[i].ImagePath = fmt.Sprintf("/wine/images/wine_%d", winelist[i].ID)
 		}
 	}
 
@@ -87,9 +87,9 @@ func getWine(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to find the wine", http.StatusInternalServerError)
 		return
 	}
-	imageFilePath := fmt.Sprintf("./data/images/wine_%d", resp.ID)
+	imageFilePath := fmt.Sprintf("./data/wine/images/wine_%d", resp.ID)
 	if _, err := os.Stat(imageFilePath); err == nil {
-		resp.ImagePath = fmt.Sprintf("/uploads/wine_%d", resp.ID)
+		resp.ImagePath = fmt.Sprintf("/wine/images/wine_%d", resp.ID)
 	}
 
 	w.WriteHeader(http.StatusOK)
@@ -127,7 +127,7 @@ func deleteWine(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	imageName := fmt.Sprintf("wine_%s", id)
-	imagePath := "./data/images/" + imageName
+	imagePath := "./data/wine/images/" + imageName
 	err = os.Remove(imagePath)
 	if err != nil {
 		fmt.Println("Could not delete the image:", err)
@@ -170,7 +170,7 @@ func addWine(w http.ResponseWriter, r *http.Request) {
 	defer file.Close()
 
 	imageName := fmt.Sprintf("wine_%d", wine.ID)
-	imagePath := "./data/images/" + imageName
+	imagePath := "./data/wine/images/" + imageName
 
 	outFile, err := os.Create(imagePath)
 	if err != nil {
