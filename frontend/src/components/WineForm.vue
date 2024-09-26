@@ -91,6 +91,7 @@ export default {
       finishes: [],
       balances: [],
       store,
+      previewImage: null,
     };
   },
   watch: {
@@ -108,9 +109,21 @@ export default {
     saveWine() {
       if (this.mode === "add") {
         axios
-          .post("/wine", this.formData)
+          .post(
+            "/wine",
+            {
+              "wine{}": this.formData,
+              "image[]": this.$refs.fileInput.files,
+            },
+            {
+              headers: {
+                "content-type": "multipart/form-data",
+              },
+            }
+          )
           .then((res) => {
             this.$emit("wine_added", res.data);
+            this.clearImage();
           })
           .catch((error) => {
             window.alert(`The API returned an error: ${error}`);
@@ -139,6 +152,7 @@ export default {
     cancelForm() {
       this.formData = { ...this.selected };
       this.$parent.wine_dialog = false;
+      this.clearImage();
     },
     getSeverityClass(selectedValue, itemId) {
       const severity = this.store.severity[itemId];
@@ -151,6 +165,19 @@ export default {
     range(start, end) {
       return Array.from({ length: end - start + 1 }, (_, i) => start + i);
     },
+    selectFile() {
+      this.$refs.fileInput.click();
+    },
+    onFileSelected(event) {
+      const file = event.target.files[0];
+      if (file) {
+        this.previewImage = URL.createObjectURL(file);
+      }
+    },
+    clearImage() {
+      this.previewImage = null;
+      this.$refs.fileInput.value = "";
+    },
   },
 };
 </script>
@@ -161,6 +188,31 @@ export default {
     modal
     :header="mode === 'add' ? 'Add Wine' : 'Update Wine'"
   >
+    <div class="flex flex-wrap items-center justify-center gap-2 mb-4">
+      <input
+        type="file"
+        ref="fileInput"
+        accept="image/*"
+        style="display: none"
+        @change="onFileSelected"
+      />
+      <Button
+        icon="pi pi-upload"
+        label="Image"
+        @click="selectFile"
+        v-if="!previewImage"
+      />
+      <div class="relative mt-4" v-if="previewImage">
+        <img :src="previewImage" alt="Preview" class="max-w-xs" />
+        <Button
+          icon="pi pi-times"
+          severity= "secondary"
+          rounded
+          class="button-image"
+          @click="clearImage"
+        />
+      </div>
+    </div>
     <div class="flex items-center gap-2 mb-4">
       <label for="name" class="font-semibold w-20">Name</label>
       <InputText
