@@ -3,8 +3,10 @@ package endpoints
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/Beadko/mywinebook/db"
 	"github.com/Beadko/mywinebook/internal/wine"
@@ -115,23 +117,58 @@ func deleteWine(w http.ResponseWriter, r *http.Request) {
 }
 
 func addWine(w http.ResponseWriter, r *http.Request) {
-	var wine wine.Wine
-	if err := json.NewDecoder(r.Body).Decode(&wine); err != nil {
-		log.Printf("Failed to decode addWine input: %v", err)
-		http.Error(w, "Invalid input db", http.StatusBadRequest)
+	if err := r.ParseMultipartForm(10 << 20); err != nil {
+		fmt.Println("Error parsing multipart form:", err)
+		http.Error(w, "File too large or invalid input", http.StatusBadRequest)
 		return
 	}
+
+	wineData := r.FormValue("wine{}")
+	var wine wine.Wine
+	if err := json.Unmarshal([]byte(wineData), &wine); err != nil {
+		fmt.Println("Error unmarshalling wine data from form field:", err)
+		http.Error(w, "Invalid wine data", http.StatusBadRequest)
+		return
+	}
+
 	id, err := db.AddWine(wine)
 	if err != nil {
-		log.Println(err)
+		fmt.Println("Error inserting wine into database:", err)
 		http.Error(w, "Failed to add the wine", http.StatusInternalServerError)
 		return
 	}
 	wine.ID = id
+
+	file, _, err := r.FormFile("image[]")
+	if err != nil {
+		fmt.Println("Error retrieving image from form field:", err)
+		http.Error(w, "Invalid image upload", http.StatusBadRequest)
+		return
+	}
+	defer file.Close()
+
+	imageName := fmt.Sprintf("wine_%d", wine.ID)
+	imagePath := "./data/images/" + imageName
+
+	outFile, err := os.Create(imagePath)
+	if err != nil {
+		fmt.Println("Error creating file for image:", err)
+		http.Error(w, "Failed to save image", http.StatusInternalServerError)
+		return
+	}
+	defer outFile.Close()
+
+	_, err = io.Copy(outFile, file)
+	if err != nil {
+		fmt.Println("Error saving image to disk:", err)
+		http.Error(w, "Failed to save image", http.StatusInternalServerError)
+		return
+	}
+
 	wJSON, err := json.Marshal(wine)
 	if err != nil {
-		fmt.Println("Could not not marshall to JSON.\nStopping here.", err)
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		fmt.Println("Could not not marshall to JSON:", err)
+		http.Error(w, "Failed to marshal wine data", http.StatusInternalServerError)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
