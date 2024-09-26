@@ -162,41 +162,44 @@ func addWine(w http.ResponseWriter, r *http.Request) {
 	wine.ID = id
 
 	file, _, err := r.FormFile("image[]")
-	if err != nil {
+	if err == http.ErrMissingFile {
+		fmt.Println("No image uploaded, proceeding without saving an image")
+	} else if err != nil {
 		fmt.Println("Error retrieving image from form field:", err)
 		http.Error(w, "Invalid image upload", http.StatusBadRequest)
 		return
-	}
-	defer file.Close()
+	} else {
+		defer file.Close()
 
-	fileData, err := io.ReadAll(file)
-	if err != nil {
-		fmt.Println("Error reading image data:", err)
-		http.Error(w, "Failed to read image data", http.StatusInternalServerError)
-		return
-	}
+		fileData, err := io.ReadAll(file)
+		if err != nil {
+			fmt.Println("Error reading image data:", err)
+			http.Error(w, "Failed to read image data", http.StatusInternalServerError)
+			return
+		}
 
-	imageName, err := generateImageName(wine.ID, fileData)
-	if err != nil {
-		fmt.Println("Error generating image name:", err)
-		http.Error(w, "Failed to generate image name", http.StatusInternalServerError)
-		return
-	}
-	imagePath := "./data/wine/images/" + imageName
+		imageName, err := generateImageName(wine.ID, fileData)
+		if err != nil {
+			fmt.Println("Error generating image name:", err)
+			http.Error(w, "Failed to generate image name", http.StatusInternalServerError)
+			return
+		}
+		imagePath := "./data/wine/images/" + imageName
 
-	outFile, err := os.Create(imagePath)
-	if err != nil {
-		fmt.Println("Error creating file for image:", err)
-		http.Error(w, "Failed to save image", http.StatusInternalServerError)
-		return
-	}
-	defer outFile.Close()
+		outFile, err := os.Create(imagePath)
+		if err != nil {
+			fmt.Println("Error creating file for image:", err)
+			http.Error(w, "Failed to save image", http.StatusInternalServerError)
+			return
+		}
+		defer outFile.Close()
 
-	_, err = io.Copy(outFile, file)
-	if err != nil {
-		fmt.Println("Error saving image to disk:", err)
-		http.Error(w, "Failed to save image", http.StatusInternalServerError)
-		return
+		_, err = io.Copy(outFile, file)
+		if err != nil {
+			fmt.Println("Error saving image to disk:", err)
+			http.Error(w, "Failed to save image", http.StatusInternalServerError)
+			return
+		}
 	}
 
 	wJSON, err := json.Marshal(wine)
