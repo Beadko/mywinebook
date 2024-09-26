@@ -169,7 +169,19 @@ func addWine(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	imageName := fmt.Sprintf("wine_%d", wine.ID)
+	fileData, err := io.ReadAll(file)
+	if err != nil {
+		fmt.Println("Error reading image data:", err)
+		http.Error(w, "Failed to read image data", http.StatusInternalServerError)
+		return
+	}
+
+	imageName, err := generateImageName(wine.ID, fileData)
+	if err != nil {
+		fmt.Println("Error generating image name:", err)
+		http.Error(w, "Failed to generate image name", http.StatusInternalServerError)
+		return
+	}
 	imagePath := "./data/wine/images/" + imageName
 
 	outFile, err := os.Create(imagePath)
@@ -196,6 +208,34 @@ func addWine(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprint(w, string(wJSON))
+}
+
+func generateImageName(id int, fileData []byte) (string, error) {
+	mimeType := http.DetectContentType(fileData)
+	var fileFormat string
+	switch mimeType {
+	case "image/jpeg":
+		fileFormat = ".jpg"
+	case "image/png":
+		fileFormat = ".png"
+	case "image/gif":
+		fileFormat = ".gif"
+	case "image/bmp":
+		fileFormat = ".bmp"
+	case "image/tiff":
+		fileFormat = ".tiff"
+	case "image/webp":
+		fileFormat = ".webp"
+	case "image/svg+xml":
+		fileFormat = ".svg"
+	case "image/heic":
+		fileFormat = ".heic"
+	default:
+		return "", fmt.Errorf("unsupported image format: %s", mimeType)
+	}
+
+	imageName := fmt.Sprintf("wine_%d%s", id, fileFormat)
+	return imageName, nil
 }
 
 func getWineTypes(w http.ResponseWriter, r *http.Request) {
