@@ -126,6 +126,14 @@ func deleteWine(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to delete the wine", http.StatusInternalServerError)
 		return
 	}
+	imageName := fmt.Sprintf("wine_%s", id)
+	imagePath := "./data/images/" + imageName
+	err = os.Remove(imagePath)
+	if err != nil {
+		fmt.Println("Could not delete the image:", err)
+		http.Error(w, "Failed to delete the image", http.StatusInternalServerError)
+	}
+
 	w.WriteHeader(http.StatusCreated)
 	fmt.Fprintln(w, "Wine deleted successfully")
 }
