@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"mime"
 	"net/http"
 	"os"
 	"regexp"
@@ -206,7 +207,7 @@ func addWine(w http.ResponseWriter, r *http.Request) {
 	}
 	wine.ID = id
 
-	file, _, err := r.FormFile("image[]")
+	f, m, err := r.FormFile("image[]")
 	if errors.Is(http.ErrMissingFile, err) {
 		fmt.Println("No image uploaded, proceeding without saving an image")
 	} else if err != nil {
@@ -214,22 +215,13 @@ func addWine(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid image upload", http.StatusBadRequest)
 		return
 	} else {
-		defer file.Close()
-
-		fileData, err := io.ReadAll(file)
-		if err != nil {
-			fmt.Println("Error reading image data:", err)
-			http.Error(w, "Failed to read image data", http.StatusInternalServerError)
-			return
+		defer f.Close()
+		exts, err := mime.ExtensionsByType(m.Header.Get("Content-Type"))
+		if err != nil || len(exts) == 0 {
+			fmt.Println("Could not process the image data:", err)
 		}
 
-		imageName, err := generateImageName(wine.ID, fileData)
-		if err != nil {
-			fmt.Println("Error generating image name:", err)
-			http.Error(w, "Failed to generate image name", http.StatusInternalServerError)
-			return
-		}
-		imagePath := "./data/wine/images/" + imageName
+		imagePath := fmt.Sprintf("./data/wine/images/wine_%d%s", wine.ID, exts[0])
 
 		outFile, err := os.Create(imagePath)
 		if err != nil {
@@ -239,8 +231,7 @@ func addWine(w http.ResponseWriter, r *http.Request) {
 		}
 		defer outFile.Close()
 
-		_, err = io.Copy(outFile, file)
-		if err != nil {
+		if _, err := io.Copy(outFile, f); err != nil {
 			fmt.Println("Error saving image to disk:", err)
 			http.Error(w, "Failed to save image", http.StatusInternalServerError)
 			return
@@ -256,34 +247,6 @@ func addWine(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprint(w, string(wJSON))
-}
-
-func generateImageName(id int, fileData []byte) (string, error) {
-	mimeType := http.DetectContentType(fileData)
-	var fileFormat string
-	switch mimeType {
-	case "image/jpeg":
-		fileFormat = ".jpg"
-	case "image/png":
-		fileFormat = ".png"
-	case "image/gif":
-		fileFormat = ".gif"
-	case "image/bmp":
-		fileFormat = ".bmp"
-	case "image/tiff":
-		fileFormat = ".tiff"
-	case "image/webp":
-		fileFormat = ".webp"
-	case "image/svg+xml":
-		fileFormat = ".svg"
-	case "image/heic":
-		fileFormat = ".heic"
-	default:
-		return "", fmt.Errorf("unsupported image format: %s", mimeType)
-	}
-
-	imageName := fmt.Sprintf("wine_%d%s", id, fileFormat)
-	return imageName, nil
 }
 
 func getWineTypes(w http.ResponseWriter, r *http.Request) {
