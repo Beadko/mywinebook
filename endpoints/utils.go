@@ -2,11 +2,14 @@ package endpoints
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"os"
+	"regexp"
+	"strconv"
 
 	"github.com/Beadko/mywinebook/db"
 	"github.com/Beadko/mywinebook/internal/wine"
@@ -48,27 +51,33 @@ func AddRouterEndpoints(r *mux.Router) *mux.Router {
 	r.HandleFunc("/finish", getFinishes).Methods("GET")
 	r.HandleFunc("/body", getBodies).Methods("GET")
 
-	r.PathPrefix("/wine/images/").Handler(http.StripPrefix("/wine/images", http.FileServer(http.Dir("./data/wine/images"))))
+	r.PathPrefix("/wine/images/").Handler(http.StripPrefix("/wine/images/", http.FileServer(http.Dir("./data/wine/images"))))
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 	return r
 }
 
 func getWines(w http.ResponseWriter, r *http.Request) {
-	winelist, err := db.GetWines()
+	wl, err := db.GetWines()
 	if err != nil {
 		fmt.Println("Error fetching wines:", err)
 		http.Error(w, "Failed to get wines", http.StatusInternalServerError)
 		return
 	}
 
-	for i := range winelist {
-		imageFilePath := fmt.Sprintf("./data/wine/images/wine_%d", winelist[i].ID)
-		if _, err := os.Stat(imageFilePath); err == nil {
-			winelist[i].ImagePath = fmt.Sprintf("/wine/images/wine_%d", winelist[i].ID)
+	for i := range wl {
+		wIDStr := strconv.Itoa(wl[i].ID)
+		exists, imageName, err := checkIfImageExists(wIDStr)
+		if err != nil {
+			fmt.Printf("Failed to check for file existence for wine ID %s: %v", wIDStr, err)
+			return
+		}
+		if exists {
+			wl[i].ImagePath = "/wine/images/" + imageName
+		} else {
 		}
 	}
 
-	winelistJson, err := json.Marshal(winelist)
+	winelistJson, err := json.Marshal(wl)
 	if err != nil {
 		fmt.Println("Could not not marshall to JSON:", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -81,15 +90,23 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 
 func getWine(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
+
 	resp, err := db.GetWine(id)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to find the wine", http.StatusInternalServerError)
 		return
 	}
-	imageFilePath := fmt.Sprintf("./data/wine/images/wine_%d", resp.ID)
-	if _, err := os.Stat(imageFilePath); err == nil {
-		resp.ImagePath = fmt.Sprintf("/wine/images/wine_%d", resp.ID)
+
+	exists, imageName, err := checkIfImageExists(id)
+	if err != nil {
+		fmt.Printf("Failed to check for file existence for wine ID %s: %v", id, err)
+		return
+	}
+	if exists {
+		resp.ImagePath = "/wine/images/" + imageName
+	} else {
+		fmt.Println("No image found, proceeding without an image")
 	}
 
 	w.WriteHeader(http.StatusOK)
@@ -121,21 +138,49 @@ func updateWine(w http.ResponseWriter, r *http.Request) {
 
 func deleteWine(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
-	err := db.DeleteWine(id)
+
+	exists, imageName, err := checkIfImageExists(id)
+	if err != nil {
+		fmt.Printf("Failed to check for file existence for wine ID %s: %v", id, err)
+		return
+	}
+	if exists {
+		imagePath := "./data/wine/images/" + imageName
+		err = os.Remove(imagePath)
+		if err != nil {
+			fmt.Println("Could not delete the image:", err)
+			http.Error(w, "Failed to delete the image", http.StatusInternalServerError)
+		}
+	} else {
+		fmt.Println("No image found, proceeding without deleting an image")
+	}
+
+	err = db.DeleteWine(id)
 	if err != nil {
 		http.Error(w, "Failed to delete the wine", http.StatusInternalServerError)
 		return
 	}
-	imageName := fmt.Sprintf("wine_%s", id)
-	imagePath := "./data/wine/images/" + imageName
-	err = os.Remove(imagePath)
-	if err != nil {
-		fmt.Println("Could not delete the image:", err)
-		http.Error(w, "Failed to delete the image", http.StatusInternalServerError)
-	}
 
 	w.WriteHeader(http.StatusCreated)
 	fmt.Fprintln(w, "Wine deleted successfully")
+}
+
+func checkIfImageExists(id string) (bool, string, error) {
+	d := "./data/wine/images"
+	files, err := os.ReadDir(d)
+	if err != nil {
+		return false, "", err
+	}
+
+	p := fmt.Sprintf(`^wine_%s.*`, id)
+	regex := regexp.MustCompile(p)
+
+	for _, f := range files {
+		if regex.MatchString(f.Name()) {
+			return true, f.Name(), nil
+		}
+	}
+	return false, "", nil
 }
 
 func addWine(w http.ResponseWriter, r *http.Request) {
@@ -162,7 +207,7 @@ func addWine(w http.ResponseWriter, r *http.Request) {
 	wine.ID = id
 
 	file, _, err := r.FormFile("image[]")
-	if err == http.ErrMissingFile {
+	if errors.Is(http.ErrMissingFile, err) {
 		fmt.Println("No image uploaded, proceeding without saving an image")
 	} else if err != nil {
 		fmt.Println("Error retrieving image from form field:", err)
