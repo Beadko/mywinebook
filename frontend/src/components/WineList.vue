@@ -19,6 +19,7 @@ export default {
       wine_dialog: false,
       wine_card: {},
       form_mode: "add",
+      isFullSize: false,
     };
   },
   computed: {
@@ -216,6 +217,13 @@ export default {
     handleWineUpdated() {
       this.wine_dialog = false;
     },
+    toggleImage(itemId) {
+      if (this.isFullSize === itemId) {
+        this.isFullSize = null;
+      } else {
+        this.isFullSize = itemId;
+      }
+    },
   },
   async mounted() {
     this.fetchData();
@@ -242,22 +250,46 @@ export default {
           >
             <div class="flex flex-col shadow-md rounded hover:border p-4">
               <div class="flex flex-row justify-between items-center">
+                <div
+                  class="justify-center items-center px-1"
+                  v-if="item.image_path"
+                >
+                  <img
+                    :src="item.image_path"
+                    class="w-16 h-16 sm:w-24 sm:h-24 rounded-md object-cover"
+                    @click.stop="toggleImage(item.id)"
+                  />
+                  <div
+                    v-if="isFullSize === item.id"
+                    class="fixed inset-0 flex items-center bg-black bg-opacity-25 justify-center z-50"
+                  >
+                    <div class="relative">
+                      <img
+                        :src="item.image_path"
+                        class="max-w-1/2 md:max-w-lg max-h-full p-4 cursor-pointer"
+                        @click.stop="toggleImage(item.id)"
+                      />
+                    </div>
+                  </div>
+                </div>
                 <div class="flex justify-around">
-                  <div class="flex flex-col px-6">
-                    <span class="text-xl font-bold">{{ item.name }}</span>
-                    <div class="text-lg font-semibold mt-2">
+                  <div class="flex flex-col">
+                    <span class="text-lg font-bold text-center">{{
+                      item.name
+                    }}</span>
+                    <div class="text-md font-semibold mt-2 text-center">
                       {{ getWineTypeName(item) }}
                     </div>
-                    <span class="text-md font-medium">{{
+                    <span class="text-base font-medium text-center">{{
                       getCountryName(item)
                     }}</span>
                   </div>
                 </div>
                 <div class="flex flex-row justify-end items-center">
-                  <div class="px-6">
+                  <div class="px-4">
                     <div class="bg-surface-100 p-1" style="border-radius: 30px">
                       <div
-                        class="bg-surface-0 flex items-center gap-2 justify-center py-1 px-2"
+                        class="bg-surface-0 flex items-center gap-2 justify-center py-1 px-1"
                         style="
                           border-radius: 20px;
                           box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.04),
