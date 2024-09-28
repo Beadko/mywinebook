@@ -277,13 +277,15 @@ func GetWines() ([]wine.Wine, error) {
 		defer gRows.Close()
 
 		for gRows.Next() {
-			var gId wine.SafeInt
-			if err := gRows.Scan(&gId); err != nil {
+			var gID wine.SafeInt
+			if err := gRows.Scan(&gID); err != nil {
 				return nil, err
 			}
-			w.GrapeIDs = append(w.GrapeIDs, gId)
+			w.GrapeIDs = append(w.GrapeIDs, gID)
 		}
-
+		if err := gRows.Err(); err != nil {
+			return nil, err
+		}
 		wines = append(wines, w)
 	}
 	if err := rows.Err(); err != nil {
@@ -301,7 +303,7 @@ func GetWine(id string) (wine.Wine, error) {
 		return wine.Wine{}, err
 	}
 	gRows, err := db.Query(`
-		SELECT grape_id FROM wine_grapes WHERE wine_id = ?
+		SELECT wine_id, grape_id FROM wine_grapes WHERE wine_id = ?
 	`, w.ID)
 	if err != nil {
 		return wine.Wine{}, err
@@ -310,7 +312,7 @@ func GetWine(id string) (wine.Wine, error) {
 
 	for gRows.Next() {
 		var gId wine.SafeInt
-		if err := gRows.Scan(&gId); err != nil {
+		if err := gRows.Scan(&w.ID, &gId); err != nil {
 			return wine.Wine{}, err
 		}
 		w.GrapeIDs = append(w.GrapeIDs, gId)
