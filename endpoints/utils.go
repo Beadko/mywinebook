@@ -116,17 +116,66 @@ func getWine(w http.ResponseWriter, r *http.Request) {
 
 func updateWine(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
+
 	wine, err := db.GetWine(id)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Failed to find the wine", http.StatusInternalServerError)
 		return
 	}
-	if err := json.NewDecoder(r.Body).Decode(&wine); err != nil {
-		log.Println(err)
-		http.Error(w, "Failed to decode updateWine input", http.StatusInternalServerError)
+
+	if err := r.ParseMultipartForm(10 << 20); err != nil {
+		fmt.Println("Error parsing multipart form:", err)
+		http.Error(w, "File too large or invalid input", http.StatusBadRequest)
 		return
 	}
+
+	wineData := r.FormValue("wine{}")
+	if err := json.Unmarshal([]byte(wineData), &wine); err != nil {
+		fmt.Println("Error unmarshalling wine data from form field:", err)
+		http.Error(w, "Invalid wine data", http.StatusBadRequest)
+		return
+	}
+
+	f, m, err := r.FormFile("image[]")
+	if errors.Is(http.ErrMissingFile, err) {
+		fmt.Println("No image uploaded, proceeding without saving an image")
+	} else if err != nil {
+		fmt.Println("Error retrieving image from form field:", err)
+		http.Error(w, "Invalid image upload", http.StatusBadRequest)
+		return
+	} else {
+		defer f.Close()
+
+		oIP := wine.ImagePath
+
+		exts, err := mime.ExtensionsByType(m.Header.Get("Content-Type"))
+		if err != nil || len(exts) == 0 {
+			fmt.Println("Could not process the image data:", err)
+			http.Error(w, "Invalid image format", http.StatusBadRequest)
+		}
+
+		nIP := fmt.Sprintf("./data/wine/images/wine_%d%s", wine.ID, exts[0])
+
+		outFile, err := os.Create(nIP)
+		if err != nil {
+			fmt.Println("Error creating file for image:", err)
+			http.Error(w, "Failed to save image", http.StatusInternalServerError)
+			return
+		}
+		defer outFile.Close()
+
+		if _, err := io.Copy(outFile, f); err != nil {
+			fmt.Println("Error saving image to disk:", err)
+			http.Error(w, "Failed to save image", http.StatusInternalServerError)
+			return
+		}
+		if err := os.Remove(oIP); err != nil {
+			fmt.Println("Failed to delete old image:", err)
+		}
+		wine.ImagePath = nIP
+	}
+
 	err = db.UpdateWine(wine, id)
 	if err != nil {
 		log.Println(err)
