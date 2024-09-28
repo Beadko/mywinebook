@@ -129,9 +129,19 @@ export default {
             window.alert(`The API returned an error: ${error}`);
           });
       } else if (this.mode === "update") {
-        Object.assign(this.selected, this.formData);
         axios
-          .put("/wine/" + this.selected.id, this.selected)
+          .put(
+            "/wine/" + this.selected.id,
+            {
+              "wine{}": this.formData,
+              "image[]": this.$refs.fileInput.files,
+            },
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            }
+          )
           .then(() => {
             this.$emit("wine_updated", this.selected);
           })
