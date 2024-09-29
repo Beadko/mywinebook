@@ -206,6 +206,7 @@ export default {
         body: "",
         finish: "",
         balance: "",
+        image_path: "",
       };
       this.form_mode = "add";
       this.wine_dialog = true;

@@ -39,6 +39,7 @@ export default {
         body: "",
         finish: "",
         balance: "",
+        image_path: "",
       }),
     },
   },
@@ -181,7 +182,11 @@ export default {
     onFileSelected(event) {
       const file = event.target.files[0];
       if (file) {
-        this.previewImage = URL.createObjectURL(file);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.previewImage = e.target.result;
+        };
+        reader.readAsDataURL(file);
       }
     },
     clearImage() {
@@ -198,7 +203,10 @@ export default {
     modal
     :header="mode === 'add' ? 'Add Wine' : 'Update Wine'"
   >
-    <div class="flex flex-wrap items-center justify-center gap-2 mb-4">
+    <div
+      class="flex flex-col items-center justify-center gap-2 mb-4"
+      v-if="previewImage || formData.image_path"
+    >
       <input
         type="file"
         ref="fileInput"
@@ -206,22 +214,41 @@ export default {
         style="display: none"
         @change="onFileSelected"
       />
-      <Button
-        icon="pi pi-upload"
-        label="Image"
-        @click="selectFile"
-        v-if="!previewImage"
-      />
-      <div class="relative mt-4" v-if="previewImage">
-        <img :src="previewImage" alt="Preview" class="max-w-xs" />
+      <div class="relative mt-4">
+        <img
+          :src="previewImage || formData.image_path"
+          alt="Preview"
+          class="max-w-xs"
+        />
         <Button
           icon="pi pi-times"
-          severity= "secondary"
+          severity="secondary"
           rounded
           class="button-image"
+          v-if="previewImage"
           @click="clearImage"
         />
       </div>
+      <Button
+        icon="pi pi-upload"
+        label="Upload new Image"
+        @click="selectFile"
+        class="mt-4"
+        v-if="!previewImage"
+      />
+    </div>
+    <div
+      class="flex flex-wrap items-center justify-center gap-2 mb-4"
+      v-if="!previewImage && !formData.image_path"
+    >
+      <input
+        type="file"
+        ref="fileInput"
+        accept="image/*"
+        style="display: none"
+        @change="onFileSelected"
+      />
+      <Button icon="pi pi-upload" label="Upload Image" @click="selectFile" />
     </div>
     <div class="flex items-center gap-2 mb-4">
       <label for="name" class="font-semibold w-20">Name</label>

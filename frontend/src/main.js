@@ -16,6 +16,7 @@ import RadioButton from "primevue/radiobutton";
 import Tag from "primevue/tag";
 import MultiSelect from "primevue/multiselect";
 import DataView from "primevue/dataview";
+import Image from "primevue/image";
 import App from "./App.vue";
 
 const app = createApp(App);
@@ -37,5 +38,6 @@ app.component("RadioButton", RadioButton);
 app.component("Tag", Tag);
 app.component("MultiSelect", MultiSelect);
 app.component("DataView", DataView);
+app.component("Image", Image);
 
 app.mount("#app");
