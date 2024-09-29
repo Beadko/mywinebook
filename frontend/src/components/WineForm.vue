@@ -201,6 +201,7 @@ export default {
   <Dialog
     v-model:visible="dialog_visible"
     modal
+    @hide="cancelForm"
     :header="mode === 'add' ? 'Add Wine' : 'Update Wine'"
   >
     <div

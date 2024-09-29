@@ -65,6 +65,7 @@ export default {
   <Dialog
     v-model:visible="dialog_visible"
     modal
+    @hide="clearSelection"
     header="Add a new grape variety"
     class="w-full md:w-[25rem]"
   >
