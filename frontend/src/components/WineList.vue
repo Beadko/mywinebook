@@ -311,7 +311,7 @@ export default {
                       rounded
                       text
                       aria-label="Edit"
-                      @click="selectWine(item)"
+                      @click.stop="selectWine(item)"
                     />
                     <Button
                       icon="pi pi-trash"
@@ -319,7 +319,7 @@ export default {
                       rounded
                       text
                       aria-label="Delete"
-                      @click="deleteWine(item)"
+                      @click.stop="deleteWine(item)"
                     />
                   </div>
                 </div>
