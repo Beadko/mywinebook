@@ -183,9 +183,6 @@ export default {
     removeWine(wn) {
       this.wines = this.wines.filter((wine) => wine.id !== wn);
     },
-    addNewWine(wn) {
-      this.wines.push(wn);
-    },
     openAddWineForm() {
       this.selected = {
         name: "",
@@ -212,10 +209,12 @@ export default {
       this.wine_dialog = true;
     },
     handleWineAdded(wn) {
-      this.addNewWine(wn);
+      this.wines.push(wn);
       this.wine_dialog = false;
     },
-    handleWineUpdated() {
+    handleWineUpdated(wn) {
+      const idx = this.wines.findIndex((wine) => wine.id === wn.id);
+      this.wines[idx] = wn;
       this.wine_dialog = false;
     },
     toggleImage(itemId) {
@@ -239,7 +238,7 @@ export default {
         <span class="material-symbols-outlined text-4xl">wine_bar</span>
         <div class="text-xl font-large ml-2">My Wine Book</div>
       </div>
-      <Button icon="pi pi-plus" size="small" @click="openAddWineForm" />
+      <Button icon="pi pi-plus" @click="openAddWineForm" />
     </div>
     <DataView :value="wines">
       <template #list="slotProps">
@@ -289,7 +288,8 @@ export default {
                 <div class="flex flex-row justify-end items-center">
                   <div class="px-4">
                     <div class="bg-surface-100 p-1" style="border-radius: 30px">
-                      <div v-if="item.score"
+                      <div
+                        v-if="item.score"
                         class="bg-surface-0 flex items-center gap-1 justify-center py-1 px-1"
                         style="
                           border-radius: 20px;

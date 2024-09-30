@@ -144,7 +144,7 @@ export default {
             }
           )
           .then(() => {
-            this.$emit("wine_updated", this.selected);
+            this.$emit("wine_updated", this.formData);
           })
           .catch((error) => {
             window.alert(`The API returned an error: ${error}`);
