@@ -57,6 +57,8 @@ func AddRouterEndpoints(r *mux.Router) *mux.Router {
 	return r
 }
 
+const imagePath = "./data/wine/images/"
+
 func getWines(w http.ResponseWriter, r *http.Request) {
 	wl, err := db.GetWines()
 	if err != nil {
@@ -73,7 +75,7 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if exists {
-			wl[i].ImagePath = "/wine/images/" + imageName
+			wl[i].ImageURL = "/wine/images/" + imageName
 		} else {
 		}
 	}
@@ -94,7 +96,7 @@ func getWine(w http.ResponseWriter, r *http.Request) {
 
 	resp, err := db.GetWine(id)
 	if err != nil {
-		log.Println(err)
+		fmt.Println("Failed to find the wine:", err)
 		http.Error(w, "Failed to find the wine", http.StatusInternalServerError)
 		return
 	}
@@ -105,7 +107,7 @@ func getWine(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if exists {
-		resp.ImagePath = "/wine/images/" + imageName
+		resp.ImageURL = "/wine/images/" + imageName
 	} else {
 		fmt.Println("No image found, proceeding without an image")
 	}
@@ -119,9 +121,23 @@ func updateWine(w http.ResponseWriter, r *http.Request) {
 
 	wine, err := db.GetWine(id)
 	if err != nil {
-		log.Println(err)
+		fmt.Println(err)
 		http.Error(w, "Failed to find the wine", http.StatusInternalServerError)
 		return
+	}
+
+	exists, imageName, err := checkIfImageExists(id)
+	if err != nil {
+		fmt.Printf("Failed to check for file existence for wine ID %s: %v", id, err)
+		http.Error(w, "Failed to check existing image", http.StatusInternalServerError)
+		return
+	}
+	var oldIP string
+	if exists {
+		oldImageName := imageName
+		oldIP = imagePath + oldImageName
+	} else {
+		fmt.Println("No image to update")
 	}
 
 	if err := r.ParseMultipartForm(10 << 20); err != nil {
@@ -138,26 +154,23 @@ func updateWine(w http.ResponseWriter, r *http.Request) {
 	}
 
 	f, m, err := r.FormFile("image[]")
-	if errors.Is(http.ErrMissingFile, err) {
-		fmt.Println("No image uploaded, proceeding without saving an image")
-	} else if err != nil {
-		fmt.Println("Error retrieving image from form field:", err)
+	if err != nil && !errors.Is(err, http.ErrMissingFile) {
+		fmt.Println("Error retrieving image:", err)
 		http.Error(w, "Invalid image upload", http.StatusBadRequest)
 		return
-	} else {
+	} else if f != nil {
 		defer f.Close()
-
-		oIP := wine.ImagePath
 
 		exts, err := mime.ExtensionsByType(m.Header.Get("Content-Type"))
 		if err != nil || len(exts) == 0 {
 			fmt.Println("Could not process the image data:", err)
 			http.Error(w, "Invalid image format", http.StatusBadRequest)
+			return
 		}
 
-		nIP := fmt.Sprintf("./data/wine/images/wine_%d%s", wine.ID, exts[0])
+		newImageName := fmt.Sprintf("wine_%d%s", wine.ID, exts[0])
 
-		outFile, err := os.Create(nIP)
+		outFile, err := os.Create(imagePath + newImageName)
 		if err != nil {
 			fmt.Println("Error creating file for image:", err)
 			http.Error(w, "Failed to save image", http.StatusInternalServerError)
@@ -170,20 +183,24 @@ func updateWine(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Failed to save image", http.StatusInternalServerError)
 			return
 		}
-		if err := os.Remove(oIP); err != nil {
-			fmt.Println("Failed to delete old image:", err)
+		if exists {
+			if err := os.Remove(oldIP); err != nil {
+				fmt.Println("Failed to delete old image:", err)
+				http.Error(w, "Failed to delete old image", http.StatusInternalServerError)
+				return
+			}
 		}
-		wine.ImagePath = nIP
+		wine.ImageURL = "/wine/images/" + newImageName
 	}
 
 	err = db.UpdateWine(wine, id)
 	if err != nil {
-		log.Println(err)
+		fmt.Println("Failed to update wine:", err)
 		http.Error(w, "Failed to update the wine", http.StatusInternalServerError)
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintln(w, "Wine updated successfully")
+	fmt.Println("Wine updated successfully with ID:", id)
 }
 
 func deleteWine(w http.ResponseWriter, r *http.Request) {
@@ -195,8 +212,7 @@ func deleteWine(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if exists {
-		imagePath := "./data/wine/images/" + imageName
-		err = os.Remove(imagePath)
+		err = os.Remove(imagePath + imageName)
 		if err != nil {
 			fmt.Println("Could not delete the image:", err)
 			http.Error(w, "Failed to delete the image", http.StatusInternalServerError)
@@ -216,8 +232,7 @@ func deleteWine(w http.ResponseWriter, r *http.Request) {
 }
 
 func checkIfImageExists(id string) (bool, string, error) {
-	d := "./data/wine/images"
-	files, err := os.ReadDir(d)
+	files, err := os.ReadDir(imagePath)
 	if err != nil {
 		return false, "", err
 	}
@@ -270,9 +285,9 @@ func addWine(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("Could not process the image data:", err)
 		}
 
-		imagePath := fmt.Sprintf("./data/wine/images/wine_%d%s", wine.ID, exts[0])
+		imageName := fmt.Sprintf("wine_%d%s", wine.ID, exts[0])
 
-		outFile, err := os.Create(imagePath)
+		outFile, err := os.Create(imagePath + imageName)
 		if err != nil {
 			fmt.Println("Error creating file for image:", err)
 			http.Error(w, "Failed to save image", http.StatusInternalServerError)
@@ -285,6 +300,8 @@ func addWine(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Failed to save image", http.StatusInternalServerError)
 			return
 		}
+
+		wine.ImageURL = "/wine/data/" + imageName
 	}
 
 	wJSON, err := json.Marshal(wine)
