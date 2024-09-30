@@ -39,7 +39,7 @@ export default {
         body: "",
         finish: "",
         balance: "",
-        image_path: "",
+        image_url: "",
       }),
     },
   },
@@ -201,13 +201,9 @@ export default {
   <Dialog
     v-model:visible="dialog_visible"
     modal
-    @hide="cancelForm"
     :header="mode === 'add' ? 'Add Wine' : 'Update Wine'"
   >
-    <div
-      class="flex flex-col items-center justify-center gap-2 mb-4"
-      v-if="previewImage || formData.image_path"
-    >
+    <div class="flex flex-col items-center justify-center gap-2 mb-4">
       <input
         type="file"
         ref="fileInput"
@@ -215,41 +211,19 @@ export default {
         style="display: none"
         @change="onFileSelected"
       />
-      <div class="relative mt-4">
+      <div v-if="previewImage || formData.image_url">
         <img
-          :src="previewImage || formData.image_path"
+          :src="previewImage || formData.image_url"
           alt="Preview"
           class="max-w-xs"
-        />
-        <Button
-          icon="pi pi-times"
-          severity="secondary"
-          rounded
-          class="button-image"
-          v-if="previewImage"
-          @click="clearImage"
         />
       </div>
       <Button
         icon="pi pi-upload"
-        label="Upload new Image"
+        label="Upload Image"
         @click="selectFile"
         class="mt-4"
-        v-if="!previewImage"
       />
-    </div>
-    <div
-      class="flex flex-wrap items-center justify-center gap-2 mb-4"
-      v-if="!previewImage && !formData.image_path"
-    >
-      <input
-        type="file"
-        ref="fileInput"
-        accept="image/*"
-        style="display: none"
-        @change="onFileSelected"
-      />
-      <Button icon="pi pi-upload" label="Upload Image" @click="selectFile" />
     </div>
     <div class="flex items-center gap-2 mb-4">
       <label for="name" class="font-semibold w-20">Name</label>
