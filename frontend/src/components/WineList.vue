@@ -206,7 +206,7 @@ export default {
         body: "",
         finish: "",
         balance: "",
-        image_path: "",
+        image_url: "",
       };
       this.form_mode = "add";
       this.wine_dialog = true;
@@ -252,12 +252,12 @@ export default {
             <div class="flex flex-col shadow-md rounded hover:border p-4">
               <div class="flex flex-row justify-between items-center">
                 <div
-                  class="justify-center items-center px-1"
-                  v-if="item.image_path"
+                  class="justify-center items-center px-2"
+                  v-if="item.image_url"
                 >
                   <img
-                    :src="item.image_path"
-                    class="w-16 h-16 sm:w-24 sm:h-24 rounded-md object-cover"
+                    :src="item.image_url"
+                    class="w-16 h-16 sm:w-20 sm:h-20 rounded-md object-cover"
                     @click.stop="toggleImage(item.id)"
                   />
                   <div
@@ -266,7 +266,7 @@ export default {
                   >
                     <div class="relative">
                       <img
-                        :src="item.image_path"
+                        :src="item.image_url"
                         class="max-w-1/2 md:max-w-lg max-h-full p-4 cursor-pointer"
                         @click.stop="toggleImage(item.id)"
                       />
@@ -289,8 +289,8 @@ export default {
                 <div class="flex flex-row justify-end items-center">
                   <div class="px-4">
                     <div class="bg-surface-100 p-1" style="border-radius: 30px">
-                      <div
-                        class="bg-surface-0 flex items-center gap-2 justify-center py-1 px-1"
+                      <div v-if="item.score"
+                        class="bg-surface-0 flex items-center gap-1 justify-center py-1 px-1"
                         style="
                           border-radius: 20px;
                           box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.04),
