@@ -124,6 +124,10 @@ export default {
           )
           .then((res) => {
             this.$emit("wine_added", res.data);
+            this.$emit("image_selected", {
+              imgURL: res.data.image_url,
+              itemId: res.data.id,
+            });
             this.clearImage();
           })
           .catch((error) => {
@@ -143,8 +147,13 @@ export default {
               },
             }
           )
-          .then(() => {
-            this.$emit("wine_updated", this.formData);
+          .then((res) => {
+            this.$emit("wine_updated", res.data);
+            this.$emit("image_selected", {
+              imgURL: res.data.image_url,
+              itemId: res.data.id,
+            });
+            this.clearImage();
           })
           .catch((error) => {
             window.alert(`The API returned an error: ${error}`);

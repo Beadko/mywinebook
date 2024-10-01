@@ -217,6 +217,12 @@ export default {
       this.wines[idx] = wn;
       this.wine_dialog = false;
     },
+    handleImage({ imgURL, wnID }) {
+      const selectedItem = this.wines.find((wine) => wine.id === wnID);
+      if (selectedItem) {
+        selectedItem.image_url = imgURL;
+      }
+    },
     toggleImage(itemId) {
       if (this.isFullSize === itemId) {
         this.isFullSize = null;
@@ -431,6 +437,7 @@ export default {
     :mode="form_mode"
     @wine_added="handleWineAdded"
     @wine_updated="handleWineUpdated"
+    @image_selected="handleImage"
     class="w-full md:w-1/2 lg:w-1/3"
   />
 </template>
