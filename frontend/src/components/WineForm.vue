@@ -128,7 +128,6 @@ export default {
               imgURL: res.data.image_url,
               itemId: res.data.id,
             });
-            this.clearImage();
           })
           .catch((error) => {
             window.alert(`The API returned an error: ${error}`);
@@ -153,7 +152,6 @@ export default {
               imgURL: res.data.image_url,
               itemId: res.data.id,
             });
-            this.clearImage();
           })
           .catch((error) => {
             window.alert(`The API returned an error: ${error}`);
@@ -171,8 +169,11 @@ export default {
     },
     cancelForm() {
       this.formData = { ...this.selected };
+      this.previewImage = null;
+      if (this.$refs.fileInput) {
+        this.$refs.fileInput.value = "";
+      }
       this.$parent.wine_dialog = false;
-      this.clearImage();
     },
     getSeverityClass(selectedValue, itemId) {
       const severity = this.store.severity[itemId];
@@ -198,10 +199,6 @@ export default {
         reader.readAsDataURL(file);
       }
     },
-    clearImage() {
-      this.previewImage = null;
-      this.$refs.fileInput.value = "";
-    },
   },
 };
 </script>
@@ -210,8 +207,8 @@ export default {
   <Dialog
     v-model:visible="dialog_visible"
     modal
-    :header="mode === 'add' ? 'Add Wine' : 'Update Wine'"
     @hide="cancelForm"
+    :header="mode === 'add' ? 'Add Wine' : 'Update Wine'"
   >
     <div class="flex flex-col items-center justify-center gap-2 mb-4">
       <input
