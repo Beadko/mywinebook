@@ -1,4 +1,4 @@
-FROM golang:1.22-alpine AS backend
+FROM golang:1.23-alpine AS backend
 COPY . /go/src/github.com/beadko/mywinebook
 WORKDIR /go/src/github.com/beadko/mywinebook
 RUN apk add --no-cache build-base
