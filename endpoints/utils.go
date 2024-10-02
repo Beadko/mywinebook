@@ -196,14 +196,20 @@ func updateWine(w http.ResponseWriter, r *http.Request) {
 		wine.ImageURL = "/wine/images/" + newImageName
 	}
 
-	err = db.UpdateWine(wine, id)
+	resp, err := db.UpdateWine(wine, id)
 	if err != nil {
 		fmt.Println("Failed to update wine:", err)
 		http.Error(w, "Failed to update the wine", http.StatusInternalServerError)
 		return
 	}
+	rJSON, err := json.Marshal(resp)
+	if err != nil {
+		fmt.Println("Could not not marshall to JSON:", err)
+		http.Error(w, "Failed to marshal wine data", http.StatusInternalServerError)
+		return
+	}
 	w.WriteHeader(http.StatusOK)
-	fmt.Println("Wine updated successfully with ID:", id)
+	fmt.Fprint(w, string(rJSON))
 }
 
 func deleteWine(w http.ResponseWriter, r *http.Request) {

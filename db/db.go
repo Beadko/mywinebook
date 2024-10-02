@@ -325,36 +325,36 @@ func GetWine(id string) (wine.Wine, error) {
 	return w, nil
 }
 
-func UpdateWine(w wine.Wine, id string) error {
+func UpdateWine(w wine.Wine, id string) (wine.Wine, error) {
 	tx, err := db.Begin()
 	if err != nil {
-		return err
+		return wine.Wine{}, err
 	}
 	_, err = tx.Exec(`UPDATE wines SET name = ?, wine_type = ?, country = ?, score = ?, producer = ?, alcohol = ?, year = ?, colour = ?, clarity = ?, aroma = ?, intensity = ?, flavour = ?, sweetness = ?, acidity = ?, tannin = ?, body = ?, finish = ?, balance = ?, notes = ? WHERE id = ?`, w.Name, w.TypeID, w.CountryID, w.Score, w.Producer, w.Alcohol, w.Year, w.ColourID, w.ClarityID, w.AromaID, w.IntensityID, w.FlavourID, w.SweetnessID, w.AcidityID, w.TanninID, w.BodyID, w.FinishID, w.BalanceID, w.Notes, id)
 	if err != nil {
 		tx.Rollback()
-		return err
+		return wine.Wine{}, err
 	}
 	// update the grapes data
 	_, err = tx.Exec(`DELETE FROM wine_grapes WHERE wine_id = ?`, id)
 	if err != nil {
 		tx.Rollback()
-		return err
+		return wine.Wine{}, err
 	}
 	for _, gId := range w.GrapeIDs {
 		_, err = tx.Exec(`INSERT INTO wine_grapes (wine_id, grape_id) VALUES (?, ?)`, id, gId)
 		if err != nil {
 			tx.Rollback()
-			return err
+			return wine.Wine{}, err
 		}
 	}
 
 	if err := tx.Commit(); err != nil {
-		return err
+		return wine.Wine{}, err
 	}
 
 	log.Println("Wine updated successfully")
-	return nil
+	return w, nil
 }
 
 func DeleteWine(id string) error {
