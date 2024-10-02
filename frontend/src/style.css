@@ -28,10 +28,10 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  display: border-box;
 }
 
 h1 {
@@ -229,14 +229,15 @@ button:focus-visible {
 }
 
 .card {
-  padding: 2em;
+  padding: 0;
 }
 
 #app {
   max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+  margin: auto;
   text-align: center;
+  justify-content: center;
+  width: inherit;
 }
 
 @media (prefers-color-scheme: light) {

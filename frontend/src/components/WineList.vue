@@ -238,8 +238,8 @@ export default {
 </script>
 
 <template>
-  <div class="card w-full">
-    <div class="flex flex-row justify-between gap-4 my-6">
+  <div class="w-full md:w-3/4 lg:w-1/2 m-auto pt-20">
+    <div class="flex flex-row justify-between gap-4 m-6">
       <div class="flex items-center justify-start">
         <span class="material-symbols-outlined text-4xl">wine_bar</span>
         <div class="text-xl font-large ml-2">My Wine Book</div>
