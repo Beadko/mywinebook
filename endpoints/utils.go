@@ -121,8 +121,8 @@ func updateWine(w http.ResponseWriter, r *http.Request) {
 
 	wine, err := db.GetWine(id)
 	if err != nil {
-		fmt.Println(err)
-		http.Error(w, "Failed to find the wine", http.StatusInternalServerError)
+		fmt.Printf("Error fetching wine with ID %s: %v", id, err)
+		http.Error(w, "Failed to find the wine", http.StatusNotFound)
 		return
 	}
 
@@ -134,8 +134,7 @@ func updateWine(w http.ResponseWriter, r *http.Request) {
 	}
 	var oldIP string
 	if exists {
-		oldImageName := imageName
-		oldIP = imagePath + oldImageName
+		oldIP = imagePath + imageName
 	} else {
 		fmt.Println("No image to update")
 	}
@@ -164,13 +163,15 @@ func updateWine(w http.ResponseWriter, r *http.Request) {
 		exts, err := mime.ExtensionsByType(m.Header.Get("Content-Type"))
 		if err != nil || len(exts) == 0 {
 			fmt.Println("Could not process the image data:", err)
-			http.Error(w, "Invalid image format", http.StatusBadRequest)
+			http.Error(w, "Invalid image format", http.StatusUnsupportedMediaType)
 			return
 		}
 
 		newImageName := fmt.Sprintf("wine_%d%s", wine.ID, exts[0])
 
-		outFile, err := os.Create(imagePath + newImageName)
+		newIP := imagePath + newImageName
+
+		outFile, err := os.Create(newIP)
 		if err != nil {
 			fmt.Println("Error creating file for image:", err)
 			http.Error(w, "Failed to save image", http.StatusInternalServerError)
@@ -184,10 +185,12 @@ func updateWine(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if exists {
-			if err := os.Remove(oldIP); err != nil {
-				fmt.Println("Failed to delete old image:", err)
-				http.Error(w, "Failed to delete old image", http.StatusInternalServerError)
-				return
+			if oldIP != newIP {
+				if err := os.Remove(oldIP); err != nil {
+					fmt.Println("Failed to delete old image:", err)
+					http.Error(w, "Failed to delete old image", http.StatusInternalServerError)
+					return
+				}
 			}
 		}
 		wine.ImageURL = "/wine/images/" + newImageName
@@ -301,7 +304,7 @@ func addWine(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		wine.ImageURL = "/wine/data/" + imageName
+		wine.ImageURL = "/wine/images/" + imageName
 	}
 
 	wJSON, err := json.Marshal(wine)
