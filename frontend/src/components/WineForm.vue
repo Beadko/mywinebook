@@ -211,6 +211,7 @@ export default {
     v-model:visible="dialog_visible"
     modal
     :header="mode === 'add' ? 'Add Wine' : 'Update Wine'"
+    @hide="cancelForm"
   >
     <div class="flex flex-col items-center justify-center gap-2 mb-4">
       <input
