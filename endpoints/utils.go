@@ -132,6 +132,7 @@ func updateWine(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to check existing image", http.StatusInternalServerError)
 		return
 	}
+
 	var oldIP string
 	if exists {
 		oldIP = imagePath + imageName
@@ -152,48 +153,14 @@ func updateWine(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	f, m, err := r.FormFile("image[]")
-	if err != nil && !errors.Is(err, http.ErrMissingFile) {
-		fmt.Println("Error retrieving image:", err)
-		http.Error(w, "Invalid image upload", http.StatusBadRequest)
+	imageURL, err := updateImage(r, id, oldIP)
+	if err != nil {
+		fmt.Println("Image handling error:", err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
-	} else if f != nil {
-		defer f.Close()
-
-		exts, err := mime.ExtensionsByType(m.Header.Get("Content-Type"))
-		if err != nil || len(exts) == 0 {
-			fmt.Println("Could not process the image data:", err)
-			http.Error(w, "Invalid image format", http.StatusUnsupportedMediaType)
-			return
-		}
-
-		newImageName := fmt.Sprintf("wine_%d%s", wine.ID, exts[0])
-
-		newIP := imagePath + newImageName
-
-		outFile, err := os.Create(newIP)
-		if err != nil {
-			fmt.Println("Error creating file for image:", err)
-			http.Error(w, "Failed to save image", http.StatusInternalServerError)
-			return
-		}
-		defer outFile.Close()
-
-		if _, err := io.Copy(outFile, f); err != nil {
-			fmt.Println("Error saving image to disk:", err)
-			http.Error(w, "Failed to save image", http.StatusInternalServerError)
-			return
-		}
-		if exists {
-			if oldIP != newIP {
-				if err := os.Remove(oldIP); err != nil {
-					fmt.Println("Failed to delete old image:", err)
-					http.Error(w, "Failed to delete old image", http.StatusInternalServerError)
-					return
-				}
-			}
-		}
-		wine.ImageURL = "/wine/images/" + newImageName
+	}
+	if imageURL != "" {
+		wine.ImageURL = imageURL
 	}
 
 	resp, err := db.UpdateWine(wine, id)
@@ -202,14 +169,43 @@ func updateWine(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to update the wine", http.StatusInternalServerError)
 		return
 	}
-	rJSON, err := json.Marshal(resp)
-	if err != nil {
-		fmt.Println("Could not not marshall to JSON:", err)
-		http.Error(w, "Failed to marshal wine data", http.StatusInternalServerError)
-		return
-	}
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprint(w, string(rJSON))
+	json.NewEncoder(w).Encode(resp)
+	log.Printf("Wine updated successfully with ID: %s", id)
+}
+
+func updateImage(r *http.Request, id string, oldIP string) (string, error) {
+	f, m, err := r.FormFile("image[]")
+	if err != nil && !errors.Is(err, http.ErrMissingFile) {
+		return "", fmt.Errorf("error retrieving image: %w", err)
+	} else if f != nil {
+		defer f.Close()
+
+		exts, err := mime.ExtensionsByType(m.Header.Get("Content-Type"))
+		if err != nil || len(exts) == 0 {
+			return "", fmt.Errorf("could not process the image data: %w", err)
+		}
+
+		newImageName := fmt.Sprintf("wine_%s%s", id, exts[0])
+		newIP := imagePath + newImageName
+
+		outFile, err := os.Create(newIP)
+		if err != nil {
+			return "", fmt.Errorf("error creating file for image: %w", err)
+		}
+		defer outFile.Close()
+
+		if _, err := io.Copy(outFile, f); err != nil {
+			return "", fmt.Errorf("error saving image to disk: %w", err)
+		}
+		if oldIP != "" && oldIP != newIP {
+			if err := os.Remove(oldIP); err != nil {
+				return "", fmt.Errorf("failed to delete old image: %w", err)
+			}
+		}
+		return "/wine/images/" + newImageName, nil
+	}
+	return "", nil
 }
 
 func deleteWine(w http.ResponseWriter, r *http.Request) {
