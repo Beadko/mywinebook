@@ -150,7 +150,7 @@ export default {
             this.$emit("wine_updated", res.data);
             this.$emit("image_selected", {
               imgURL: res.data.image_url,
-              itemId: this.selected.id,
+              itemID: this.selected.id,
             });
           })
           .catch((error) => {

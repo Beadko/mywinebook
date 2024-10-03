@@ -20,7 +20,6 @@ export default {
       wine_card: {},
       form_mode: "add",
       isFullSize: false,
-      newKey: 0,
     };
   },
   computed: {
@@ -218,12 +217,11 @@ export default {
       this.wines[idx] = wn;
       this.wine_dialog = false;
     },
-    handleImage({ imgURL, wnID}) {
-      const selectedItem = this.wines.find((wine) => wine.id === wnID);
+    handleNewImage({ imgURL, itemID}) {
+      const selectedItem = this.wines.find((wine) => wine.id === itemID);
       if (selectedItem) {
-        selectedItem.image_url = imgURL;
+        selectedItem.image_url = imgURL+"?"+new Date().getTime();
       }
-      this.newKey = new Date().getTime();
     },
     toggleImage(itemId) {
       if (this.isFullSize === itemId) {
@@ -264,7 +262,6 @@ export default {
                 >
                   <img
                     :src="item.image_url"
-                    :key="item.image_url + newKey"
                     class="w-16 h-16 sm:w-20 sm:h-20 rounded-md object-cover"
                     @click.stop="toggleImage(item.id)"
                   />
@@ -275,7 +272,6 @@ export default {
                     <div class="relative">
                       <img
                         :src="item.image_url"
-                        :key="item.image_url + newKey"
                         class="max-w-1/2 md:max-w-lg max-h-full p-4 cursor-pointer"
                         @click.stop="toggleImage(item.id)"
                       />
@@ -441,7 +437,7 @@ export default {
     :mode="form_mode"
     @wine_added="handleWineAdded"
     @wine_updated="handleWineUpdated"
-    @image_selected="handleImage"
+    @image_selected="handleNewImage"
     class="w-full md:w-1/2 lg:w-1/3"
   />
 </template>
