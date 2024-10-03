@@ -118,7 +118,7 @@ export default {
             },
             {
               headers: {
-                "content-type": "multipart/form-data",
+                "Content-Type": "multipart/form-data",
               },
             }
           )
@@ -150,7 +150,7 @@ export default {
             this.$emit("wine_updated", res.data);
             this.$emit("image_selected", {
               imgURL: res.data.image_url,
-              itemId: res.data.id,
+              itemId: this.selected.id,
             });
           })
           .catch((error) => {
