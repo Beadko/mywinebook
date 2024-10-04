@@ -12,6 +12,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 	"github.com/spf13/cobra"
+	"golang.org/x/crypto/acme/autocert"
 )
 
 // serverCmd represents the server command
@@ -44,8 +45,20 @@ func RunServer() {
 	})
 	handler := c.Handler(router)
 	endpoints.AddRouterEndpoints(router)
-	err := http.ListenAndServe(":80", handler)
-	if err != nil {
-		log.Fatalln("There's an error with the server", err)
+	m := &autocert.Manager{
+		Cache:      autocert.DirCache("./data/cert-cache/"),
+		Prompt:     autocert.AcceptTOS,
+		HostPolicy: autocert.HostWhitelist("winebook.fifty.bar"),
 	}
+	s := &http.Server{
+		Addr:      ":https",
+		Handler:   handler,
+		TLSConfig: m.TLSConfig(),
+	}
+	go func() {
+		if err := http.ListenAndServe(":80", m.HTTPHandler(nil)); err != nil {
+			log.Fatalln("There's an error with the server", err)
+		}
+	}()
+	s.ListenAndServeTLS("", "")
 }

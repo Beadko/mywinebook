@@ -16,7 +16,8 @@ WORKDIR /opt/mywinebook/
 COPY --from=backend /go/src/github.com/beadko/mywinebook/mywinebook bin/
 COPY --from=frontend-build /opt/my-wine-book/dist static
 RUN chmod +x bin/mywinebook
-RUN mkdir -p data/wine/images
+RUN mkdir -p data/wine/images data/cert-cache
 RUN ["/opt/mywinebook/bin/mywinebook", "init"]
 CMD ["/opt/mywinebook/bin/mywinebook", "server"]
 EXPOSE 80
+EXPOSE 443
